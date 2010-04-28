@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="300" height="500"
+		 title="Manage Libraries"		 
+		 contentBackgroundColor="0xFFFFFF"
+		 creationComplete="onCC()"
+		 xmlns:local="*" xmlns:components="com.simplediagrams.view.components.*">
+	
+	<fx:Metadata>
+		[Event(name="OK", type="flash.events.Event")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.DeleteLibraryEvent;
+			import com.simplediagrams.model.LibraryManager;
+			import com.simplediagrams.model.libraries.ILibrary;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+						
+			[Bindable]
+			[Autowire( bean="libraryManager")]
+			public var libraryManager:LibraryManager
+			
+			protected var _libraryToDelete:ILibrary
+			
+			protected function onCC():void
+			{
+				libraryManager.rememberShowInPanelSettings()
+			}
+			
+			protected function onOK():void
+			{
+				var evt:Event = new Event("OK", true)
+				dispatchEvent(evt)
+			}
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+								
+				libraryManager.revertShowInPanelSettings()
+			}
+			
+			public function deleteItem(libraryObj:Object):void
+			{   
+				_libraryToDelete = libraryObj as ILibrary
+				Alert.show("Delete this library plugin?", "Delete Plugin", Alert.OK | Alert.CANCEL, FlexGlobals.topLevelApplication as Sprite, onDeleteItemConfirm) 						
+			}
+			
+			protected function onDeleteItemConfirm(event:CloseEvent):void
+			{
+				if (event.detail == Alert.OK)
+				{
+					var evt:DeleteLibraryEvent = new DeleteLibraryEvent(DeleteLibraryEvent.DELETE_LIBRARY, true)
+					evt.library = _libraryToDelete
+					dispatchEvent(evt)
+				}
+				_libraryToDelete = null
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout  paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="10"/>
+	</s:layout>
+	
+	<!--
+	<s:VGroup horizontalAlign="right">
+		<s:Button id="btnLoadFromServer" label="Load from Server" toolTip="Click this button if you've purchased libraries from the SimpleDiagrams site and are now ready to download them" />
+	</s:VGroup>
+	-->
+	
+	<components:CheckBoxDataGrid
+		id="dgLibraries" 
+		width="100%" 
+		height="100%"
+		dataProvider="{libraryManager.librariesAC}"
+		allowMultipleSelection="true"
+	>
+		<components:columns>
+			
+			<mx:DataGridColumn dataField="showInPanel" headerText="Display" width="60" >
+					
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:Box width="100%" height="100%" 
+								horizontalAlign="center"
+								verticalAlign="middle">
+							<mx:CheckBox selected="{data.showInPanel}" change="onChange(event);" toolTip="Display the libray in the library panel">
+								<fx:Script>
+									<![CDATA[
+										private function onChange(evt:Event):void 
+										{
+											data.showInPanel = !data.showInPanel;
+										}
+
+									]]>
+								</fx:Script>
+							</mx:CheckBox>
+						</mx:Box>
+					</fx:Component>
+				</mx:itemRenderer>
+			</mx:DataGridColumn>
+			
+			<mx:DataGridColumn dataField="isPlugin" headerText="Plugin" width="50" >
+				<mx:itemRenderer>
+					<fx:Component>						
+						<mx:Box horizontalAlign="center"  >
+							<mx:Image visible="{data.isPlugin}" source="@Embed('assets/img/icons/tick.png')" toolTip="This library is a plugin."/>
+						</mx:Box>						
+					</fx:Component>
+				</mx:itemRenderer>
+			</mx:DataGridColumn>
+			
+			<mx:DataGridColumn 
+				dataField="displayName"
+			  	headerText="Name"
+			/>
+			
+			
+			<mx:DataGridColumn headerText="Delete" width="60" >
+				<mx:itemRenderer>
+					<fx:Component>						
+						<mx:Box horizontalAlign="center" >
+							<mx:Button click="outerDocument.deleteItem(data)" 
+									   useHandCursor="true"
+									   buttonMode="true"
+									   visible="{data.isPlugin}"
+									   width="16"
+									   height="16"
+									   upSkin="@Embed('assets/img/icons/delete.png')"
+									   downSkin="@Embed('assets/img/icons/delete.png')" 
+									   overSkin="@Embed('assets/img/icons/delete.png')"
+									   toolTip="Delete this plugin library."
+									   />
+						</mx:Box>						
+					</fx:Component>
+				</mx:itemRenderer>
+			</mx:DataGridColumn>
+			
+		</components:columns>
+		
+	</components:CheckBoxDataGrid>
+	
+	
+	<s:VGroup width="100%" horizontalAlign="right" paddingRight="10" paddingTop="5">
+		<s:HGroup>
+			<s:Button id="btnCancel" label="CANCEL" 
+					  click="onCancel()"  
+					  styleName="blueButton"
+					  width="90" height="30" />	
+			<s:Button id="btnDone" 
+					  label="OK" 
+					  click="onOK()"  
+					  styleName="blueButton"
+					  width="90" height="30" />
+		</s:HGroup>	
+	</s:VGroup>
+	
+	
+	
+	
+</s:Panel>

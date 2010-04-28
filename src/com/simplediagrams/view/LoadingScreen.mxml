@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<!-- background fill -->  
+    <s:Rect id="background" left="0" top="0" right="0" bottom="0" alpha="1">  
+        <s:fill>  
+            <s:BitmapFill source="@Embed(source='assets/img/backgrounds/chalkboard_tile.png')"/>  
+        </s:fill>  
+    </s:Rect>  
+	
+	<mx:Label text="loading" horizontalCenter="0" verticalCenter="0" color="#FFFFFF"/>
+	
+</s:Group>

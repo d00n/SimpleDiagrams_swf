@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://blog.flexexamples.com/2009/06/02/creating-a-transparent-spark-textarea-control-in-flex-gumbo/ -->
+<s:SparkSkin 
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:mx="library://ns.adobe.com/flex/mx"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        minWidth="36" minHeight="36"
+        blendMode="normal">
+    
+    <fx:Metadata>
+    	<![CDATA[
+       		[HostComponent("com.simplediagrams.view.SDComponents.SDTextArea")]
+    	]]>
+    </fx:Metadata> 
+    
+    <!-- states -->
+    <s:states>
+        <s:State name="normal" />
+        <s:State name="selected" />
+    </s:states>
+    
+
+    <fx:Script>
+    	<![CDATA[
+	        /* Define the skin elements that should not be colorized.
+	           For text area, the skin itself is colorized but the individual parts are not. */
+	        //static private const exclusions:Array = ["background", "scroller"];
+	
+	        //override public function get colorizeExclusions():Array {return exclusions;}
+	
+	        /* Define the content fill items that should be colored by the "contentBackgroundColor" style. */
+	        //static private const contentFill:Array = ["bgFill"];
+	
+	        //override public function get contentItems():Array {return contentFill};
+	        
+	        [Bindable]
+	        [Embed(source='assets/tool_shapes/default_tools.swf', symbol='StickyNote')]
+	        public var StickyNote:Class
+	        
+    	]]>
+    </fx:Script>
+
+          
+  	<mx:Image id="backgroundImage" source="{StickyNote}" width="{hostComponent.width}" height="{hostComponent.height}" />
+  
+    <s:Scroller id="scroller" left="0" top="0" right="0" bottom="0" minViewportInset="1">
+      <s:RichEditableText id="mainTextArea"
+        		  color="{hostComponent.fontColor}"
+        		  fontSize="{hostComponent.fontSize}"
+        		  width="{hostComponent.width-20}"
+        		  height="{hostComponent.height-20}"
+        		  text="{hostComponent.text}"
+                  heightInLines="10"
+                  widthInChars="15"
+                  paddingLeft="10" paddingTop="15"
+                  paddingRight="10" paddingBottom="10"/>
+         
+    </s:Scroller>
+
+</s:SparkSkin>

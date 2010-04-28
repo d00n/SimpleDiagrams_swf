@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:myComps="*" 		
+		 creationComplete="onCC()"
+		 title="Flickr Login"
+		 >
+	
+	
+	<fx:Metadata>
+		[Event(name="showAuthorizeWebpage", type="com.simplediagrams.events.FlickrEvent")]
+		[Event(name="attemptLogin", type="com.simplediagrams.events.FlickrEvent")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.FlickrEvent;
+			import com.simplediagrams.model.FlickrModel;
+			
+			public static const STATE_GET_FROB:String = "getFrob";
+			public static const STATE_AUTHORIZING:String = "authorizing";
+			public static const STATE_SHOW_AUTHORIZE:String = "showAuthorize";
+			public static const STATE_SHOW_COMPLETE_AUTHORIZE:String = "showCompleteAuthorize";
+			
+			[Bindable]
+			private var _errorMsg:String = "";
+			
+			[Bindable]
+			[Autowire(name="flickrModel")]
+			public var flickrModel:FlickrModel
+			
+			protected function onCC():void
+			{
+			}
+			
+			
+			
+			protected function onAuthorize():void
+			{
+				
+				dispatchEvent(new FlickrEvent(FlickrEvent.SHOW_AUTHORIZE_WEBPAGE, true))				
+				currentState = FlickrLoginDialog.STATE_SHOW_COMPLETE_AUTHORIZE
+			}
+			
+			protected function onAuthorizeComplete():void
+			{
+				dispatchEvent(new FlickrEvent(FlickrEvent.AUTHORIZATION_COMPLETE, true))
+			}
+			
+			
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="getFrob"/>
+		<s:State name="showAuthorize"/>
+		<s:State name="showCompleteAuthorize"/>
+		<s:State name="authorizing"/>
+	</s:states>	
+	
+	
+	<s:VGroup width="100%" height="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">		
+		
+		<s:Group includeIn="getFrob" width="430" height="100%">
+			
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>					
+			
+			<s:Label height="20" textAlign="center" text="Authorizing..."  y="50" width="430"/>
+			
+			<myComps:LoadingBar y="75" x="80" />			
+			
+		</s:Group>
+				
+		
+		<s:Group includeIn="showAuthorize" width="430" height="100%">
+						
+			<s:layout>
+				<s:VerticalLayout/>
+			</s:layout>					
+			
+			<s:VGroup height="100%" width="100%" paddingTop="20">
+				<s:Label height="25" width="430" text="This program requires your authorization before it can upload diagrams to Flickr." />
+				<s:Label height="60" width="430" text="Authorizing is a simple process which takes place in your web browser. When you're finished, return to this window to complete authorization and being uploading your diagrams to Flickr."/>
+			</s:VGroup>
+			
+					
+			<s:VGroup horizontalAlign="right" width="100%" paddingTop="10" paddingLeft="10" >
+				
+				<s:HGroup>
+					<s:Button id="btnCancelAuth" 
+							  label="CANCEL" 
+							  click="onCancel()"  
+							  width="90" 
+							  height="30" 
+							  styleName="blueButton"
+							  />	
+					<s:Button id="btnShowAuthorize" 
+							  label="AUTHORIZE..." 
+							  click="onAuthorize()"  
+							  width="130" 
+							  height="30" 
+							  styleName="blueButton"
+							  />	
+				</s:HGroup>
+			</s:VGroup>
+			
+		</s:Group>
+		
+		<s:Group includeIn="showCompleteAuthorize" width="430" height="100%">
+			
+			<s:layout>
+				<s:VerticalLayout/>
+			</s:layout>					
+			
+			<s:VGroup height="100%" width="100%" paddingTop="20">
+				<s:Label height="60" width="430" text="Return to this window after you have finished the authorization process on Flickr.com."/>
+				<s:Label height="60" width="430" text="Once your done, click the 'Complete Authorization' button below  and you continue your diagram upload"/>
+			</s:VGroup>
+					
+			
+			<s:VGroup horizontalAlign="right" width="100%" paddingTop="10" >
+				
+				<s:HGroup>
+					<s:Button id="btnCancelAuthComplete" 
+							  label="CANCEL" 
+							  click="onCancel()"  
+							  width="90" 
+							  height="30" 
+							  styleName="blueButton"
+							  />	
+					<s:Button id="btnCompleteAuth" 
+							  label="COMPLETE AUTHORIZATION" 
+							  click="onAuthorizeComplete()"  
+							  width="190" 
+							  height="30" 
+							  styleName="blueButton"
+							  />	
+				</s:HGroup>
+			</s:VGroup>
+			
+		</s:Group>
+		
+		
+				
+		
+		
+		
+		
+	</s:VGroup>	
+	
+</s:Panel>

@@ -1,0 +1,182 @@
+package com.simplediagrams.controllers
+{
+	
+	import com.simplediagrams.events.PositionEvent;
+	import com.simplediagrams.events.ToolPanelEvent;
+	import com.simplediagrams.events.DrawingBoardEvent;
+	import com.simplediagrams.model.*;
+	import com.simplediagrams.util.Logger;
+	import com.simplediagrams.view.SDComponents.SDBase;
+	
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
+	
+	import mx.controls.Alert;
+	import mx.core.FlexGlobals;
+	import mx.managers.CursorManager;
+	
+	import org.swizframework.controller.AbstractController;
+
+	public class ToolPanelController extends AbstractController
+	{
+		
+		[Autowire(bean="diagramModel")]
+		public var diagramModel:DiagramModel;
+		
+		[Bindable]
+		[Embed(source="assets/img/icons/zoom_out.png")]
+		public var ZoomOutIcon:Class
+		
+		[Bindable]
+		[Embed(source="assets/img/icons/zoom_in.png")]
+		public var ZoomInIcon:Class
+		
+		[Bindable]
+		[Embed(source="assets/img/icons/text_cursor.png")]
+		public var TextCursorIcon:Class
+		
+		
+		[Bindable]
+		[Embed(source="assets/img/icons/pencil.png")]
+		public var PencilIcon:Class
+		
+		protected var _suspendedToolType:String = DiagramModel.POINTER_TOOL
+		
+		public function ToolPanelController()
+		{
+			
+			FlexGlobals.topLevelApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown)
+			FlexGlobals.topLevelApplication.addEventListener(KeyboardEvent.KEY_UP, onKeyUp)
+		}
+		
+		protected function onKeyDown(event:KeyboardEvent):void
+		{
+			//If using zoom control, shift toggles between + and -
+			if (diagramModel.currToolType==DiagramModel.ZOOM_TOOL)
+			{
+				if (event.keyCode == Keyboard.SHIFT)
+				{
+					Logger.debug("setting cursor to out...", this)
+					CursorManager.removeAllCursors()
+					CursorManager.setCursor(ZoomOutIcon)
+				}
+			}
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			if (diagramModel.currToolType==DiagramModel.ZOOM_TOOL)
+			{
+				Logger.debug("setting cursor to in...", this)
+				CursorManager.removeAllCursors()
+				CursorManager.setCursor(ZoomInIcon)
+			}
+		}
+		
+		[Mediate(event="ToolPanelEvent.TOOL_SELECTED")]
+		public function setTool(event:ToolPanelEvent):void
+		{			
+			CursorManager.removeAllCursors()
+			
+			//we may need to do some cleanup later on, or some other processing here in the time
+			//between a tool being selected and the models and views learning about it.
+			
+			changeToolAction(event.toolTypeSelected)
+					
+		}
+		
+		
+		[Mediate(event="PositionEvent.MOVE_BACKWARD")]
+		[Mediate(event="PositionEvent.MOVE_FORWARD")]
+		public function changePosition(event:PositionEvent):void
+		{
+			
+			
+			//get current selection
+			var selectedVisualsArr:Array = diagramModel.selectedVisuals
+			
+			if (selectedVisualsArr.length==0) 
+			{
+				Alert.show("No object selected.")
+			}
+			
+			if (selectedVisualsArr.length>1)
+			{
+				Alert.show("You can only move one object at a time.")
+				return
+			}
+			
+				
+			var sdBase:SDBase = selectedVisualsArr[0]
+			switch(event.type)
+			{
+				case PositionEvent.MOVE_BACKWARD:
+					sdBase.moveBackwardSelected(null)
+					break
+				
+				case PositionEvent.MOVE_FORWARD:
+					sdBase.moveForwardSelected(null)
+					break
+				
+			}
+		}
+		
+		[Mediate(event="ToolPanelEvent.SUSPEND_CURRENT_TOOL")]
+		public function suspendCurrentTool(event:ToolPanelEvent):void
+		{
+			
+			if (diagramModel.currToolType == DiagramModel.POINTER_TOOL) return
+			CursorManager.removeAllCursors()
+			this._suspendedToolType = diagramModel.currToolType
+			changeToolAction(DiagramModel.POINTER_TOOL)
+		}
+		
+		[Mediate(event="DrawingBoardEvent.MOUSE_OVER")]
+		public function resumeCurrentTool(event:DrawingBoardEvent):void
+		{			
+			if (this._suspendedToolType =="") return
+			Logger.debug("resumeCurrentTool() _suspendedToolType: " + _suspendedToolType,this)
+			changeToolAction(this._suspendedToolType)
+			this._suspendedToolType  = ""
+		}
+		
+		
+		protected function changeToolAction(toolType:String):void
+		{
+			switch (toolType)
+			{
+				case DiagramModel.POINTER_TOOL:
+					diagramModel.currToolType = DiagramModel.POINTER_TOOL
+					break
+				
+				case DiagramModel.PENCIL_TOOL:
+					diagramModel.currToolType = DiagramModel.PENCIL_TOOL
+					//make sure nothing is selected
+					diagramModel.clearSelection()
+					CursorManager.setCursor(PencilIcon,2, 0, -15)	
+					diagramModel.clearSelection()	
+					break
+				
+				case DiagramModel.TEXT_TOOL:
+					diagramModel.currToolType = DiagramModel.TEXT_TOOL
+					CursorManager.setCursor(TextCursorIcon, 2, 0, 0)
+					diagramModel.clearSelection()
+					break
+				
+				case DiagramModel.LINE_TOOL:
+					diagramModel.currToolType = DiagramModel.LINE_TOOL	
+					diagramModel.clearSelection()
+					break
+				
+				case DiagramModel.ZOOM_TOOL:
+					diagramModel.currToolType = DiagramModel.ZOOM_TOOL	
+					CursorManager.setCursor(ZoomInIcon)
+					break
+				
+				default:
+					Logger.warn("changeToolStatus() unrecognized tool type: " + toolType, this)
+			}
+		}
+		
+	}
+}

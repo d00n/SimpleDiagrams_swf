@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 title="Export Diagram to Basecamp"		 
+		 contentBackgroundColor="0xFFFFFF"
+		 creationComplete="onCC()"
+		 xmlns:myComps="*" 
+		 xmlns:components="com.simplediagrams.view.components.*">
+	
+	<fx:Metadata>
+		[Event(name="exportDiagram", type="flash.events.Event")]
+		[Event(name='cancelUpload', event='flash.events.Event')]
+		[Event(name='changeLogin', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.FlickrEvent;
+			import com.simplediagrams.model.FlickrModel;
+			import com.simplediagrams.util.Logger;
+			
+			import org.swizframework.Swiz
+			import mx.controls.Alert
+			import flash.utils.ByteArray;
+			
+			
+			[Bindable]
+			[Autowire]
+			public var flickrModel:FlickrModel
+			
+			public static const STATE_TRANSMITTING:String = "transmitting"
+			
+			public function set imageData(ba:ByteArray):void
+			{
+				imgDiagram.source = ba
+			}
+						
+			protected function onCC():void
+			{				
+			}
+			
+						
+			protected function onOK():void
+			{
+				//TODO : check inputs
+				this.currentState = STATE_TRANSMITTING
+				var evt:Event = new Event("exportDiagram", true)
+				dispatchEvent(evt)
+				
+			}
+			
+			protected function onCancelUpload():void
+			{			
+				var evt:Event = new FlickrEvent(FlickrEvent.CANCEL_UPLOAD, true)
+				dispatchEvent(evt)				
+			}	
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}		
+			
+			
+			
+			protected function onChangeLogin():void
+			{
+				var evt:Event = new Event("changeLogin", true)
+				dispatchEvent(evt)
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="transmitting"/>
+	</s:states>
+	
+	
+	<s:Group width="100%" height="100%" includeIn="transmitting">
+		
+		<s:Label width="100%" text="Uploading image..." verticalCenter="-30" textAlign="center" />
+		<myComps:LoadingBar verticalCenter="0" x="195"/>
+		
+		<s:Button label="CANCEL UPLOAD" styleName="blueButton" click="onCancelUpload()" right="10" bottom="10" height="30" width="120"/>
+		
+	</s:Group>
+	
+	<s:VGroup width="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10" gap="5" excludeFrom="transmitting"> 
+		
+		<s:HGroup width="100%" paddingTop="10">
+			
+			<s:VGroup width="100%" paddingRight="20" gap="10">
+				
+				<s:Label text="Logged in as: "/>
+				<s:Label fontWeight="bold" text="{flickrModel.username}"/>
+				
+								
+				<s:Label text="Image Title:" paddingTop="3"/>
+				<s:TextInput id="txtMessageTitle" width="250"  />
+								
+			</s:VGroup>
+			
+			<s:VGroup width="200">
+				<s:Label text="Image Preview (not to scale):" paddingTop="3"/>
+				<mx:Image id="imgDiagram" width="150" height="150"/>
+				<mx:Text width="200" 
+						 color="#888888">
+					<mx:htmlText>
+						<![CDATA[Hint: If your image looks small on the background, try changing the diagram dimensions in the <b>diagrams > properties</b> menu.]]>
+					</mx:htmlText>
+				</mx:Text>
+			</s:VGroup>
+			
+		</s:HGroup>
+		
+		<s:Label text="Image Description:" />
+		<s:TextArea id="txtImageDesription" width="100%" height="70"  />
+		
+		<s:Label text="Image Tags:" />
+		<s:TextInput id="txtImageTags" width="100%" height="70"  />
+		
+		
+		<s:VGroup horizontalAlign="right" width="100%" paddingTop="10">				
+			<s:HGroup >								
+				<s:Button id="btnLogout" 
+						  label="CHANGE LOGIN" 
+						  click="onChangeLogin()"  
+						  styleName="blueButton"
+						  width="110" height="30" />
+				
+				<mx:Spacer width="100%"/>
+				
+				<s:Button id="btnCancel" label="CANCEL" 
+						  click="onCancel()"  						   
+						  styleName="blueButton"
+						  width="90" height="30" />	
+				
+				<s:Button id="btnDone" 
+						  label="EXPORT" 
+						  click="onOK()"  
+						  styleName="blueButton"
+						  width="90" height="30" />
+				
+			</s:HGroup>
+		</s:VGroup>
+		
+	</s:VGroup> 
+	
+	
+	
+	
+</s:Panel>

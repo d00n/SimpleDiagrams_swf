@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+    contentBackgroundColor="0xFFFFFF"
+    keyDown="onKeyDown(event)"
+    title="Edit Diagram Properties"
+    width="350"
+    creationComplete="onCC()"
+    >
+	
+	<fx:Metadata>
+		[Event(name="OK", type="flash.events.Event")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+		
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="error"/>
+	</s:states>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import mx.validators.Validator;
+		
+			import com.simplediagrams.model.DiagramModel
+			import com.simplediagrams.util.Logger
+			
+			
+			[Bindable]
+			public var diagramModel:DiagramModel
+			
+			protected var _validatorsArr:Array 
+			
+			protected function onCC():void
+			{
+				_validatorsArr = [vldHeight, vldWidth]
+			}
+			
+			protected function onOK():void
+			{
+				var valid:Boolean = validate()
+				
+				if (valid==false) 
+				{
+					this.currentState = "error"
+				}
+				else
+				{					
+					diagramModel.width = Number(txtWidth.text)
+					diagramModel.height = Number(txtHeight.text)
+					diagramModel.baseBackgroundColor = cpBackgroundColor.selectedColor
+					diagramModel.isDirty = true
+					Logger.debug("diagramModel.baseBackgroundColor: " + diagramModel.height, this)
+					
+					var evt:Event = new Event("OK", true)
+					dispatchEvent(evt)
+				}
+				
+			}
+			
+			protected function validate():Boolean
+			{
+				Logger.debug("validatorsArr: " + _validatorsArr + " validatorsArr[0]: " +_validatorsArr[0], this)
+				
+				for each (var vld:Validator in _validatorsArr)
+				{
+					var vResult:ValidationResultEvent = vld.validate()
+					
+	                if (vResult.type!=ValidationResultEvent.VALID) 
+	                {
+	                   return false
+	                }
+				}
+				
+				return true
+			}
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}
+			
+			
+			protected function onKeyDown(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					onOK()
+				}
+			}
+
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>		
+		<mx:NumberValidator id="vldHeight" 
+			minValue="50"
+			source="{txtHeight}"
+            property="text"
+            trigger="{txtHeight}"
+            triggerEvent="focusOut"
+			/>
+			
+		<mx:NumberValidator id="vldWidth" 
+			minValue="50"
+			source="{txtWidth}"
+            property="text"
+            trigger="{txtWidth}"
+            triggerEvent="focusOut"
+			/>
+		
+    </fx:Declarations>
+
+
+	<s:layout>
+		<s:VerticalLayout  paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10"/>
+	</s:layout>
+	
+		
+	<s:Group includeIn="error" id="errorMessage">
+	
+		<s:layout>
+			<s:HorizontalLayout  paddingTop="5" paddingBottom="5"  />			
+		</s:layout>
+		
+		<mx:Text showEffect="showEff"
+				height="40" width="320" 
+				color="#CC0000"
+				text="Some of your inputs are not valid. Please check the fields with a red border."/>
+	</s:Group>
+			
+	<s:Group >
+		<s:layout>
+			<s:HorizontalLayout  paddingTop="5" paddingBottom="5"  />			
+		</s:layout>
+		<mx:Label paddingLeft="5" text="Height:" width="80"/>
+		<s:TextInput id="txtHeight" text="{diagramModel.height}" 
+			restrict="0-9" maxChars="4"
+			width="80"
+			 />
+	</s:Group>
+	
+	
+	<s:Group  >
+		<s:layout>
+			<s:HorizontalLayout  paddingTop="10" paddingBottom="5"  />			
+		</s:layout>
+		<mx:Label paddingLeft="5" text="Width:" width="80"/>
+		<s:TextInput id="txtWidth" text="{diagramModel.width}"  
+			restrict="0-9" maxChars="4"
+			width="80"
+			/>
+	</s:Group>
+	
+	
+	<s:Group  >
+		<s:layout>
+			<s:HorizontalLayout  paddingTop="15" paddingBottom="5"  />			
+		</s:layout>
+		<mx:Text width="80" height="40" paddingLeft="5" text="Background:" />
+		<mx:ColorPicker id="cpBackgroundColor" selectedColor="{diagramModel.baseBackgroundColor}" />
+		<mx:Spacer width="10"/>
+		<mx:Label text="(Applies to Basic style only)" styleName="formHint" />
+	</s:Group>
+	
+	<s:Group  >
+		<s:layout>
+			<s:HorizontalLayout  paddingTop="15" paddingBottom="5"  />			
+		</s:layout>
+	</s:Group>
+	
+	<s:VGroup width="100%" horizontalAlign="right">
+		<s:HGroup>
+			<s:Button id="btnCancel" label="CANCEL" click="onCancel()"  styleName="blueButton" width="90" height="30" />	
+			<s:Button id="btnOK" label="OK" click="onOK()" styleName="blueButton" width="90" height="30"  />	
+		</s:HGroup>
+	</s:VGroup>
+	
+
+	
+	
+</s:Panel>

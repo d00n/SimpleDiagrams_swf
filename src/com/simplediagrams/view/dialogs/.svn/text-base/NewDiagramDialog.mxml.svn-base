@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+    contentBackgroundColor="0xFFFFFF"
+    creationComplete="onCC()"
+    keyDown="onKeyDown(event)"
+    title="Save New Diagram"
+ 
+	>
+		
+	<fx:Metadata>
+		[Event(name='saveDiagram', event='flash.events.Event')]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="warning"/>
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LoadDiagramEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.business.DBManager;
+			import com.simplediagrams.model.dao.DiagramDAO
+			import com.simplediagrams.model.LibraryManager
+			
+			
+			import mx.managers.PopUpManager
+			import mx.managers.FocusManager
+			
+			import org.swizframework.Swiz
+			import com.simplediagrams.util.Logger	
+			import mx.utils.ObjectUtil;
+			
+			
+			public static const SAVE:String = "saveDiagram"
+			
+			
+			protected function onCC():void
+			{
+				focusManager.setFocus(txtName)
+			}
+			
+			public function onSave():void
+			{
+				Logger.debug("onComplete()",this)
+				
+				if (txtName.text=="")
+				{
+					currentState="warning"
+					return
+				}
+				
+				var diagramModel:DiagramModel = Swiz.getBean("diagramModel") as DiagramModel
+				diagramModel.name = txtName.text
+				
+				Logger.debug("Dispatching event: " + NewDiagramDialog.SAVE, this)				
+				dispatchEvent(new Event(NewDiagramDialog.SAVE,true))
+			}
+			
+			protected function onCancel():void
+			{
+				dispatchEvent(new Event(Event.CANCEL,true))
+			}
+			
+			protected function onKeyDown(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					onSave()
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+
+    <s:transitions>
+        <s:Transition fromState="normal" toState="warning">
+            <s:Fade target="{hbxWarning}" duration="500" />
+        </s:Transition>
+    </s:transitions>
+		
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+
+		
+	<mx:HBox id="hbxWarning" includeIn="warning" width="100%" horizontalAlign="center" paddingTop="10" paddingRight="10">
+		<mx:Label text="Please enter a name for your new diagram" color="#CC0000"  />
+	</mx:HBox>
+	
+	<mx:HBox width="100%" paddingTop="10" paddingLeft="5" paddingRight="10"  >
+		<mx:Label text="Diagram name:"/>
+		<mx:TextInput id="txtName" width="100%" />
+	</mx:HBox>
+
+		
+	<mx:HBox width="100%" horizontalAlign="right" paddingRight="10" paddingTop="5">
+		<mx:Button label="Save" width="90" height="30" click="onSave()"  />
+		<mx:Button label="Cancel" width="90" height="30" click="onCancel()"  />
+	</mx:HBox>
+	
+		
+</s:Panel>
+	
+	

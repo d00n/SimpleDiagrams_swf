@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 		
+		xmlns:mx="library://ns.adobe.com/flex/mx" 
+		xmlns:s="library://ns.adobe.com/flex/spark" alpha.disabled=".5">
+	
+	<!-- states -->
+	<s:states>
+		<s:State name="up" />
+		<s:State name="over" />
+		<s:State name="down" />
+		<s:State name="disabled" />
+	</s:states>
+	
+	<mx:Image source="@Embed('assets/img/btn_manage_library_off.png')" includeIn="up, disabled" />
+	<mx:Image source="@Embed('assets/img/btn_manage_library_on.png')" includeIn="over, down" />
+	
+	
+</s:Skin>

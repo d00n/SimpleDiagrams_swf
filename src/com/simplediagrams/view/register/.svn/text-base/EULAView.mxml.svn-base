@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 creationComplete="onCC()"
+		 addedToStage="onATS()"
+		 >
+	
+	<fx:Metadata>
+		[Event(name="upgrade", type="flash.events.Event")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.ApplicationEvent;
+			import com.simplediagrams.events.RegistrationViewEvent;
+			import com.simplediagrams.model.RegistrationManager;
+			import com.simplediagrams.util.Logger
+			
+			import flash.filesystem.*;
+			
+			import mx.controls.Alert;
+			
+			[Bindable]
+			[Autowire(bean="registrationManager")]
+			public var registrationManager:RegistrationManager		
+			
+			[Bindable]
+			protected var _license:String
+			
+			public function onQuit():void
+			{		
+				var evt:ApplicationEvent = new ApplicationEvent(ApplicationEvent.QUIT, true)
+				dispatchEvent(evt)
+			}
+			
+			public function onContinue():void
+			{
+				
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USER_AGREED_TO_LICENSE, true)
+				dispatchEvent(evt)		
+			}
+			
+			protected function onATS():void
+			{
+				Logger.debug("onATS()",this)		
+			}
+			
+			protected function onCC():void
+			{
+				Logger.debug("onCC()",this)
+				var licenseFile:File = File.applicationDirectory.resolvePath("license.txt");
+				if (licenseFile.exists==false)
+				{
+					Alert.show("The license.txt file is missing from the SimpleDiagrams installation directory. Please try downloading and installing SimpleDiagrams again.","License file missing")
+				}
+				else
+				{
+					var stream:FileStream = new FileStream()
+					stream.open(licenseFile, FileMode.READ)
+					_license = stream.readUTFBytes(stream.bytesAvailable)
+				}	
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+		
+	<s:Label 
+		color="#000000"
+		text="Welcome to SimpleDiagrams Free Version"
+		fontSize="16"
+		x="15" y="13"
+		/>	
+		
+	<mx:TextArea htmlText="{_license}"
+			 x="15" y="70"
+			 width="385"
+			 height="200"
+			 />
+	
+	<s:CheckBox id="cbxAgree" 
+				x="20"
+				y="280"
+				label="I agree to the SimpleDiagrams End User License Agreement" />
+	
+	<mx:HBox x="15" y="315" >
+		
+		<s:Button id="btnAgree" 
+				  click="onContinue()"
+				  styleName="blueButton"
+				  label="Continue"
+				  enabled="{cbxAgree.selected}"
+				  width="170" height="30"
+				  />	
+		
+		<mx:Spacer width="30"/>			
+		
+		<s:Button id="btnQuit" 
+				  click="onQuit()"
+				  styleName="blueButton"
+				  label="I Don't Agree"
+				  width="170" height="30"
+				  />	
+		
+		
+	</mx:HBox>
+	
+	
+</s:Group>

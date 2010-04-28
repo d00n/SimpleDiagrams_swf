@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	creationComplete="onCC()"
+	width="620" height="360" 		
+	horizontalCenter="0"
+	verticalCenter="0"
+	currentState="{_registrationManager.viewing}"
+	xmlns:register="com.simplediagrams.view.register.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LicenseStatusEvent;
+			import mx.validators.ValidationResult;
+			import com.simplediagrams.model.ApplicationModel;
+			import com.simplediagrams.model.RegistrationManager;
+			import com.simplediagrams.util.AboutInfo;
+			import com.simplediagrams.util.Logger;
+			
+			
+			import mx.controls.Alert	
+			import org.swizframework.Swiz	            
+			
+			import mx.events.ValidationResultEvent;			
+			import flash.net.navigateToURL
+				
+			[Autowire(bean="applicationModel")]
+			public var applicationModel:ApplicationModel	
+			
+			[Bindable]
+			protected var _registrationManager:RegistrationManager
+						
+			
+			[Autowire(bean="registrationManager")]
+			public function set registrationManager(model:RegistrationManager):void
+			{
+				this._registrationManager = model
+				this.currentState = _registrationManager.viewing
+			}
+						
+			[Bindable]
+			[Embed(source='assets/img/registration_bg.png')]
+			protected var Bkgd:Class;
+													
+			protected var req:URLRequest 
+			
+			protected function onCC():void
+			{						
+				var aboutInfo:AboutInfo = new AboutInfo()
+				lblVersion.text = "Version : " + AboutInfo.applicationVersion	
+			}
+			
+			protected function onUpgrade():void
+			{
+				currentState='registerView'
+			}
+							
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+		    
+	<s:states>
+		<s:State name="eulaView"/>
+		<s:State name="freeModeView"/>
+		<s:State name="registerView"/>
+		<s:State name="registrationSuccessView"/>
+		<s:State name="serverUnavailableView"/>
+	</s:states>	    
+		
+	<mx:Image source="{Bkgd}" />
+		    
+    <register:EULAView includeIn="eulaView" />
+    <register:FreeModeView includeIn="freeModeView" upgrade="onUpgrade()" />
+    <register:RegisterView includeIn="registerView"  />
+    <register:RegistrationSuccessView includeIn="registrationSuccessView"  />
+    <register:ServerUnavailableView includeIn="serverUnavailableView"  />
+        
+	<!-- stuff for blue info section on right side of screen ... doesn't change across sub-views -->
+	<mx:Label id="lblVersion"
+			color="#cddcff"
+			text="V3.0"
+			x="431"
+			y="37" 
+			/>			
+	
+</s:Group>

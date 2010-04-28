@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:properties="com.simplediagrams.view.properties.*"
+	>
+	
+	
+	<s:layout>
+		<s:HorizontalLayout paddingTop="5" paddingLeft="20" />
+	</s:layout>	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.TextPropertyChangeEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.model.SDTextAreaModel;
+			import com.simplediagrams.util.Logger;
+			
+			import mx.collections.ArrayCollection;
+			
+			
+			protected var _cbxFontSizeCreationComplete:Boolean = false;
+			
+			[Bindable]
+			protected var _fontsAC:ArrayCollection = new ArrayCollection( [	{ label:"6", data:6 },
+																		{ label:"8", data:8 },
+																		{ label:"9", data:9 },
+																		{ label:"10", data:10 },
+																		{ label:"12", data:12 },
+																		{ label:"14", data:14 },
+																		{ label:"18", data:18 },
+																		{ label:"24", data:24 },
+																		{ label:"30", data:30 },
+																		{ label:"36", data:36 },
+																		{ label:"48", data:48 },
+																		{ label:"60", data:60 },
+																		{ label:"72", data:72 } ] );
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/font_size.png")]
+			protected var fontSize:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_left.png")]
+			protected var textAlignLeft:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_center.png")]
+			protected var textAlignCenter:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_right.png")]
+			protected var textAlignRight:Class				
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_justify.png")]
+			protected var textAlignJustify:Class					
+			
+			protected var _fontSize:String
+			protected var _textAlign:String = "";
+			
+			[Bindable]
+			protected var _diagramModel:DiagramModel
+						
+			[Autowire(bean="diagramModel")]
+			public function set diagramModel( model : DiagramModel) : void 
+			{
+				_diagramModel = model
+				resetProperties()						
+			} 
+				
+				
+			public function resetProperties():void
+			{				
+				if (_diagramModel==null || _diagramModel.selectedArray.length==0) return
+				if (_cbxFontSizeCreationComplete==false) return
+				
+				var sdTextAreaModelsArr:Array = _diagramModel.selectedArray
+														
+				if (sdTextAreaModelsArr.length==1)
+				{
+					setControlsFromModel()				
+				}
+				else
+				{	
+					//blank out controls unless all models have same value
+					var fontSizeSame:Boolean = true
+					var textAlignSame:Boolean = true
+					var textPositionSame:Boolean = true
+					var lastTextAreaModel:SDTextAreaModel
+					for each (var sdTextAreaModel:SDTextAreaModel in sdTextAreaModelsArr)
+					{
+						//skip first iteration
+						if (lastTextAreaModel==null) 
+						{
+							lastTextAreaModel = sdTextAreaModel
+							continue
+						}
+						if (lastTextAreaModel)
+						{
+							if (sdTextAreaModel.fontSize != lastTextAreaModel.fontSize)
+							{
+								fontSizeSame = false
+							}
+							if (sdTextAreaModel.textAlign != lastTextAreaModel.textAlign)
+							{
+								textAlignSame = false
+							}							
+						}	
+						lastTextAreaModel = sdTextAreaModel
+					}					
+					
+					if (fontSizeSame)
+					{
+						_fontSize = lastTextAreaModel.fontSize.toString()
+					}
+					else
+					{
+						_fontSize = ""
+					}
+					
+					if (textAlignSame)
+					{
+						_textAlign = lastTextAreaModel.textAlign
+					}
+					else
+					{
+						_textAlign = ""
+					}
+										
+					if (_cbxFontSizeCreationComplete==true) setControlsFromProps()	
+				}
+			}
+			
+			protected function setControlsFromModel():void
+			{		
+				if (_diagramModel.selectedArray[0])
+				{
+					var sdTextAreaModel:SDTextAreaModel = _diagramModel.selectedArray[0] as SDTextAreaModel
+					setTextAlign(sdTextAreaModel.textAlign)
+					
+					Logger.debug("setControlsFromModel() sdTextAreaModel.fontSize: " + sdTextAreaModel.fontSize,this)
+					cbxFontSize.text = sdTextAreaModel.fontSize.toString()
+				}
+			}
+			
+			protected function setControlsFromProps():void
+			{						
+				setTextAlign(this._textAlign)
+				cbxFontSize.text = this._fontSize				
+			}
+			
+			
+			protected function setTextAlign(textAlign:String):void
+			{
+				switch (textAlign)
+				{
+					case "left":
+						btnBar.selectedIndex = 0
+						break
+					case "center":
+						btnBar.selectedIndex = 1
+						
+						break
+					case "right":
+						btnBar.selectedIndex = 2
+						
+						break
+					case "justify":
+						btnBar.selectedIndex = 3
+						
+						break
+					default:
+						btnBar.selectedIndex = -1							
+				}
+			}
+			
+			protected function onFontSizeChange():void
+			{				
+				if (cbxFontSize.value=="" || !_cbxFontSizeCreationComplete) return
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_FONT_SIZE, true)
+				evt.fontSize = Number(cbxFontSize.value)
+				dispatchEvent(evt)
+			}
+			
+			
+			protected function onTextAlignChange():void
+			{				
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_TEXT_ALIGN, true)
+				evt.textAlign = btnBar.selectedItem.label
+				dispatchEvent(evt)
+			}
+			
+			protected function onComboCC():void
+			{
+				_cbxFontSizeCreationComplete = true
+				resetProperties()
+			}
+			
+			protected function onBoldChange():void
+			{
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_FONT_WEIGHT, true)
+				
+				if (btnBold.selected)
+				{
+					evt.fontWeight = "bold"
+				}
+				else
+				{
+					evt.fontWeight = "normal"
+				}
+				dispatchEvent(evt)	
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+
+	<mx:Image source="{fontSize}" width="20" height="20" />
+	
+	<mx:ComboBox
+				 id="cbxFontSize" 
+  				 dataProvider="{_fontsAC}"
+				 editable="true"
+				 restrict="0-9"		
+				 creationComplete="onComboCC()"		 
+				 valueCommit="onFontSizeChange()"
+				 height="21"
+				 width="60"/>
+	
+	<s:ButtonBar id="btnBar"
+				 requireSelection="true"
+				 skinClass="com.simplediagrams.view.properties.TextAlignButtonBarSkin"
+				 click="onTextAlignChange()"
+				 width="80">
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object label="left"
+						   icon="{textAlignLeft}" 
+						   />
+				<fx:Object label="center"
+						   icon="{textAlignCenter}" 
+						   />
+				<fx:Object label="right"
+						   icon="{textAlignRight}" 
+						   />
+				<fx:Object label="justify"
+						   icon="{textAlignJustify}" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	
+	<s:ToggleButton id="btnBold"
+					click="onBoldChange()"
+					label="B"
+					width="30"
+					/>
+
+
+	
+	
+	
+</s:Group>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:myComps="*" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+	contentBackgroundColor="0xFFFFFF"
+	title="Download Libraries from SimpleDiagrams.com"
+	width="650" height="550"
+    currentState="downloadingLibraryList"
+	creationComplete="onCC()">
+	
+	
+	<fx:Metadata>
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.model.DownloadManager;
+			
+			import flash.events.Event
+				
+			public static const STATE_DOWNLOADING_LIBRARY_LIST:String = "downloadingLibraryList"
+			public static const STATE_SELECT_LIBRARIES_TO_DOWNLOAD:String = "selectLibrariesToDownload"
+			public static const STATE_DOWNLOADING_SELECTED_LIBRARIES:String = "downloadingSelectedLibraries"
+			public static const STATE_LIBRARIES_DOWNLOADED:String = "librariesDownloaded"
+			public static const STATE_DOWNLOAD_LIST_ERROR:String = "downloadListError"
+			public static const STATE_DOWNLOAD_LIBRARIES_ERROR:String = "downloadLibrariesError";
+			
+			[Bindable]
+			[Autowire(bean='downloadManager')]
+			public var downloadManager:DownloadManager
+			
+			public function onCC():void
+			{
+				
+			}
+			
+			protected function onCancelDownloadingLibraryList():void
+			{
+				dispatchEvent(new Event(Event.CANCEL, true))
+				
+			}			
+			protected function onCancelDownloadingSelectedLibraries():void
+			{
+				
+				dispatchEvent(new Event(Event.CANCEL, true))
+			}
+			
+			protected function onDownloadSelectedLibaries():void
+			{
+				
+			}
+						
+			protected function onErrorOK():void
+			{
+				
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="downloadingLibraryList"/>
+		<s:State name="selectLibrariesToDownload"/>
+		<s:State name="downloadingSelectedLibraries"/>
+		<s:State name="librariesDownloaded"/>
+		<s:State name="downloadListError"/>
+		<s:State name="downloadLibrariesError"/>
+	</s:states>
+	
+	
+	
+	<s:VGroup includeIn="downloadingLibraryList" width="100%" height="100%">
+				
+		<s:Group width="100%" height="100%" >
+			<s:Label text="downloading available libraries from SimpleDiagrams.com" horizontalCenter="0" verticalCenter="-20"/>
+			<myComps:LoadingBar horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onCancelDownloadingLibraryList()" label="CANCEL" width="90" height="30" styleName="blueButton" />
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	<s:VGroup includeIn="selectLibrariesToDownload" width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%" verticalCenter="0">
+			<mx:DataGrid id="dgLibrariesAvailable" 
+							dataProvider="{downloadManager.downloadableLibrariesAC}"
+							width="100%" height="100%"
+							>
+				<mx:columns>
+					<mx:DataGridColumn dataField="name" width="200"/>
+					<mx:DataGridColumn dataField="description"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</s:VGroup>
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onCancelDownloadingLibraryList()" label="CANCEL" height="30" width="90" styleName="blueButton" />
+			<s:Button click="onDownloadSelectedLibaries()" label="DOWNLOAD SELECTED" height="30" width="160"  styleName="blueButton"/>
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	<s:VGroup includeIn="downloadingSelectedLibraries" width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%" verticalCenter="0">
+			<s:Label text="downloading selected libraries from SimpleDiagrams.com"/>
+		</s:VGroup>
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onCancelDownloadingSelectedLibraries()" label="CANCEL" height="30" width="90" styleName="blueButton" />
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	<s:VGroup includeIn="librariesDownloaded" width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%" verticalCenter="0">
+			<s:Label text="libraries downloaded"/>
+		</s:VGroup>
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onCancelDownloadingSelectedLibraries()" label="CANCEL" height="30" width="90" styleName="blueButton" />
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	
+	<s:VGroup includeIn="downloadListError" width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%" verticalCenter="0">
+			<s:Label text="downloading list error"/>
+		</s:VGroup>
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onErrorOK()" label="OK" height="30" width="90" styleName="blueButton" />
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	
+	<s:VGroup includeIn="downloadLibrariesError" width="100%" height="100%">
+		
+		<s:VGroup width="100%" height="100%" verticalCenter="0">
+			<s:Label text="downloading libraries error"/>
+		</s:VGroup>
+		<mx:HBox horizontalAlign="right" paddingRight="10" width="100%" height="40" paddingBottom="10">
+			<s:Button click="onErrorOK()" label="OK" height="30" width="90" styleName="blueButton" />
+		</mx:HBox>
+		
+	</s:VGroup>
+	
+	
+	
+	
+	
+</s:Panel >

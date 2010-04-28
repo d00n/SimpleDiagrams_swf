@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:properties="com.simplediagrams.view.properties.*"
+		 >
+	
+	
+	<s:layout>
+		<s:HorizontalLayout paddingTop="5" paddingLeft="20" />
+	</s:layout>	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.TextPropertyChangeEvent;
+			import com.simplediagrams.events.MultiSelectEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.model.SDObjectModel;
+			import com.simplediagrams.model.SDSymbolModel;
+			import com.simplediagrams.util.Logger;
+			
+			import mx.collections.ArrayCollection;
+			
+			import org.swizframework.Swiz;
+			
+			
+			[Bindable]		
+			[Embed(source='assets/img/icons/text_bold.png')]
+			private var boldIcon:Class
+			
+			[Bindable]
+			protected var _fontsAC:ArrayCollection = new ArrayCollection( [	{ label:"6", data:6 },
+				{ label:"8", data:8 },
+				{ label:"9", data:9 },
+				{ label:"10", data:10 },
+				{ label:"12", data:12 },
+				{ label:"14", data:14 },
+				{ label:"18", data:18 },
+				{ label:"24", data:24 },
+				{ label:"30", data:30 },
+				{ label:"36", data:36 },
+				{ label:"48", data:48 },
+				{ label:"60", data:60 },
+				{ label:"72", data:72 } ] );
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/font_size.png")]
+			protected var fontSizeIcon:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_left.png")]
+			protected var textAlignLeft:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_center.png")]
+			protected var textAlignCenter:Class														
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_right.png")]
+			protected var textAlignRight:Class				
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_align_justify.png")]
+			protected var textAlignJustify:Class		
+			
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_valign_above.png")]
+			protected var textValignAbove:Class	
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_valign_top.png")]
+			protected var textValignTop:Class	
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_valign_middle.png")]
+			protected var textValignMiddle:Class	
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_valign_bottom.png")]
+			protected var textValignBottom:Class	
+			
+			[Bindable]
+			[Embed(source="assets/img/icons/text_valign_below.png")]
+			protected var textValignBelow:Class	
+			
+			[Bindable]
+			protected var _diagramModel:DiagramModel
+			
+			protected var _cbxFontSizeCreationComplete:Boolean = false
+			
+			protected var _fontSize:String
+			protected var _textPosition:String = ""
+			protected var _textAlign:String = "";
+			
+			[Autowire(bean="diagramModel")]
+			public function set diagramModel( model : DiagramModel) : void 
+			{
+				_diagramModel = model
+				resetProperties()						
+			} 
+								
+			
+											
+			public function resetProperties():void
+			{
+				
+				if (_diagramModel==null || _diagramModel.selectedArray.length==0) return
+				if (_cbxFontSizeCreationComplete==false) return
+					
+				var sdSymbolModelsArr:Array = _diagramModel.selectedArray
+					
+				if (sdSymbolModelsArr.length==1)
+				{
+					setControlsFromModel()				
+				}
+				else
+				{
+					//blank out controls unless all models have same value
+					
+					var fontSizeSame:Boolean = true
+					var textAlignSame:Boolean = true
+					var textPositionSame:Boolean = true
+					var lastSymbolModel:SDSymbolModel
+					for each (var sdSymbolModel:SDSymbolModel in sdSymbolModelsArr)
+					{
+						//skip first iteration
+						if (lastSymbolModel==null) 
+						{
+							lastSymbolModel = sdSymbolModel
+							continue
+						}
+						if (lastSymbolModel)
+						{
+							if (sdSymbolModel.fontSize != lastSymbolModel.fontSize)
+							{
+								fontSizeSame = false
+							}
+							if (sdSymbolModel.textAlign != lastSymbolModel.textAlign)
+							{
+								textAlignSame = false
+							}
+							if (sdSymbolModel.textPosition != lastSymbolModel.textPosition)
+							{
+								textPositionSame = false
+							}
+						}	
+						lastSymbolModel = sdSymbolModel
+					}					
+					
+					if (fontSizeSame)
+					{
+						_fontSize = lastSymbolModel.fontSize.toString()
+					}
+					else
+					{
+						_fontSize = ""
+					}
+										
+					if (textAlignSame)
+					{
+						_textAlign = lastSymbolModel.textAlign
+					}
+					else
+					{
+						_textAlign = ""
+					}
+					
+					if (textPositionSame)
+					{
+						_textPosition = lastSymbolModel.textPosition
+					}
+					else
+					{
+						_textPosition = ""
+					}
+															
+					if (_cbxFontSizeCreationComplete==true) setControlsFromProps()		
+				}
+			}
+			
+			protected function setControlsFromModel():void
+			{				
+				if (_diagramModel.selectedArray[0] && _diagramModel.selectedArray[0] is SDSymbolModel)
+				{
+					var sdSymbolModel:SDSymbolModel = _diagramModel.selectedArray[0] as SDSymbolModel
+					setTextAlign(sdSymbolModel.textAlign)
+					setTextPosition(sdSymbolModel.textPosition)
+					cbxFontSize.text = sdSymbolModel.fontSize.toString()
+				}
+			}
+			
+			protected function setControlsFromProps():void
+			{						
+				setTextAlign(this._textAlign)
+				setTextPosition(this._textPosition)
+				cbxFontSize.text = this._fontSize				
+			}
+						
+			
+		
+			protected function setTextAlign(textAlign:String):void
+			{
+				switch (textAlign)
+				{
+					case "left":
+						btnBar.selectedIndex = 0
+						break
+					
+					case "center":
+						btnBar.selectedIndex = 1						
+						break
+					
+					case "right":
+						btnBar.selectedIndex = 2						
+						break
+					
+					case "justify":
+						btnBar.selectedIndex = 3						
+						break
+					
+					default:
+						btnBar.selectedIndex = -1
+						
+					
+					
+				}
+			}
+			
+			protected function setTextPosition(textPosition:String):void
+			{
+				switch (textPosition)
+				{
+					case SDObjectModel.TEXT_POSITION_ABOVE:
+						btnBarValign.selectedIndex = 0
+						break
+					case SDObjectModel.TEXT_POSITION_TOP:
+						btnBarValign.selectedIndex = 1
+						break
+					case SDObjectModel.TEXT_POSITION_MIDDLE:
+						btnBarValign.selectedIndex = 2						
+						break
+					case SDObjectModel.TEXT_POSITION_BOTTOM:
+						btnBarValign.selectedIndex = 3						
+						break
+					case SDObjectModel.TEXT_POSITION_BELOW:
+						btnBarValign.selectedIndex = 4						
+						break
+					default:
+						Logger.debug("trying to deselect the vAlign button bar",this)
+						btnBarValign.selectedIndex = -1				
+				
+				}
+			}
+			
+			
+			protected function onFontSizeChange(event:Event):void
+			{								
+				if (cbxFontSize.value=="" || !_cbxFontSizeCreationComplete) return
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_FONT_SIZE, true)
+				evt.fontSize = Number(cbxFontSize.value)
+				dispatchEvent(evt)
+			}
+			
+			protected function onTextAlignChange():void
+			{				
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_TEXT_ALIGN, true)
+				if (btnBar.selectedItem && btnBar.selectedItem.label)
+				{
+					evt.textAlign = btnBar.selectedItem.label
+					dispatchEvent(evt)
+				}
+			}
+			
+			protected function onBoldChange():void
+			{
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_FONT_WEIGHT, true)
+				
+				if (btnBold.selected)
+				{
+					evt.fontWeight = "bold"
+				}
+				else
+				{
+					evt.fontWeight = "normal"
+				}
+				dispatchEvent(evt)	
+			}
+						
+			protected function onTextPositionChange():void
+			{				
+				var evt:TextPropertyChangeEvent = new TextPropertyChangeEvent(TextPropertyChangeEvent.CHANGE_TEXT_POSITION, true)
+				
+				if (btnBarValign && btnBarValign.selectedItem && btnBarValign.selectedItem.label)
+				{
+					evt.textPosition = btnBarValign.selectedItem.label
+					dispatchEvent(evt)
+				}
+				
+			}
+			
+			protected function onComboCC():void
+			{
+				_cbxFontSizeCreationComplete = true
+				resetProperties()
+			}
+			
+			
+		]]>
+	</fx:Script>
+		
+	
+	<mx:Image source="{fontSizeIcon}" width="20" height="20" />
+	
+	
+	<mx:ComboBox
+		id="cbxFontSize" 
+		dataProvider="{_fontsAC}"
+	    creationComplete="onComboCC()"
+		valueCommit="onFontSizeChange(event)"
+		editable="true"
+		restrict="0-9"	    
+		height="21"
+		width="60"/>
+	
+	<s:ButtonBar id="btnBar"
+				 skinClass="com.simplediagrams.view.properties.TextAlignButtonBarSkin"
+				 click="onTextAlignChange()"
+				 requireSelection="false"
+				 width="80">
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object label="left"
+						   icon="{textAlignLeft}" 
+						   />
+				<fx:Object label="center"
+						   icon="{textAlignCenter}" 
+						   />
+				<fx:Object label="right"
+						   icon="{textAlignRight}" 
+						   />
+				<fx:Object label="justify"
+						   icon="{textAlignJustify}" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	
+	<s:ButtonBar id="btnBarValign"
+				 skinClass="com.simplediagrams.view.properties.TextAlignButtonBarSkin"
+				 click="onTextPositionChange()"
+				 requireSelection="false"
+				 width="100">
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object label="above"
+						   icon="{textValignAbove}" 
+						   toolTip="Align text above"
+						   />
+				<fx:Object label="top"
+						   icon="{textValignTop}" 
+						   toolTip="Align text to top"
+						   />
+				<fx:Object label="middle"
+						   icon="{textValignMiddle}" 
+						   toolTip="Align text to middle"
+						   />
+				<fx:Object label="bottom"
+						   icon="{textValignBottom}" 
+						   toolTip="Align text to bottom"
+						   />
+				<fx:Object label="below"
+						   icon="{textValignBelow}"
+						   toolTip="Align text below symbol" />
+			</s:ArrayList>
+		</s:dataProvider>
+	</s:ButtonBar>
+	
+	<s:ToggleButton id="btnBold"
+			  		click="onBoldChange()"
+			    	label="B"
+					width="30"
+					/>
+	
+	
+	
+	
+	
+</s:Group>

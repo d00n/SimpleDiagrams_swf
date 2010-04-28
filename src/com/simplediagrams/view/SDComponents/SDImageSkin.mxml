@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin 
+    xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx"
+    xmlns:myComps="*"
+    >
+    
+    <!-- host component -->
+    <fx:Metadata>
+    	[HostComponent("com.simplediagrams.view.SDComponents.SDImage")]
+    </fx:Metadata>
+    
+    <fx:Script>
+    <![CDATA[         
+    	
+    	import com.simplediagrams.util.Logger
+    
+        /* Define the skin elements that should not be colorized. 
+        exclude symbol and text group */
+        //static private const exclusions:Array = ["image"];
+        
+        /** 
+         * @copy spark.skins.SparkSkin#colorizeExclusions
+         */        
+       // override public function get colorizeExclusions():Array {return exclusions;}
+       
+       	[Bindable]
+       	[Embed(source='assets/visualAssets.swf', symbol='PieceOfTape')]
+       	private var PieceOfTape:Class 
+       		
+        
+    ]]>        
+    </fx:Script>
+    
+    
+    <!-- states -->
+    <s:states>
+        <s:State name="normal" />
+        <s:State name="selected" />
+    </s:states>
+    
+    <s:Graphic id="frame">
+    	<s:Rect width="{this.width}" height="{this.height}" >
+          <s:fill>
+             <s:SolidColor color="0xF9F9F9"/>
+          </s:fill>
+     	</s:Rect>
+    </s:Graphic>
+    
+    
+    <s:Graphic id="imageBG">
+    	<s:Rect x="10" y="10" width="{this.width-20}" height="{this.height-20}" >
+          <s:fill>
+             <s:SolidColor color="0xEEEEEE"/>
+          </s:fill>
+     	</s:Rect>
+    </s:Graphic>
+    
+    <mx:Image x="10" y="10" id="imageHolder" 
+    	source="{hostComponent.imageData}" 
+    	width="{hostComponent.width-20}" 
+    	height="{hostComponent.height-20}"
+        enabled="false" 
+        focusEnabled="false"
+        mouseEnabled="false"
+    	/>
+      	   
+    
+    <mx:Image id="tapeGraphic"
+    	x="{hostComponent.width/2}" y="-20"
+    	source="{PieceOfTape}"
+        enabled="false" 
+        focusEnabled="false"
+        mouseEnabled="false"
+       />  	   
+             
+    <s:Graphic id="hack_because_image_when_clicked_eats_keyup_events">
+    	<s:Rect width="{this.width}" height="{this.height}" >
+          <s:fill>
+             <s:SolidColor color="0xFFFFFF" alpha="0"/>
+          </s:fill>
+     	</s:Rect>
+    </s:Graphic>
+    
+    <mx:LinkButton label="Click to add image" 
+    	visible="{hostComponent.imageData==null}"
+    	click="hostComponent.onAddImageClick()" 
+    	horizontalCenter="0" verticalCenter="0" />
+   	    
+</s:SparkSkin>

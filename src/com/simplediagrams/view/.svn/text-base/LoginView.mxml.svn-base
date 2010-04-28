@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+	 xmlns:s="library://ns.adobe.com/flex/spark" 
+	 xmlns:mx="library://ns.adobe.com/flex/mx" 
+	 initialize="onInit()"
+	 width="400" height="300">
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LoginEvent;
+		
+			import com.simplediagrams.vo.LoginUser;
+            import com.simplediagrams.controllers.LoginController
+            import com.simplediagrams.events.LoginEvent
+            import com.simplediagrams.model.ApplicationModel
+            import mx.events.ValidationResultEvent;
+			import com.simplediagrams.util.Logger
+			import mx.events.DynamicEvent
+			import mx.validators.Validator
+			import org.swizframework.Swiz
+
+			private var _validators:Array
+			
+			private function onInit():void
+			{
+				//validators = [vUsername, vPassword]
+			}
+			
+			private function doLogin():void
+			{			
+				Logger.debug("doLogin", this)
+                var event:LoginEvent = new LoginEvent(LoginEvent.DO_LOGIN, true)
+                var loginUser:LoginUser = new LoginUser()
+                loginUser.login = txtLogin.text
+				loginUser.password = txtPassword.text
+				event.loginUser = loginUser	
+				dispatchEvent(event)
+            }
+            
+			
+		]]>
+	</fx:Script>
+	
+	<!--
+    <mx:StringValidator id="vUsername" source="{ txtLogin }" property="text" required="true"/>
+    <mx:StringValidator id="vPassword" source="{ txtPassword }" property="text" required="true"/>
+	-->
+	<mx:Panel title="Login" horizontalCenter="0" verticalCenter="0"  width="350" height="300">
+	    		
+	    <mx:Canvas  width="100%"  height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" >
+	    
+	    	<mx:Form id="loginForm" defaultButton="{ btnLogin }" width="100%" height="100%">
+		    	
+		    	<mx:FormItem label="Login:" >
+		    		<mx:TextInput id="txtLogin" text="mcqinteractive" width="200"/>
+		    	</mx:FormItem>
+		    	<mx:FormItem label="Password:" >
+		    		<mx:TextInput id="txtPassword" displayAsPassword="true" text="h3ll0fr0mm@rs" width="200"/>
+		    	</mx:FormItem>
+		    	
+		    	<mx:Spacer height="10"/>
+		    	<mx:Canvas textAlign="right" width="280" >
+		    		<mx:Button width="100" height="30" id="btnLogin" label="Login" click="doLogin()" textAlign="center" right="0"/>
+		    	</mx:Canvas>
+		    	
+		    	<mx:CheckBox id="cbxRememberMe" label="Remember me" />
+		    			    	
+	    	</mx:Form>
+	    	
+	    	
+	    </mx:Canvas>
+	   
+	</mx:Panel>
+	
+	
+</s:Group>

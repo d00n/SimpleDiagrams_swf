@@ -1,0 +1,369 @@
+package com.simplediagrams.business
+{
+	import com.simplediagrams.events.StoredLibraryLoadEvent;
+	import com.simplediagrams.model.LibraryManager;
+	import com.simplediagrams.model.SDSymbolModel;
+	import com.simplediagrams.model.libraries.AbstractLibrary;
+	import com.simplediagrams.model.libraries.ILibraryModule;
+	import com.simplediagrams.model.libraries.ISymbolInfo;
+	import com.simplediagrams.util.Logger;
+	
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.filesystem.*;
+
+	public class LibraryPluginsDelegate extends EventDispatcher
+	{
+		public static const LOADING_FINISHED:String = "looadingLibrariesFinished"
+		
+		//These events are only dispatched when loading a single file
+		public static const LOADING_FAILED:String = "loadingLibrariesFailed"
+	
+		
+		protected var _libPath:String = "lib/"
+		protected var _libraryManager:LibraryManager
+		protected var _libFile:File
+		
+		protected var _libraryFilesArr:Array = []
+
+		protected var _libraryUnpackersArr:Array = []
+		protected var _libraryLoadersArr:Array = []
+		
+		//Since we'll be looping through each directory and the reads are asynchronous, we'll have to count stuff manually to know when we're done
+		
+		protected var _numZipFiles:uint					//number of files that are .zip
+		protected var _numZipFilesUnpackAttemps:uint	//number of attempts to unpack .zip
+		
+		protected var _numFiles:uint					//number of library files to try to load
+		protected var _numLoadAttemps:uint				//number we've loaded
+		
+		protected var _errorsEncountered:Boolean = false
+		
+		public function LibraryPluginsDelegate()
+		{
+		}		
+		
+		public function loadLibraries(libraryManager:LibraryManager):void
+		{
+			_libraryManager = libraryManager
+			//get a list of library directories in the 'libs' folder
+			_libFile = File.applicationStorageDirectory
+			_libFile = _libFile.resolvePath(_libPath)
+			Logger.debug("Looking in folder for libraries:" + _libFile.nativePath, this)
+			
+			if (_libFile.exists == false)
+			{
+				_libFile.createDirectory()
+				dispatchEvent(new Event(LOADING_FINISHED, true))
+				return //cuz there's nothing there
+			}
+			
+			
+			_libraryFilesArr = _libFile.getDirectoryListing()
+				
+			if ((_libraryFilesArr.length==0) || (_libraryFilesArr.length==1 && File(_libraryFilesArr[0]).name==".DS_Store"))
+			{
+				Logger.debug("StoredLibraryDelegate found no libraries to load", this)
+				dispatchEvent(new Event(LOADING_FINISHED, true))
+				return
+			}
+			
+			
+			unpackZipFiles()
+						
+		}
+		
+		protected function unpackZipFiles():void
+		{
+			//first turn all .zip files into folders		
+			_numFiles = _libraryFilesArr.length
+			_numZipFiles = 0	
+			
+			//count zip files first
+			for (var i:uint=0; i<_numFiles; i++)
+			{
+				var file:File = _libraryFilesArr[i]	
+				if (file.extension=="zip")
+				{
+					_numZipFiles++
+				}
+			}
+			
+			if (_numZipFiles==0)
+			{				
+				loadLibrarieDirectories()
+			}
+			else
+			{			
+				//now unpack the zips
+				for (i=0;i<_numFiles;i++)
+				{				
+					file = _libraryFilesArr[i]	as File
+					if (file.extension=="zip")
+					{
+						var unpacker:LibraryPluginUnpacker = new LibraryPluginUnpacker()
+						_libraryUnpackersArr.push (unpacker)
+							
+						unpacker.addEventListener(LibraryPluginUnpacker.UNPACK_OK, onUnpackAttempt)
+						unpacker.addEventListener(LibraryPluginUnpacker.UNPACK_FAILED, onUnpackAttempt) 
+					
+						//make a directory and unpack the .zip there
+						var destinationDirectory:File = File.applicationStorageDirectory
+						destinationDirectory = destinationDirectory.resolvePath(_libPath + file.name.slice(0,-4))
+							
+						unpacker.unpack(file, destinationDirectory)
+					}
+				}			
+			}
+		}
+		
+		protected function onUnpackAttempt(event:Event):void
+		{
+			var unpacker:LibraryPluginUnpacker = event.target as LibraryPluginUnpacker
+			Logger.debug("unpacked file : " + unpacker.file + " unpack success: " + unpacker.success.toString(), this)
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_OK, onUnpackAttempt)
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_FAILED, onUnpackAttempt) 				
+			_numZipFilesUnpackAttemps++
+			if (_numZipFilesUnpackAttemps==_numZipFiles) unpackingFinished()			
+		}
+				
+		
+		protected function unpackingFinished():void
+		{	
+			
+			loadLibrarieDirectories()
+		}
+		
+		
+		protected function loadLibrarieDirectories():void
+		{	
+			Logger.debug("loadLibrarieDirectories()",this)
+				
+			//get the director listing again, this time we'll just skip the .zips
+			_libraryFilesArr = _libFile.getDirectoryListing()
+			
+			_numFiles = _libraryFilesArr.length
+			_numLoadAttemps = 0						
+			
+			for (var i:uint=0; i<_numFiles; i++)
+			{
+				var file:File = _libraryFilesArr[i]
+				Logger.debug("Loading local library: " + file.name + " extension: " + file.extension, this)
+				if (file.isDirectory == false)
+				{
+					Logger.debug("skipping file: " + file.name)
+					_numLoadAttemps ++ 
+					continue
+				}
+								
+				var loader:LibraryPluginLoader = new LibraryPluginLoader()
+				loader.addEventListener(LibraryPluginLoader.LOAD_ERROR, onStoredLibraryLoadError)
+				loader.addEventListener(LibraryPluginLoader.LOAD_COMPLETE, onStoredLibraryLoadComplete)						
+				_libraryLoadersArr.push(loader)	
+				loader.loadLibrary(file)
+			}
+				
+		}
+		
+		protected function onStoredLibraryLoadError(event:Event):void
+		{
+			var loader:LibraryPluginLoader = event.target as LibraryPluginLoader
+			Logger.debug("Library load error for library: " + loader.name, this)
+			Logger.debug("error: " + loader.errorMessage, this)
+			_numLoadAttemps ++
+			if (_numLoadAttemps == _numFiles) finishLoad()
+		}
+		
+		protected function onStoredLibraryLoadComplete(event:Event):void
+		{
+			var loader:LibraryPluginLoader = event.target as LibraryPluginLoader
+			Logger.debug("Library loaded for library: " + loader.name, this)
+			_numLoadAttemps ++
+			
+			var libraryModule:ILibraryModule = loader.libraryModule
+			try
+			{
+				var newLibrary:AbstractLibrary = createLibraryFromModule(libraryModule)
+				_libraryManager.addLibrary(newLibrary)		
+			}
+			catch(err:Error)
+			{
+				Logger.error("Error trying to create a library from module: " + libraryModule.libraryName + " error: "+ err, this)
+				_errorsEncountered = true
+			}						
+			if (_numLoadAttemps == _numFiles) finishLoad()
+		}
+		
+		protected function createLibraryFromModule(libraryModule:ILibraryModule):AbstractLibrary
+		{
+			Logger.debug("creating library from libraryModule:" + libraryModule,this)
+			
+			// CREATE A NEW LIBARY WITH SYMBOLS STORED IN LIBRARY MODULE	
+			//load module into LibraryManager
+			var newLibrary:AbstractLibrary= new AbstractLibrary()
+			newLibrary.displayName = libraryModule.displayName
+			newLibrary.libraryName = libraryModule.libraryName
+			newLibrary.isPremium = libraryModule.isPremium
+			newLibrary.isPlugin = libraryModule.isPlugin
+			newLibrary.fileName = libraryModule.fileName
+			
+			var librarySymbolsArr:Array = libraryModule.library
+			var len:uint = librarySymbolsArr.length 
+			Logger.debug("library contains :" +len  + " symbols",this)
+			for (var i:uint=0;i<len;i++) 
+			{							
+				var symbolInfo:ISymbolInfo = librarySymbolsArr[i] as ISymbolInfo
+				newLibrary.addLibraryItem(new SDSymbolModel(symbolInfo.name)) 
+			}
+			newLibrary.initLibrary()
+			Logger.debug("returning library: " + newLibrary, this)
+			return newLibrary
+		}
+		
+		protected function finishLoad():void
+		{
+			
+			for (var i:uint=0; i<_numFiles; i++)
+			{
+				var loader:LibraryPluginLoader = _libraryLoadersArr[i]	
+				if (loader)
+				{
+					loader.removeEventListener(StoredLibraryLoadEvent.LOAD_ERROR, onStoredLibraryLoadError)
+					loader.removeEventListener(StoredLibraryLoadEvent.LOAD_COMPLETE, onStoredLibraryLoadComplete)						
+					loader = null			
+				}
+			}
+			
+			//delete all the .zips that loaded ok
+			for (i=0; i<_libraryUnpackersArr.length; i++)
+			{
+				var unpacker:LibraryPluginUnpacker = LibraryPluginUnpacker(_libraryUnpackersArr[i])
+				if (unpacker.success)
+				{
+					Logger.debug("deleting .zip file : " + unpacker.file.name,this)
+					unpacker.file.deleteFile()
+				}
+				unpacker = null
+			}
+			_libraryUnpackersArr = null
+			
+			dispatchEvent(new Event(LOADING_FINISHED, true))
+			
+		}
+		
+		public function cancelLoad():void
+		{
+			if (_libraryFilesArr.length>0)
+			{
+				for (var i:uint=0; i<_numFiles; i++)
+				{
+					var loader:LibraryPluginLoader = _libraryFilesArr[i] as LibraryPluginLoader	
+					if (loader)
+					{
+						loader.removeEventListener(StoredLibraryLoadEvent.LOAD_ERROR, onStoredLibraryLoadError)
+						loader.removeEventListener(StoredLibraryLoadEvent.LOAD_COMPLETE, onStoredLibraryLoadComplete)	
+						loader = null						
+					}	
+				}
+			}
+		}
+		
+		/* ******************************************/
+		/* FOR LOADING ONE FILE SELECTED BY USER  	*/
+		/* ******************************************/
+		
+		/* Loads one library from a path the user selects */
+		
+		public function loadOneLibrary(file:File, libraryManager:LibraryManager):void
+		{			
+			_libraryManager = libraryManager
+			if (file.extension!="zip")
+			{
+				Logger.error("Can't unpack a non-zip file", this)
+				dispatchEvent(new Event(LOADING_FAILED, true))
+				return
+			}
+			
+			var unpacker:LibraryPluginUnpacker = new LibraryPluginUnpacker()			
+			unpacker.addEventListener(LibraryPluginUnpacker.UNPACK_OK, onSingleUnpackAttempt)
+			unpacker.addEventListener(LibraryPluginUnpacker.UNPACK_FAILED, onSingleUnpackAttemptFailed) 
+			
+			//make a directory and unpack the .zip there
+			var destinationDirectory:File = File.applicationStorageDirectory
+			destinationDirectory = destinationDirectory.resolvePath(_libPath + file.name.slice(0,-4))
+			
+			unpacker.unpack(file, destinationDirectory)
+		}
+		
+		protected function onSingleUnpackAttempt(event:Event):void
+		{			
+			var unpacker:LibraryPluginUnpacker = event.target as LibraryPluginUnpacker
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_OK, onSingleUnpackAttempt)
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_FAILED, onSingleUnpackAttemptFailed) 		
+			
+			var loader:LibraryPluginLoader = new LibraryPluginLoader()
+			loader.addEventListener(LibraryPluginLoader.LOAD_COMPLETE, onSingleLibraryLoadComplete)	
+			loader.addEventListener(LibraryPluginLoader.LOAD_ERROR, onSingleLibraryLoadError)					
+			loader.loadLibrary(unpacker.destinationDirectory)	
+			
+		}
+		
+		protected function onSingleUnpackAttemptFailed(event:Event):void
+		{
+			var unpacker:LibraryPluginUnpacker = event.target as LibraryPluginUnpacker
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_OK, onSingleUnpackAttempt)
+			unpacker.removeEventListener(LibraryPluginUnpacker.UNPACK_FAILED, onSingleUnpackAttemptFailed) 			
+			dispatchEvent(new Event(LOADING_FAILED, true))
+		}
+		
+		protected function onSingleLibraryLoadComplete(event:Event):void
+		{
+			var loader:LibraryPluginLoader = event.target as LibraryPluginLoader
+			loader.removeEventListener(LibraryPluginLoader.LOAD_COMPLETE, onSingleLibraryLoadComplete)	
+			loader.removeEventListener(LibraryPluginLoader.LOAD_ERROR, onSingleLibraryLoadError)	
+				
+			var libraryModule:ILibraryModule = loader.libraryModule
+			try
+			{
+				var newLibrary:AbstractLibrary = createLibraryFromModule(libraryModule)	
+				_libraryManager.addLibrary(newLibrary)		
+			}
+			catch(err:Error)
+			{
+				Logger.debug("Couldn't create a new library from module: " + loader.libraryModule.libraryName + " error: " +err, this)
+				this._errorsEncountered = true				
+				dispatchEvent(new Event(LOADING_FAILED, true))	
+				return
+			}						
+			Logger.debug("LOADED LIBRARY IS PLUGIN: " + newLibrary.isPlugin.toString(), true)
+			dispatchEvent(new Event(LOADING_FINISHED, true))			
+		}
+		
+		protected function onSingleLibraryLoadError(event:Event):void
+		{
+			var loader:LibraryPluginLoader = event.target as LibraryPluginLoader
+			loader.removeEventListener(LibraryPluginLoader.LOAD_COMPLETE, onSingleLibraryLoadComplete)	
+			loader.removeEventListener(LibraryPluginLoader.LOAD_ERROR, onSingleLibraryLoadError)			
+			dispatchEvent(new Event(LOADING_FAILED, true))
+		}
+		
+		/* Deletes a library from the applicationStorageDirectory */
+		public function deleteLibraryFolder(libraryFileName:String):void
+		{
+			var deleteDir:File = File.applicationStorageDirectory
+			deleteDir = deleteDir.resolvePath( _libPath + libraryFileName)
+			if (deleteDir.isDirectory)
+			{
+				deleteDir.deleteDirectory(true)
+			}
+			
+		}
+		
+		public function get errorsEncountered():Boolean
+		{
+			return _errorsEncountered
+		}
+		
+		
+	}
+}

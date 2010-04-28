@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" 
+	width="620" height="360" 		
+	horizontalCenter="0"
+	verticalCenter="0"
+	addedToStage="onATS()"
+	creationComplete="onCC()">
+
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.*;
+			import com.simplediagrams.model.ApplicationModel;
+			import com.simplediagrams.model.LibraryManager;
+			import com.simplediagrams.util.AboutInfo;
+			import com.simplediagrams.util.Logger;
+			
+			import mx.collections.ArrayCollection;
+			
+			import org.swizframework.Swiz;
+
+			[Bindable]
+			[Autowire(bean="applicationModel")]
+			public var applicationModel:ApplicationModel;    
+			
+			[Bindable]
+			[Autowire(bean="libraryManager")]
+			public var library:LibraryManager;    		
+    			    			
+			
+			[Embed('assets/img/startup_menu_bg.png')]
+			[Bindable]
+			protected var StartupMenuBG:Class
+			
+			[Embed('assets/img/icons/diagram_icon.png')]
+			[Bindable]
+			protected var DiagramIcon:Class
+			
+			[Embed('assets/img/icons/diagram_icon.png')]
+			[Bindable]
+			protected var NewDiagramIcon:Class
+			
+			
+			[Embed('assets/img/icons/icon_help.png')]
+			[Bindable]
+			protected var HelpIcon:Class
+			
+			
+			[Embed('assets/img/icons/icon_folder.png')]
+			[Bindable]
+			protected var FolderIcon:Class;
+			
+			//this is a dummy AC that gives us something to put in list that shows "Open..." button
+			[Bindable]
+			protected var _openListAC:ArrayCollection = new ArrayCollection();
+			
+			
+			
+			protected function onCC():void
+			{
+				Logger.debug("onCC()",this)
+				_openListAC.addItem(new Object())			
+				_openListAC.addItem(new Object())
+				
+				var aboutInfo:AboutInfo = new AboutInfo()
+				lblVersion.text = "Version : " + AboutInfo.applicationVersion
+			
+			}
+			
+			protected function onATS():void
+			{
+				Logger.debug("onATS()",this)
+			
+			}
+			
+		
+			protected function onCreateDiagram():void
+			{
+				var evt:CreateNewDiagramEvent = new CreateNewDiagramEvent(CreateNewDiagramEvent.CREATE_NEW_DIAGRAM, true)
+				Swiz.dispatchEvent(evt)
+			}
+			
+			protected function onOpenDiagram():void
+			{				
+				var evt:OpenDiagramEvent = new OpenDiagramEvent(OpenDiagramEvent.OPEN_DIAGRAM_EVENT, true)
+				Swiz.dispatchEvent(evt)
+			}
+			
+			protected function onOpenRecentDiagram():void
+			{				
+			 	var evt:LoadDiagramEvent = new LoadDiagramEvent(LoadDiagramEvent.LOAD_DIAGRAM)
+			 	if (lstDiagrams.selectedItem == null) return
+			 	evt.nativePath = lstDiagrams.selectedItem.data
+				Swiz.dispatchEvent(evt)
+			}
+			
+			protected function onHelp():void
+			{				
+				Logger.debug("onHelp()")
+				var req:URLRequest = new URLRequest("http://www.simplediagrams.com/support.html")
+				navigateToURL(req, "_blank")	
+			}
+			
+			protected function onTutorial():void
+			{
+				Logger.debug("onTutorial()")
+				var req:URLRequest = new URLRequest("http://www.simplediagrams.com/tutorials.html")
+				navigateToURL(req, "_blank")
+			}
+			
+			protected function onFindDiagram():void
+			{
+				
+				var evt:ShowDialogEvent = new ShowDialogEvent(ShowDialogEvent.OPEN_DIAGRAM_DIALOG, true)
+				Swiz.dispatchEvent(evt)
+				//var evt:ShowDialogEvent = new ShowDialogEvent(ShowDialogEvent.OPEN_DIAGRAM_DIALOG, true)
+				//Swiz.dispatchEvent(evt)
+				//openButtonHackList.selectedIndex=-1
+			}
+			
+			protected function onClearRecentList():void
+			{
+				var evt:ClearRecentListEvent = new ClearRecentListEvent(ClearRecentListEvent.CLEAR_RECENT_LIST, true)
+				dispatchEvent(evt)
+			}
+			
+		
+			
+		]]>
+	</fx:Script>
+	
+    	
+	<mx:Image source="{StartupMenuBG}" />
+	
+	<mx:Grid x="5" y="40" width="400" height="320" horizontalGap="0">
+	
+	<mx:GridRow>
+	
+		<mx:GridItem width="195" height="100%" verticalScrollPolicy="off">
+		
+				<mx:LinkButton label="New Diagram" click="onCreateDiagram()" icon="{NewDiagramIcon}" width="100%" textAlign="left" />
+		
+		</mx:GridItem>
+		
+		<mx:GridItem width="10">
+			
+		</mx:GridItem>
+		
+		<mx:GridItem width="195" height="100%" verticalScrollPolicy="off" paddingLeft="5"  >
+		
+			<mx:VBox width="100%" height="100%">
+			
+			<s:List id="lstDiagrams"
+			    dataProvider="{library.recentDiagramsAC}"
+			    click="onOpenRecentDiagram()" 
+	            horizontalCenter="0"
+	            verticalCenter="0"
+	            width="100%"
+			    height="280"
+			    itemRenderer="com.simplediagrams.view.RecentDiagramsItemRenderer"
+			    skinClass="com.simplediagrams.view.RecentDiagramsListSkin"
+			  
+	             />
+			<mx:LinkButton label="Clear recent list" click="onClearRecentList()" visible="{lstDiagrams.dataProvider.length>0}"/>
+				
+			
+			</mx:VBox>
+		
+		</mx:GridItem>
+		
+	</mx:GridRow>
+	
+	</mx:Grid>
+
+	<mx:Label id="lblVersion"
+				color="#cddcff"
+				text="V3.0"
+				x="431"
+				y="37" 
+				/>
+
+
+	<!-- help buttons -->
+	<mx:VBox x="420" y="160" 	verticalScrollPolicy="off" horizontalScrollPolicy="off">
+	
+		<mx:LinkButton width="170" 
+			label="View tutorials" 
+			textAlign="left" 
+			icon="{HelpIcon}"
+			color="#FFFFFF"
+			click="onTutorial()"
+			 />
+		
+		<mx:LinkButton width="170" 
+			label="Get help" 
+			textAlign="left" 
+			icon="{HelpIcon}"
+			color="#FFFFFF" 
+			click="onHelp()"
+			/>
+			
+	</mx:VBox>
+	
+	
+		
+</s:Group>

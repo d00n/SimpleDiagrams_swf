@@ -1,0 +1,144 @@
+package com.simplediagrams.model
+{
+	import com.simplediagrams.model.mementos.ITransformMemento;
+	import com.simplediagrams.model.mementos.SDObjectMemento;
+	import com.simplediagrams.model.mementos.SDTextAreaMemento;
+	import com.simplediagrams.util.Logger;
+	import com.simplediagrams.view.SDComponents.ISDComponent;
+	import com.simplediagrams.view.SDComponents.SDTextArea;
+
+	
+	[Bindable]
+	[Table(name="text_areas")]
+	public class SDTextAreaModel extends SDObjectModel
+	{
+		public static var NO_BACKGROUND:String = "noBackground"
+		public static var STICKY_NOTE:String = "stickyNote"
+		public static var PAPER_WITH_TAPE:String = "paperWithTape"
+		public static var INDEX_CARD:String = "indexCard"
+		
+		private var _styleName:String = SDTextAreaModel.NO_BACKGROUND
+		private var _text:String = ""
+		private var _fontSize:Number = 12
+		private var _fontWeight:String = "normal"
+		private var _textAlign:String = "left"
+			
+		private var _startState:SDTextAreaMemento
+		
+		
+		public function SDTextAreaModel()
+		{
+			super();
+			this.width = 150
+			this.height = 150
+			allowRotation = false
+		}
+		
+		public override function createSDComponent():ISDComponent
+		{
+			var component:SDTextArea = new SDTextArea()
+			component.objectModel = this
+			this.sdComponent = component
+			return component
+		}
+	
+		public function get styleName():String
+		{
+			return _styleName	
+		}
+		
+	 	public function set styleName(value:String):void
+	 	{
+	 		_styleName = value
+	 	}
+		
+		public function get text():String
+		{
+			return _text	
+		}
+		
+	 	public function set text(value:String):void
+	 	{
+	 		_text = value
+	 	}
+	 	
+	 	
+		
+	 	public function get fontSize():Number
+		{
+			return _fontSize	
+		}
+		
+	 	public function set fontSize(value:Number):void
+	 	{
+			if (fontSize<3) value = 3
+	 		_fontSize = value
+	 	}
+		
+		
+		public function get fontWeight():String
+		{
+			return _fontWeight	
+		}
+		
+		public function set fontWeight(value:String):void
+		{
+			_fontWeight = value
+		}
+		
+		
+		public function get textAlign():String
+		{
+			
+			return _textAlign	
+		}
+		
+		public function set textAlign(value:String):void
+		{
+			if (value=="left" || value=="right" || value=="center" || value=="justify")
+			{
+				_textAlign=value
+			}
+			else
+			{
+				_textAlign = "left"
+				Logger.warn("unrecognized textAlign value: " + value, this)
+			}
+		}
+	
+		override public function getMemento():SDObjectMemento
+		{
+			var memento:SDTextAreaMemento = new SDTextAreaMemento()
+			captureBasePropertiesInMemento(memento)
+			
+			//now record SDSymbolModel's specific properties into memento
+			var mem:SDTextAreaMemento = SDTextAreaMemento(memento)
+			mem.text = text
+			mem.textAlign = textAlign
+			mem.fontSize = fontSize
+			mem.fontWeight = fontWeight
+			mem.styleName = styleName
+			
+			return memento 
+		}
+		
+		
+		override public function setMemento(memento:SDObjectMemento):void
+		{
+			//set base properties from memento
+			this.setBasePropertiesFromMemento(memento)
+			
+			//now set SDSymbolModel specific properties from memento
+			var mem:SDTextAreaMemento = SDTextAreaMemento(memento)
+			text = mem.text
+			textAlign = mem.textAlign
+			fontSize = mem.fontSize
+			fontWeight = mem.fontWeight
+			styleName = mem.styleName 
+		}
+		
+		
+		
+		
+	}
+}

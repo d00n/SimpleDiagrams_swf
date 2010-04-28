@@ -1,0 +1,86 @@
+package com.simplediagrams.model
+{
+	
+	import flash.data.EncryptedLocalStore;
+	import flash.utils.ByteArray;
+	
+	[Bindable]
+	public class UserModel
+	{
+		public var _username:String
+		public var _password:String
+		protected var _loggedIn:Boolean
+		
+		public var isDirty:Boolean = false
+		
+		public function UserModel()
+		{
+			loadFromEncryptedStore()
+		}
+		
+		public function set loggedIn(value:Boolean):void
+		{
+			_loggedIn = value
+		}
+		
+		public function get loggedIn():Boolean
+		{
+			return _loggedIn
+		}
+		
+		
+		public function get username():String
+		{
+			return _username
+		}
+		
+		public function get password():String
+		{
+			return _password
+		}
+		
+		public function set username(value:String):void
+		{
+			_username = value
+		}
+		
+		public function set password(value:String):void
+		{
+			_password = value	
+		}
+		
+		public function clearFromEncryptedStore():void
+		{
+			EncryptedLocalStore.removeItem("com.simplediagrams.username")
+			EncryptedLocalStore.removeItem("com.simplediagrams.password")
+				
+		}
+		
+		
+		public function loadFromEncryptedStore():void
+		{
+			
+			var usernameBA:ByteArray = EncryptedLocalStore.getItem("com.simplediagrams.username")
+			if (usernameBA) _username = usernameBA.readUTFBytes(usernameBA.length)
+				
+			var passwordBA:ByteArray = EncryptedLocalStore.getItem("com.simplediagrams.password")
+			if (passwordBA) _password= passwordBA.readUTFBytes(passwordBA.length)
+			
+		}
+		
+		public function saveToEncryptedStore():void
+		{
+			
+			var ba:ByteArray = new ByteArray()
+			ba.writeUTFBytes(_username)
+			EncryptedLocalStore.setItem("com.simplediagrams.username", ba )	
+			
+			ba = new ByteArray()
+			ba.writeUTFBytes(_password)
+			EncryptedLocalStore.setItem("com.simplediagrams.password", ba )
+			
+		}
+		
+		
+	}
+}

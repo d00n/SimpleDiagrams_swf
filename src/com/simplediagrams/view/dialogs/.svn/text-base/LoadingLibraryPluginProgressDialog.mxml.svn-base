@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:myComps="*"
+		 title="Loading Library Plugin">
+	
+	<fx:Metadata>
+		[Event(name="cancel", type="flash.events.Event")]
+	</fx:Metadata>
+		
+	<s:Label text="Loading library plugin from file..." x="0" y="40" width="100%" textAlign="center"  />
+	
+	<myComps:LoadingBar x="70" y="55" />
+	
+	
+</s:Panel>

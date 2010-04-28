@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+    backgroundColor="0xFFFFFF"
+   	horizontalScrollPolicy = "off"
+   	verticalScrollPolicy = "off"
+    creationComplete="onCC()"
+    showCloseButton="false"
+    title="Quit SimpleDiagrams?"
+    layout="vertical"
+    borderAlpha="1" 
+	width="450" 
+	height="150"
+    paddingLeft="10"
+	xmlns:s="library://ns.adobe.com/flex/spark">
+	
+	<mx:Metadata>
+		[Event(name='quit', event='flash.events.Event')]
+		[Event(name='cancel', event='flash.events.Event')]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import com.simplediagrams.events.LoadDiagramEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.business.DBManager;
+			import com.simplediagrams.model.dao.DiagramDAO
+			import com.simplediagrams.model.LibraryManager
+			
+			import mx.managers.PopUpManager
+			import org.swizframework.Swiz
+			import com.simplediagrams.util.Logger	
+			import mx.utils.ObjectUtil;
+			
+			public static const QUIT:String = "quit";
+							
+			public function onCC():void
+			{
+					
+			}
+					
+			public function onQuit():void
+			{				
+				dispatchEvent(new Event("quit", true))
+			}
+						
+			public function onCancel():void
+			{
+				dispatchEvent(new Event(Event.CANCEL, true))
+			}
+			
+            
+            
+			
+		]]>
+	</mx:Script>
+	
+	
+	<mx:Spacer height="5"/>
+	
+	
+	<mx:HBox height="30" paddingBottom="10">
+		<mx:Label text="Your diagram has unsaved changes. Are you sure you want to quit?"/>
+	</mx:HBox>
+			
+	
+	<s:VGroup width="100%" paddingRight="10" horizontalAlign="right">
+		<s:HGroup>
+			<s:Button label="Don't Quit" styleName="blueButton" width="90" height="30" click="onCancel()"/>
+			<s:Button label="Quit" styleName="blueButton" width="90" height="30" click="onQuit()"/>			
+		</s:HGroup>		
+	</s:VGroup>
+	
+</mx:TitleWindow>

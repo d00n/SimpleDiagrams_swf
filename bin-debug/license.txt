@@ -1,0 +1,181 @@
+SimpleDiagrams END USER LICENSE AGREEMENT : Version 1.1 
+
+You must read this End User License Agreement before using SimpleDiagrams.
+
+Effective Date: End User License Agreement was last updated on 12/4/2009
+
+By installing or using the McQuillen Interactive (the “Company”) product SimpleDiagrams (the “Software”) you indicate your agreement to the terms of this End User License Agreement (the “Agreement”). If you do not agree to the terms herein, you are not authorized to copy or use the Software. The Software, including all images, photographs, icons, and text incorporated in the Software, is owned by Company or its suppliers and is protected by United States copyright laws and international treaty provisions. Except to the extent expressly licensed herein, all rights are reserved to Company and its suppliers. You may not reverse engineer, decompile or disassemble the Software except as set forth herein.
+
+ATTENTION: USE OF THE SOFTWARE IS SUBJECT TO YOUR ACCEPTANCE OF THE TERMS SET FORTH BELOW. IF YOU DO NOT ACCEPT THESE TERMS YOU ARE NOT AUTHORIZED TO USE THIS SOFTWARE.
+
+1. LICENSE GRANT
+
+The Company grants you a non-exclusive, royalty-free, worldwide right and license to use the executable version of the Software, where “use” in this Agreement means storing, loading, installing or executing the Software. You may not modify the Software or disable any licensing or control features of the Software. You agree that you may not copy any written materials accompanying the Software. You may copy the software for archival purposes so long as the copy is unmodified from the original distribution and the copy retains all of the original Software’s proprietary notices. You may not rent or lease your rights to the Software or documentation’ or otherwise sublicense or transfer the Software or any portion thereof in any way. If you are an individual and this Agreement is for a single license , you may install the Software on up to three computers provided that not more than one of those computers is in use simultaneously and that those computers are solely for your own use. If the Software license you have is for a single user license then the Software may be installed on a computer that is for multiple users but it may not be installed on more than one computer regardless of whether those computers are operated simultaneously or not. If this Agreement is for a multi-user (site) license, the number of computers on which the Software is installed may not exceed the number of licenses purchased, regardless of whether the computer is used by multiple users or not. You may use this software in a networked environment on computers other than the computer on which the software is installed provided that you have purchased licenses for each computer that will use the software, regardless of whether those computers will use the software at the same time or not.
+
+2. LICENSE FEE
+
+You will pay a one-time license fee to McQuillen Interactive if you desire to upgrade from the "Free" version to the "Full" version. The license fee is non-refundable and does not include any sales or other tax that your jurisdiction may impose on the license fee, for which you (and not the Company) will be responsible. The amount of the license fee will depend on the number of seats which you license, and will appear in the terms and conditions of the Simple Diagrams web site. All of the functionality of the Software may not be available to you in the "Free" version. 
+
+2. OWNERSHIP
+
+All right, title and interest in and to the Software is owned and copyrighted by the Company or its third party suppliers. Your license confers neither title to nor ownership in the Software and is not a sale of any rights in the Software. Company third party suppliers may protect their rights in the event of any violation of this License Agreement as if such suppliers were parties to this License Agreement. No license is given to you under any patent or patent application of Company.
+
+3. COPIES AND ADAPTATIONS
+
+Other than as provided in the License Grant section of this agreement, you may only make copies or adaptations of the Software for archival purposes or when copying or adaptation is an essential step in the authorized use of the Software. You must reproduce all copyright notices in the original Software on all copies or adaptations.
+
+4. NO DISASSEMBLY, RECOMPILATION OR DECRYPTION
+
+You may not disassemble or decompile the Software unless Company’s prior written consent is obtained. In some jurisdictions, Company’s written consent may not be required for limited disassembly or decompilation. In such jurisdictions, you will provide Company with reasonably detailed information regarding any disassembly or decompilation. You may not decrypt the Software unless decryption is an essential step in the authorized use of the Software. If you have obtained a source code version of this program, you may use the unmodified binary executable in accordance with this Agreement, but source code for the Software is not covered by this Agreement. If provided, source code is provided exclusively as an educational service and you agree that all responsibility for all use of source code is yours alone and that Company assumes no responsibility for any use of source code by you.
+
+5. NO WARRANTIES
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, COMPANY EXPRESSLY DISCLAIMS ANY WARRANTY FOR THE SOFTWARE. THE SOFTWARE AND ANY RELATED DOCUMENTATION IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND THE WARRANTY OF NONINFRINGEMENT OF THIRD PARTY PROPRIETARY RIGHTS. COMPANY DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE, COMPLETE OR CORRECT. THE ENTIRE RISK ARISING OUT OF USE OR PERFORMANCE OF THE SOFTWARE REMAINS WITH YOU.
+
+6. NO LIABILITY FOR DAMAGES
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NEITHER COMPANY NOR ITS SUPPLIERS SHALL BE LIABLE FOR ANY INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFIT, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF OR RELATING TO THE USE OR INABILITY TO USE THIS SOFTWARE, EVEN IF COMPANY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. BECAUSE SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY FOR CONSEQUENTIAL OR INCIDENTAL DAMAGES, THE ABOVE LIMITATION MAY NOT APPLY TO YOU. FURTHERMORE, THE COMPANY’S LIABILITY FOR DIRECT DAMAGES SHALL NOT EXCEED THE LICENSE FEE, IF ANY, PAID BY YOU DIRECTLY TO THE COMPANY FOR USE OF THE SOFTWARE OR ANY LICENSE FEE RECEIVED BY THE COMPANY FOR THE USE OF THE SOFTWARE IF PURCHASED THROUGH AN AUTHORIZED THIRD PARTY.
+
+7. CUSTOMER REMEDIES
+
+YOUR EXCLUSIVE REMEDY SHALL BE, AT COMPANY OPTION, REPAIR OR REPLACEMENT OF THE SOFTWARE OR REFUND OF PART OR ALL OF THE LICENSE FEE, IF ANY, PAID BY YOU FOR THE SOFTWARE. COMPANY UNDERTAKES NO OBLIGATION TO MAINTAIN ANY PORTION OF THE SOFTWARE.
+
+8. INDEMNIFICATION
+
+This Software is intended for use with data, media, files, and content for which you have sufficient rights to, authority for, or ownership of. It is your responsibility to ascertain whether copyrights, patents, or other licenses are needed for the content that you use in conjunction with this Software. You agree to hold harmless, indemnify and defend the Company, its officers, directors, employees and third party suppliers against any loss, damage, fine, or expense including attorney’s fees arising out of or related to any claim that you have used this Software in violation of applicable laws in your jurisdiction. It is your responsibility to abide by the laws of whichever jurisdiction you reside in or do business in.
+
+9. TERMINATION
+
+This Agreement shall continue for the duration of Company copyright in the Software, unless earlier terminated as provided herein. The Company may terminate your license immediately without notice to you for your failure to comply with any of the terms set forth in this Agreement. Upon termination, you must immediately destroy the Software, together with all copies, adaptations and merged portions thereof in any form. Obligations to pay accrued charges or fees shall survive the termination of this Agreement.
+
+10. ASSIGNMENT AND NON-ASSIGNMENT
+
+If you are an individual and this Agreement is for a single license, then this license is personal to you but you may assign your rights under this Agreement to a third party who agrees in writing to be bound to this Agreement prior to the assignment and provided that you transfer all copies of the Software, registration keys and/or codes, and related documentation to the third party and destroy any copies not transferred. If you are an individual and this Agreement is for a multi-user license, or you are not an individual and are an entity, then you may not assign your rights under this Agreement without the prior written permission of the Company. If you are an entity that merges with or is acquired by another entity then your rights under this Agreement shall be deemed to be temporarily assigned to the resulting entity of that merge or acquisition provided that you supply the Company with written notice not later than the date on which any public announcement of that merger or acquisition is made. Upon receipt of written notice, the Company shall have thirty (30) days to either accept or reject the assignment of rights.
+
+11. EXPORT REQUIREMENTS
+
+You may not export or re-export the Software or any copy or adaptation in violation of any applicable laws or regulations.
+
+12. U.S. GOVERNMENT RESTRICTED RIGHTS
+
+The Software and any accompanying documentation have been developed entirely at private expense. They are delivered and licensed as “commercial computer software.” If this Software is acquired under the terms of a DOD or civilian agency contract, use, reproduction or disclosure of the Software by the Government is subject to the restrictions set forth in this License Agreement in accordance with 48 C.F.R. 227.7202 or 48 C.F.R. 12.212, respectively.
+
+13. NO PARTNERSHIP
+
+Company shall not become or be deemed a partner or a joint venturer with you by reason of the provisions of this license. You are not authorized to take any action on behalf of the Company or to commit the Company in any way.
+
+14. GOVERNING LAW AND FORUM
+
+Irrespective of the place of execution or performance, this License Agreement shall be governed and construed in accordance with the laws of the State of California. Except as hereafter set forth, any litigation to enforce or interpret the provisions of this License Agreement or the parties’ rights or obligations arising out of this License Agreement or the performance hereunder shall be maintained only in any court located in San Jose, California, and the parties expressly consent to personal jurisdiction in such courts. In the event that you breach this Agreement or indicate your intention to breach this Agreement in any manner that violates or may violate the Company’s intellectual property rights or may cause continuing or irreparable harm to the Company, the Company may seek injunctive relief in any court of competent jurisdiction. The United Nations Convention on Contracts for the International Sale of Goods is specifically disclaimed.
+
+15. ENTIRE AGREEMENT
+
+Unless otherwise expressly agreed in writing, this License Agreement constitutes the sole and exclusive agreement between you and Company with regard to the Software, and supersedes all prior agreements, whether oral or written, and other communications between the parties relating to the subject matter set forth herein.
+
+16. NO WAIVER
+
+The failure of either party hereto to enforce its rights with respect to a breach hereunder will not constitute a waiver of the right to enforce its rights with respect to the same or any other breach.
+
+17. NOTICES
+
+Company may give notice by means of a general notice on the Company website, electronic mail to your e-mail address on record with the Company, or by written communication sent by first class mail or pre-paid post to your address on record. Such notice will be deemed to have been given upon the expiration of 48 hours after mailing or posting (if sent by first class mail or pre-paid post) or 12 hours after sending (if sent by email). You may give notice to Company at any
+time by any of the following: letter delivered by nationally recognized overnight delivery service or first class postage prepaid mail to Company’s addresses on its website.
+
+18. AMENDMENTS
+
+Company may amend this License Agreement at any time or from time to time by notifying you as aforesaid. Your use of the Software after any such notification shall constitute acceptance of any such amendment. 
+
+
+If you have any questions regarding this License Agreement or if you wish to request any information from Company, please contact the firm at the email address below. All correspondence must be in English.
+
+Email: daniel@simplediagrams.com
+
+Copyright © 2009 McQuillen Interactive. All rights reserved.
+
+
+ 
+EXHIBIT A: Open Source Components
+
+1.	Adobe Flex SDK : licensing information is located here: http://opensource.adobe.com/wiki/display/flexsdk/Legal+Stuff
+
+2.	ObjectHandles : McQuillen Interactive LLC uses portions of the open source project ObjectHandles in SimpleDiagrams code
+* ObjectHandles was developed by Marc Hughes and is licensed under the MIT License, the entire text of which follows
+* ObjectHandles project page: http://code.google.com/p/flex-object-handles/
+* The MIT License is included below.
+
+3.	SWIZ Framework : McQuillen Interactive LLC uses portions of the open source project SWIZ in SimpleDiagrams code
+* SWIZ information can be found here: http://code.google.com/p/swizframework/
+* SWIZ is licensed under the Apache License, Version 2.0 : http://www.apache.org/licenses/LICENSE-2.0
+* The Apache Licence, Version 2.0 is included below.
+
+
+
+The MIT License
+
+Copyright (c) 2009 Marc Hughes
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "MIT Software"), to deal in the MIT Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the MIT Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the MIT Software.
+
+THE MIT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE MIT SOFTWARE OR THE USE OR OTHER DEALINGS IN THE MIT SOFTWARE.
+
+
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
+
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1. Definitions.
+
+
+"License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
+
+"Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
+
+"Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
+
+"You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
+
+"Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
+
+"Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
+
+"Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
+
+"Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
+
+"Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
+
+"Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
+
+2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
+
+3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.
+
+4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:
+
+   1. You must give any other recipients of the Work or Derivative Works a copy of this License; and
+
+   2. You must cause any modified files to carry prominent notices stating that You changed the files; and
+
+   3. You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and
+
+   4. If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.
+
+You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.
+
+5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.
+
+6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.
+
+7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
+
+8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
+
+9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
+
+END OF TERMS AND CONDITIONS
+

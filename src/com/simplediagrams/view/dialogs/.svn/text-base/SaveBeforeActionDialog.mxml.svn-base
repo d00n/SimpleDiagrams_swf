@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+    backgroundColor="0xFFFFFF"
+    creationComplete="onCC()"
+    title="Save Changes?"
+    borderAlpha="1" 
+	width="450" 
+	height="140"
+   
+	>
+	
+	<fx:Metadata>
+		[Event(name='save', event='flash.events.Event')]
+		[Event(name='do_not_save', event='flash.events.Event')]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import com.simplediagrams.events.LoadDiagramEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.business.DBManager;
+			import com.simplediagrams.model.dao.DiagramDAO
+			import com.simplediagrams.model.LibraryManager
+			
+			import mx.managers.PopUpManager
+			import org.swizframework.Swiz
+			import com.simplediagrams.util.Logger	
+			import mx.utils.ObjectUtil;
+			
+			public static const SAVE:String = "save"
+			public static const DONT_SAVE:String = "do_not_save";
+						
+			public static const MODE_SAVE_BEFORE_NEW:String = "saveBeforeNewMode";
+			public static const MODE_SAVE_BEFORE_CLOSE:String = "saveBeforeCloseMode";
+			public static const MODE_SAVE_BEFORE_OPEN:String = "saveBeforeOpenMode";
+				
+			
+			[Embed(source='assets/img/icons/bullet_error.png')]
+			[Bindable]
+			private var WarningIcon:Class	
+			
+			private var _mode:String = MODE_SAVE_BEFORE_NEW;
+			
+			[Bindable]
+			private var _headerText:String
+						
+			private var _isNewDiagram:Boolean 
+			
+			public function onCC():void
+			{
+					
+			}
+			
+			
+			public function set mode(v:String):void
+			{
+				switch (v)
+				{
+					case MODE_SAVE_BEFORE_NEW:
+						_headerText = "Save changes before starting new diagram?"
+						break
+					case MODE_SAVE_BEFORE_CLOSE:
+						_headerText = "Save changes before closing this diagram?"
+						break
+					case MODE_SAVE_BEFORE_OPEN:
+						_headerText = "Save changes before opening a new diagram?"
+						break
+					default:
+						Logger.error("mode set to unrecongized value: " + v, this)
+						return					
+				}
+				_mode = v
+			}				
+			
+			public function get mode():String
+			{
+				return _mode
+			}
+			
+			public function onSave():void
+			{				
+				dispatchEvent(new Event(SAVE, true))
+			}
+			
+			public function onDontSave():void
+			{
+				dispatchEvent(new Event(DONT_SAVE, true))
+			}
+			
+			public function onCancel():void
+			{
+				dispatchEvent(new Event(Event.CANCEL, true))
+			}
+			
+					            
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup paddingLeft="10" width="100%" height="100%">
+		
+		<mx:Spacer height="5"/>
+		
+		<s:Label text="{_headerText}" paddingBottom="10" paddingTop="10"/>
+		
+		<s:VGroup horizontalAlign="right" width="100%" paddingRight="10" paddingTop="20">
+			<s:HGroup>
+				<s:Button label="Don't Save" styleName="blueButton" width="90" height="30" click="onDontSave()"/>
+				<mx:Spacer width="70" />
+				<s:Button label="Cancel" styleName="blueButton" width="90" height="30" click="onCancel()"/>
+				<s:Button label="Save" styleName="blueButton" width="90" height="30" click="onSave()"/>
+			</s:HGroup>
+		</s:VGroup>
+		
+	</s:VGroup>
+	
+	
+</s:Panel>

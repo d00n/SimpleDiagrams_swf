@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 title="Select People to Notify"		 
+		 contentBackgroundColor="0xFFFFFF"
+		 xmlns:myComps="*" 
+		 creationComplete="onCC()"
+		 xmlns:components="com.simplediagrams.view.components.*">
+	
+	<fx:Metadata>
+		[Event(name="OK", type="flash.events.Event")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+		
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.BasecampEvent;
+			import com.simplediagrams.model.BasecampModel;
+			
+			import org.swizframework.Swiz;
+			
+			
+			[Bindable]
+			protected var _basecampModel:BasecampModel
+			
+			protected function onCC():void
+			{
+				_basecampModel = Swiz.getBean("basecampModel") as BasecampModel
+			}
+			
+			
+			protected function onOK():void
+			{
+				var evt:Event = new Event("OK", true)
+				dispatchEvent(evt)
+			}
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)								
+			}
+						
+			protected function onCancelLoadPeople():void
+			{
+				
+			}
+			
+			protected function onSelectAll():void
+			{
+				_basecampModel.selectAllPeopleForNotification()
+				_basecampModel.peopleAC.refresh()
+			}
+			
+			protected function onSelectNone():void
+			{
+				_basecampModel.selectNoPeopleForNotification()
+				_basecampModel.peopleAC.refresh()
+					
+			}
+			
+			protected function onRefresh():void
+			{
+				this.currentState = "loading"
+				var evt:BasecampEvent = new BasecampEvent(BasecampEvent.REFRESH_PEOPLE, true)
+				Swiz.dispatchEvent(evt)		
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="loading"/>
+	</s:states>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<!--
+	<s:VGroup horizontalAlign="right">
+	<s:Button id="btnLoadFromServer" label="Load from Server" toolTip="Click this button if you've purchased libraries from the SimpleDiagrams site and are now ready to download them" />
+	</s:VGroup>
+	-->
+	
+	<s:Group width="350" height="100%" includeIn="loading">
+					
+		<s:Label y="130" text="Getting list of people..." textAlign="center" width="345" />	
+					
+		<myComps:LoadingBarSmall y="150" x="90"/>		
+		
+		
+		<s:Button label="CANCEL LOAD" 
+					  styleName="blueButton" 
+					  click="onCancelLoadPeople()" 
+					  right="10" 
+					  bottom="10" 
+					  height="30" 
+					  width="120"/>		
+	</s:Group>
+	
+	
+	
+	<s:VGroup   
+		includeIn="normal" 
+		width="100%" 
+		height="100%"
+		paddingTop="10"
+		>
+		
+		<s:Group width="100%">
+			
+			<s:HGroup width="100%" verticalAlign="middle" gap="0" paddingLeft="10" paddingRight="10">
+				<s:Label text="Select: " paddingTop="2"/>
+				<mx:LinkButton label="All" click="onSelectAll()" styleName="linkButton"/>
+				<mx:LinkButton label="None" click="onSelectNone()" styleName="linkButton"/>
+			</s:HGroup>
+			
+			<mx:LinkButton right="10" label="Refresh" click="onRefresh()"  styleName="linkButton"/>
+			
+		</s:Group>
+		
+		
+		<components:CheckBoxDataGrid
+			id="dgLibraries" 
+			width="100%" 
+			height="275"
+			dataProvider="{_basecampModel.peopleAC}"
+			allowMultipleSelection="true"
+		  
+			>
+			<components:columns>
+				
+				<mx:DataGridColumn dataField="notify" headerText="Notify" width="60" >
+					
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:Box width="100%" height="100%" 
+									horizontalAlign="center"
+									verticalAlign="middle">
+								<mx:CheckBox selected="{data.notify}" change="onChange(event);" toolTip="Notify this user when diagram is uploaded">
+									<fx:Script>
+										<![CDATA[
+											private function onChange(evt:Event):void 
+											{
+												data.notify = !data.notify;
+											}
+											
+										]]>
+									</fx:Script>
+								</mx:CheckBox>
+							</mx:Box>
+						</fx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>
+							
+				<mx:DataGridColumn 
+					dataField="firstName"
+					headerText="First Name"
+					/>			
+				
+				<mx:DataGridColumn 
+					dataField="lastName"
+					headerText="Last Name"
+					/>			
+				
+			</components:columns>
+			
+		</components:CheckBoxDataGrid>
+		
+	</s:VGroup>	
+	
+	
+	<s:Button id="btnDone" 
+			  label="OK" 
+			  click="onOK()"  
+			  styleName="blueButton"
+			  width="90" height="30" 
+			  right="10" bottom="10"
+			  includeIn="normal"/>
+		
+
+	
+	
+</s:Panel>

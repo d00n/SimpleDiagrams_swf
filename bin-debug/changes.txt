@@ -1,0 +1,5 @@
+
+
+Change Log : Version 1.0.20
+
+- Added text vertical align "above" symbol

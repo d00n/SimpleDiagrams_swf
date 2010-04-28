@@ -1,0 +1,160 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace components "com.simplediagrams.view.components.*";
+
+components|IconButton {
+	skinClass: ClassReference("com.simplediagrams.view.skins.IconButtonSkin");
+}
+
+
+s|Panel
+{
+	cornerRadius: 5;
+	highlightAlphas: 0.29, 0;
+}
+
+s|TextInput
+{
+	contentBackgroundColor:#F6F6F6;
+	borderColor:#B6B6B6;
+}
+
+
+s|TextArea
+{
+	contentBackgroundColor:#F6F6F6;
+	borderColor:#B6B6B6;
+}
+
+mx|Accordion
+{
+	baseColor: #333333;	
+	color:#FFFFFF;
+	textRollOverColor: #ffffff;   
+	textSelectedColor: #ffffff;
+}
+
+.linkButton
+{
+	color:#4c73dd;
+}
+
+s|Button
+{
+	cornerRadius: 5px;
+}
+
+
+.blueButton
+{
+	skinClass: ClassReference('com.simplediagrams.view.skins.SimpleIconButtonSkin');
+	chromeColor: #4c73dd; /* Do not use black black; /*"0x56d9e5";*/
+	color: #FFFFFF;
+	cornerRadius: 5px;
+}
+
+/* compound. override the over state of the button in element desc for class styleClass blueButton */
+.blueButton 
+{
+	baseColor: #7993d8;
+}
+
+/* compound. override the down state of the button in element desc for class styleClass blueButton */
+.blueButton 
+{
+	baseColor: #7993d8;
+}
+
+
+
+
+.customAccordionHeadStyles
+{
+	skin: ClassReference("com.simplediagrams.view.skins.CustomAccordionHeaderSkin");
+	baseColor: #353a4a;
+}
+
+.formItemTitle
+{
+	fontWeight:bold;
+}
+
+.infoWindowHeader
+{
+	fontSize: 16px;	
+}
+
+
+.libraryTileList
+{
+	background-alpha: 1;
+	background-color:#000000;
+	contentBackgroundColor:#000000;
+	borderColor:#000000;
+}
+
+
+.defaultToolTileList
+{
+	background-alpha: 1;
+	background-color:#000000;
+	contentBackgroundColor:#000000;
+	baseColor:#000000;
+}
+
+.libraryTileItem
+{
+	background-color:#000000;
+	background-alpha: 1;
+}
+
+.libraryDivider
+{
+	backgroundColor:#1c2131;
+}	
+
+
+.basicTextArea
+{
+	color:#FFFFFF;
+	background-alpha: 1;
+	
+	borderSkin: ClassReference("com.simplediagrams.view.SDComponents.CustomHaloTextAreaBorderSkin");
+	fontFamily: Comic Sans MS;
+	font-size:13px;
+}
+
+.formHint
+{
+	font-color: #000088;
+	font-style: italic;
+}
+
+.invalidTextInputStyle 
+{
+    backgroundAlpha: 0.3;
+    backgroundColor: red;
+}
+
+.trialDaysText
+{
+	fontWeight:bold;
+	fontSize: 14;
+}
+
+
+/* Diagram style dependent */
+
+.diagram
+{
+    backgroundColor:#FFFFFF;
+	lineColor:#000000;
+}
+
+
+
+
+
+
+

@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/53/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles
+END
+CircleHandle.as
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/51/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/CircleHandle.as
+END
+IConstraint.as
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/IConstraint.as
+END
+IResizeable.as
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/IResizeable.as
+END
+HandleDescription.as
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/51/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/HandleDescription.as
+END
+HandleRoles.as
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/HandleRoles.as
+END
+ObjectChangedEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/!svn/ver/49/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/ObjectChangedEvent.as
+END
+IMoveable.as
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/IMoveable.as
+END
+IHandle.as
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/51/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/IHandle.as
+END
+ObjectHandles.as
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/!svn/ver/51/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/ObjectHandles.as
+END
+ObjectHandlesSelectionManager.as
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/!svn/ver/49/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/ObjectHandlesSelectionManager.as
+END
+HandleDefinitions.as
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/!svn/ver/44/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/HandleDefinitions.as
+END
+SelectionEvent.as
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/49/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/SelectionEvent.as
+END
+DragGeometry.as
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/DragGeometry.as
+END
+Handle.as
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/!svn/ver/51/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/Handle.as
+END

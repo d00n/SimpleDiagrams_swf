@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	>
+	
+	<s:layout>
+		<s:BasicLayout />
+	</s:layout>
+	
+			<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import com.simplediagrams.model.DefaultToolsManager
+			import com.simplediagrams.model.SDObjectModel
+			import com.simplediagrams.model.SDSymbolModel
+			import flash.events.MouseEvent
+			import com.simplediagrams.util.Logger
+			import mx.managers.DragManager
+      	  	import mx.core.DragSource
+      	  	import mx.controls.Image
+			
+			[Autowire(bean='defaultToolsManager')]
+			[Bindable]
+			public var defaultToolsManager:DefaultToolsManager
+			
+
+			private function onDragStart(event:MouseEvent):void
+			{
+												
+                var dragInitiator:List = event.currentTarget as List;
+                var dragSource:DragSource = new DragSource();
+                                                
+                dragSource.addData(dragInitiator.selectedItem, 'defaultTool');
+                               
+				var dragProxy:Image = new Image()
+				var iconClass:Class = SDObjectModel(event.currentTarget.selectedItem).iconClass
+				dragProxy.source = new iconClass()
+				
+
+				var xPos:Number = defaulToolList.mouseX
+				var yPos:Number = defaulToolList.mouseY
+			
+				try
+				{	
+                	DragManager.doDrag(dragInitiator, dragSource, event, dragProxy, xPos, yPos);
+				}
+				catch(err:Error)
+				{
+					//TODO : figure out why sometimes I get a "TypeError: Error #2007: Parameter data must be non-null." when dragging here 
+					Logger.error("drag error: " + err, this)
+				}
+			}
+			
+			private function noSelectionEasingFunction(t:Number,b:Number,c:Number,d:Number):Number
+			{
+			     return 0;
+			}
+
+			
+		]]>
+	</fx:Script>
+	
+	<s:Rect  width="100%" height="100%">
+		<s:fill>
+			<s:BitmapFill source="@Embed('assets/img/backgrounds/default_objects_bg.png')" fillMode="repeat"/>
+		</s:fill>					
+	</s:Rect>
+	
+	<s:VGroup width="100%" height="100%" paddingTop="5" paddingLeft="5">
+		
+		<mx:Label text="ANNOTATIONS"/>		
+		
+		<s:List id="defaulToolList"
+				x="10" y="20"
+				styleName="defaultToolTileList"
+				dataProvider="{defaultToolsManager.sdObjectsAC}"
+				itemRenderer="com.simplediagrams.view.itemRenderers.BasicToolsItemRenderer"
+				dragEnabled="true"
+				dropEnabled="false"
+				contentBackgroundAlpha="0"
+				borderVisible="false"
+				dragMoveEnabled="false"
+				width="100%"
+				dragStart="onDragStart(event)"
+				height="100%" >
+			
+			<s:layout>
+				<s:TileLayout/>
+			</s:layout>
+			
+		</s:List>
+		
+	</s:VGroup>
+	
+
+	
+	
+	
+</s:Group>

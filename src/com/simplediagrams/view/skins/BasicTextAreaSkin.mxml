@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://blog.flexexamples.com/2009/06/02/creating-a-transparent-spark-textarea-control-in-flex-gumbo/ -->
+<s:SparkSkin name="BasicTextAreaSkin"
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        minWidth="36" minHeight="36">
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="disabled"/>
+    </s:states>
+
+    <fx:Metadata>
+    <![CDATA[
+        [HostComponent("spark.components.TextArea")]
+    ]]>
+    </fx:Metadata>
+
+    <fx:Script>
+        /* Define the skin elements that should not be colorized.
+           For text area, the skin itself is colorized but the individual parts are not. */
+        static private const exclusions:Array = ["background", "scroller"];
+
+        override public function get colorizeExclusions():Array {return exclusions;}
+
+        /* Define the content fill items that should be colored by the "contentBackgroundColor" style. */
+        static private const contentFill:Array = ["bgFill"];
+
+        override public function get contentItems():Array {return contentFill};
+    </fx:Script>
+
+    
+
+    <!-- fill -->
+    <!--- Defines the appearance of the TextArea component's background. -->
+    <s:Rect id="background" left="1" right="1" top="1" bottom="1" includeIn="normal">
+        <s:fill>
+        <!--- Defines the background fill color. -->
+            <s:SolidColor id="bgFill" color="#000000" alpha="0.5" />
+        </s:fill>
+    </s:Rect>
+
+
+    <!--- Defines the scroller used to scroll the RichEditableText. -->
+    <s:Scroller id="scroller" left="0" top="0" right="0" bottom="0">
+        <s:RichEditableText id="textView"
+                  heightInLines="10"
+                  paddingLeft="4" paddingTop="4"
+                  paddingRight="4" paddingBottom="4"/>
+    </s:Scroller>
+
+</s:SparkSkin>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+    backgroundColor="0xFFFFFF"
+    creationComplete="onCC()"
+    title="Open Diagram"
+    borderAlpha="1" 
+	>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LoadDiagramEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.business.DBManager;
+			import com.simplediagrams.model.dao.DiagramDAO
+			import com.simplediagrams.model.LibraryManager
+			
+			import mx.managers.PopUpManager
+			import org.swizframework.Swiz
+			import com.simplediagrams.util.Logger	
+			import mx.utils.ObjectUtil;
+			
+			public function onWindowClose():void
+			{				
+				PopUpManager.removePopUp(this)
+			}
+			
+			public function onCC():void
+			{
+				var library:LibraryManager = Swiz.getBean("libraryManager") as LibraryManager
+				dgDiagrams.dataProvider = library.diagramsAC
+				Swiz.addEventListener(LoadDiagramEvent.DIAGRAM_LOADED, onDiagramLoaded)			
+			}
+			
+			public function onLoad():void
+			{
+				Logger.debug("onLoad()",this)
+				if (dgDiagrams.selectedItem != null)
+				{
+					Logger.debug("dispatching event for id: " + dgDiagrams.selectedItem.id,this)
+					Logger.debug("libaryController: " + Swiz.getBean("libraryController"),this)
+					var evt:LoadDiagramEvent = new LoadDiagramEvent(LoadDiagramEvent.LOAD_DIAGRAM, true)
+					evt.id = dgDiagrams.selectedItem.id
+					Swiz.dispatchEvent(evt)
+				}
+			}
+			
+			public function onCancel():void
+			{
+				onWindowClose()
+			}
+			
+			public function onDiagramLoaded(event:LoadDiagramEvent):void
+			{
+				if (event.success)
+				{
+					PopUpManager.removePopUp(this)
+				}
+				else
+				{
+					//do nothing...let user select another project	
+				}
+			}
+			
+			private function date_sortCompareFunc(itemA:Object, itemB:Object):int 
+			{
+                return ObjectUtil.dateCompare(itemA.updatedAt, itemB.updatedAt);
+            }
+            
+            private function date_dataTipFunc(item:Object):String
+            {
+                return dateFormatter.format(item.updatedAt);
+            }
+
+            private function formatDateColumn(item:Object, column:DataGridColumn):String
+            {
+                return dateFormatter.format(item[column.dataField]);
+            }
+
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<mx:DateFormatter id="dateFormatter" formatString="MM/DD/YYYY L:NN A" />
+		
+	</fx:Declarations>
+	
+	<s:VGroup paddingLeft="10">
+		
+				
+		<mx:Label text="Select a diagram to load"/>
+		
+		<mx:DataGrid id="dgDiagrams" variableRowHeight="true"  width="100%" height="100%" doubleClickEnabled="true" doubleClick="onLoad()">
+			<mx:columns>
+				<mx:DataGridColumn dataField="name" width="200"/>
+				<mx:DataGridColumn dataField="description" wordWrap="true" />
+				<mx:DataGridColumn 
+					dataField="updatedAt" 
+					width="150" 
+					headerText="Updated" 
+					labelFunction="formatDateColumn"
+					sortCompareFunction="date_sortCompareFunc"
+					showDataTips="true"
+					/>			
+			</mx:columns>
+		</mx:DataGrid>
+		
+		<s:VGroup horizontalAlign="right" width="100%">
+			<s:HGroup>
+				<s:Button label="Cancel" styleName="blueButton" width="90" height="30" click="onCancel()"/>
+				<s:Button label="Open" styleName="blueButton" width="90" height="30" click="onLoad()"/>
+			</s:HGroup>			
+		</s:VGroup>
+		
+	</s:VGroup>
+		
+	
+</s:Panel>

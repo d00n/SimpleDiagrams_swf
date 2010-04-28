@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2008 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for the Spark HScrollBar component. The thumb and track skins are defined by the
+HScrollBarThumbSkin and HScrollBarTrackSkin classes, respectively. -->
+<s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+	  minWidth="35" minHeight="15"
+	  alpha.disabled="0.5">
+	<fx:Script>
+		<![CDATA[
+		]]>
+	</fx:Script>
+
+    <fx:Metadata>
+    <![CDATA[ 
+	/** 
+	 * @copy spark.skins.default.ApplicationSkin#hostComponent
+	 */
+    	[HostComponent("spark.components.HScrollBar")]
+    ]]>
+    </fx:Metadata> 
+    
+    <fx:Script>
+        /* Define the skin elements that should not be colorized. 
+           For scroll bar, the skin itself is colorized but the individual parts are not. */
+        static private const exclusions:Array = ["track", "thumb", "decrementButton", "incrementButton"];
+
+	/** 
+	 * @copy spark.skins.SparkSkin#colorizeExclusions
+	 */		
+        override public function get colorizeExclusions():Array {return exclusions;}
+    </fx:Script>
+    
+    <s:states>
+    	<s:State name="normal" />
+    	<s:State name="disabled" />
+    </s:states>
+    
+    <!--- Defines the skin class for the HScrollBarSkin's track. The default skin class is HScrollBarTrackSkin. -->
+    <s:Button id="track" left="16" right="15" width="54"
+              focusEnabled="false"
+              skinClass="com.simplediagrams.view.skins.MyHScrollBarTrackSkin" />
+    <!--- Defines the skin class for the HScrollBarSkin's thumb. The default skin class is HScrollBarThumbSkin. -->
+    <s:Button id="thumb" 
+              focusEnabled="false"
+              skinClass="spark.skins.spark.HScrollBarThumbSkin" />
+
+    <!--- Defines the skin class for the left button of the HScrollBarSkin. The default skin class is ScrollBarLeftButtonSkin. -->
+    <s:Button id="decrementButton" left="0"
+              focusEnabled="false"
+              skinClass="spark.skins.spark.ScrollBarLeftButtonSkin" />
+    <!--- Defines the skin class for the right button of the HScrollBarSkin. The default skin class is ScrollBarRightButtonSkin. -->
+    <s:Button id="incrementButton" right="0"
+              focusEnabled="false"
+              skinClass="spark.skins.spark.ScrollBarRightButtonSkin" />
+
+</s:SparkSkin>

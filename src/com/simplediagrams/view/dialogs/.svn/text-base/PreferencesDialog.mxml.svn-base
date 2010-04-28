@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:dialogs="com.mcquilleninteractive.comfen.view.dialogs.*" 
+	contentBackgroundColor="0xFFFFFF"
+	keyDown="onKeyDown(event)"
+	title="Preferences"
+	>
+	
+	<fx:Metadata>
+		[Event(name="OK", type="flash.events.Event")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="error"/>
+	</s:states>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.SimpleDiagramsLoginEvent;
+			import com.simplediagrams.events.BasecampEvent;
+			import com.simplediagrams.model.BasecampModel
+			
+			import mx.controls.Alert
+			import org.swizframework.Swiz
+			
+			
+			[Bindable]
+			[Autowire]
+			public var basecampModel:BasecampModel
+			
+			protected function onOK():void
+			{
+				
+				basecampModel.enableNotifications = this.cbxEnableNotifications.selected
+				
+				var evt:Event = new Event("OK", true)
+				dispatchEvent(evt)				
+			}
+						
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}
+			
+			
+			protected function onKeyDown(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					onOK()
+				}
+			}
+			
+			protected function onClearMemberLogin():void
+			{
+				var evt:SimpleDiagramsLoginEvent= new SimpleDiagramsLoginEvent(SimpleDiagramsLoginEvent.CLEAR_LOGIN_CREDENTIALS, true)
+				Swiz.dispatchEvent(evt)
+				Alert.show("Member login information cleared.")
+			}
+			
+			protected function onClearBasecampLogin():void
+			{				
+				var evt:BasecampEvent= new BasecampEvent(BasecampEvent.CLEAR_LOGIN_CREDENTIALS, true)
+				Swiz.dispatchEvent(evt)
+				Alert.show("Basecamp login information cleared.")
+			}
+			
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>		
+		
+		
+	</fx:Declarations>
+	
+	
+	<s:layout>
+		<s:VerticalLayout  paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10"/>
+	</s:layout>
+	
+	
+	<s:VGroup width="100%" height="100%" gap="10">
+		<s:Label text="Login Credentials" fontWeight="bold"/>
+		
+		<!--
+		<s:HGroup>
+			<s:Label text="SimpleDiagram Member Login:" width="180"  paddingTop="8"/>
+			<s:Button label="Clear" click="onClearMemberLogin()"  width="90" height="30"/>
+		</s:HGroup>
+		-->
+		
+		
+		<s:HGroup>
+			<s:Label text="Basecamp Login:" width="180" paddingTop="8"/>
+			<s:Button label="Clear" click="onClearBasecampLogin()" width="90" height="30"/>
+		</s:HGroup>
+		<s:HGroup>
+			<s:Label text="Basecamp Notifications:" width="180" paddingTop="8"/>
+			<s:CheckBox label="Enabled" id="cbxEnableNotifications" selected="{basecampModel.enableNotifications}" />
+		</s:HGroup>
+		
+	</s:VGroup>
+	
+	<s:VGroup width="100%" horizontalAlign="right">
+		<s:HGroup>
+			<s:Button id="btnCancel" label="CANCEL" click="onCancel()"  styleName="blueButton" width="90" height="30" />	
+			<s:Button id="btnOK" label="OK" click="onOK()" styleName="blueButton" width="90" height="30"  />	
+		</s:HGroup>
+	</s:VGroup>
+	
+	
+	
+	
+</s:Panel>

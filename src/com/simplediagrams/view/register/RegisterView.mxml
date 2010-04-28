@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:myComps="*"
+	currentState = "{registrationManager.registerViewing}"
+    enterState="onEnterState()"
+	creationComplete="onCC()"
+	addedToStage="onATS()"
+	 >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.RegistrationViewEvent;
+			import com.simplediagrams.events.RegisterLicenseEvent;
+			import com.simplediagrams.model.ApplicationModel;
+			import com.simplediagrams.model.RegistrationManager;
+			import com.simplediagrams.util.Logger
+			
+			import flash.net.navigateToURL;
+			
+			import mx.events.ValidationResultEvent;
+			
+			[Autowire(bean="applicationModel")]
+			public var applicationModel:ApplicationModel	
+			
+			[Bindable]
+			[Autowire(bean="registrationManager")]
+			public var registrationManager:RegistrationManager
+			
+			[Embed(source='assets/img/icons/error.png')]
+			[Bindable]
+			public var errorIcon:Class
+			
+						
+			protected var req:URLRequest 
+			
+			protected function onCC():void
+			{								
+				trace("onCC() registerVIew")
+				Logger.debug("onCC() currentState:" + this.currentState,this) 						
+				req = new URLRequest("http://www.simplediagrams.com/purchase")	
+					
+			}
+			
+			protected function onATS():void
+			{								
+				trace("onATS() registerVIew")
+				Logger.debug("onATS() currentState: " + this.currentState,this) 				
+				
+			}
+			
+			
+			protected function onEnterState():void
+			{
+				trace("onEnterState() registerVIew")
+				Logger.debug("entering state: " + this.currentState,this) 
+			}
+							
+			protected function onRegister():void
+			{
+				//validate license
+				/*var validationEvent:ValidationResultEvent = emailValidator.validate()
+				if (validationEvent.type != ValidationResultEvent.VALID)
+				{
+					txtEmail.errorString = validationEvent.message;
+					txtEmail.styleName = "invalidTextInputStyle";
+					hbxMessage.visible = true;
+					if (validationEvent.message=="This field is required.")
+					{
+						txtMessage.text = "The email field is required to register"
+					}
+					else
+					{						
+						txtMessage.text = validationEvent.message;
+					}
+	  				hbxMessage.visible = false;
+					return	
+				}
+				*/
+				
+				//validate key
+				/*
+				validationEvent = licenseValidator.validate()
+				if (validationEvent.type != ValidationResultEvent.VALID)
+				{
+					var msg:String = "This doesn't look like a SimpleDiagrams license key."
+					txtLicense.errorString = msg
+					txtLicense.styleName = "invalidTextInputStyle";
+					hbxMessage.visible = true;
+					txtMessage.text = msg			
+	  				hbxMessage.visible = false;
+					return	
+				}
+				*/
+											
+				var evt:RegisterLicenseEvent = new RegisterLicenseEvent(RegisterLicenseEvent.VALIDATE_LICENSE, true)
+				evt.email = txtEmail.text
+				evt.licenseKey = txtLicense.text
+				dispatchEvent(evt)	
+								
+			}
+			
+			public function onStartFreeVersion():void
+			{				
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USE_IN_FREE_MODE, true)
+				dispatchEvent(evt)				
+			}
+			
+			public function gotoPurchasePage():void
+			{
+				navigateToURL(req, "_blank")
+			}
+			
+			public function onCancelRegister():void
+			{
+				this.currentState = RegistrationManager.REGISTER_VIEW_NORMAL
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>	
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<s:states>
+		<s:State name="registerViewNormal"/>
+		<s:State name="registerViewWaiting"/>
+		<s:State name="registerViewError"/>
+		<s:State name="registerViewTimeout"/>
+	</s:states>
+	
+	
+	<fx:Declarations>
+		
+	    <mx:Fade id="dissolveEffect"
+	            startDelay="2500"
+	            alphaFrom="1.0"
+	            alphaTo="0.0" />	
+	            
+		<!--
+		<mx:EmailValidator id="emailValidator"
+	            source="{txtEmail}"
+	            property="text"
+	            />
+	            
+	            
+		<mx:StringValidator id="licenseValidator"
+	            source="{this.txtLicense}"
+	            property="text"
+	            minLength="32"
+	            maxLength="32"
+	            />
+		-->
+	</fx:Declarations>
+				
+	<s:Label 
+		color="#000000"
+		text="Register SimpleDiagrams License"
+		fontSize="16"
+		x="18" y="13"
+	    />	
+	
+
+	<s:Group x="15" y="80" width="390" includeIn="registerViewError">
+		
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		
+		<mx:Image source="{errorIcon}" />
+		
+		<mx:Text htmlText="{registrationManager.errorMsg}"			
+			width="100%"
+			height="300"
+			/>
+			
+	</s:Group>		
+	
+		
+	<mx:Text htmlText="{registrationManager.registrationMsg}"			
+			x="15" y="80"
+			width="390"
+			height="300"
+		   selectable="false"
+			includeIn="registerViewNormal"
+			/>
+				
+	
+	<s:Group x="15" y="80" width="390" includeIn="registerViewTimeout">
+		
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		
+		<mx:Image source="{errorIcon}"/>
+		
+		<mx:Text htmlText="{registrationManager.timeoutMsg}"			
+			width="100%"
+			height="300"
+			/>
+			
+	</s:Group>		
+	
+	
+	
+	<s:Group x="15" y="80" width="390">
+		
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		
+		<mx:Image source="{errorIcon}" includeIn="registerViewError" />
+		
+		<mx:Text htmlText="{registrationManager.errorMsg}"			
+			width="100%"
+			height="300"
+			/>
+			
+	</s:Group>		
+	
+	<s:Rect x="15" y="170" width="390" height="120" radiusX="10" radiusY="10">
+		<s:stroke>
+			<s:SolidColorStroke color="0xFFFFFF" alpha=".4"/>
+		</s:stroke>
+		
+		<s:fill>
+			<s:SolidColor color="0x000000" alpha=".1"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:Group width="390" height="150" 
+		x="15" y="180" excludeFrom="registerViewWaiting">
+	
+		<s:layout>
+			<s:VerticalLayout  gap="10" />
+		</s:layout>
+				
+		<s:HGroup paddingLeft="15"  verticalAlign="middle">			
+			<s:Label text="Email: " width="80"   />
+			<s:TextInput id="txtEmail" width="240" text=""/>
+		</s:HGroup>
+	
+		<s:HGroup  paddingLeft="15"  verticalAlign="middle">			
+			<s:Label text="License key: " width="80" />
+			<s:TextInput id="txtLicense" width="240" text=""/>
+		</s:HGroup>
+		
+		<s:HGroup paddingLeft="100">	
+		
+			<s:Button id="btnRegister" 
+				click="onRegister()" 
+				label="Register" 
+				styleName="blueButton"
+				width="170" height="30"
+				/>
+		
+		</s:HGroup>		
+		
+	</s:Group>	
+	
+	<s:Group 
+		width="390" height="150" 
+		x="15" y="180" 
+		includeIn="registerViewWaiting" >
+		
+		<s:layout>
+			<s:VerticalLayout  horizontalAlign="center" gap="8" />
+		</s:layout>
+		
+		<s:Label text="Contacting the registration server..." paddingBottom="5" paddingTop="5"/>
+		
+		<s:Group width="100%" >
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+			<myComps:LoadingBar id="loadingBar" x="65"/>
+		</s:Group>
+		
+
+		<s:Button id="btnCancelRegister" 
+			click="onCancelRegister()" 
+			label="Cancel"			
+			width="170" height="30"			
+			/>
+		
+	</s:Group>
+		
+	
+	<mx:LinkButton x="15" y="330" label="No thanks, just start the free version" click="onStartFreeVersion()"  includeIn="registerViewNormal"/>
+	
+	
+	<mx:HBox id="hbxMessage" 
+		visible="false" 
+	    horizontalAlign="center"
+		width="390" height="30"
+	    borderStyle="solid"
+	    cornerRadius="10"
+	    paddingTop="5"
+		backgroundColor="#CC0000"
+		borderColor="#CC0000"
+		hideEffect="{dissolveEffect}"
+		x="15" y="290">
+		
+		<mx:Label id="txtMessage"			 	
+			 	color="#FFFFFF"
+            	styleName="errorMessage"
+            	
+            	 />
+	</mx:HBox>				
+	
+</s:Group>

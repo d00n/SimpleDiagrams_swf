@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	
+	<fx:Script>
+		<![CDATA[
+			
+			
+			import com.simplediagrams.model.ApplicationModel
+			import com.simplediagrams.model.RegistrationManager
+			import com.simplediagrams.util.AboutInfo
+			import com.simplediagrams.events.RegistrationViewEvent
+			
+			[Bindable]
+			[Autowire(bean="registrationManager")]
+			public var registrationManager:RegistrationManager			
+			
+			
+			[Bindable]
+			protected var _msg:String = "SimpleDiagrams couldn't reach the SimpleDiagrams license server. <br/><br/>" + 
+										"Please make sure you have an Internet connection and try again or <a href='http://www.simplediagrams.com/contact/'>contact us</a> for help."
+						
+			
+			public function onStartFreeVersion():void
+			{
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USE_IN_FREE_MODE, true)
+				dispatchEvent(evt)				
+			}
+			
+			public function onTryAgain():void
+			{
+				var event:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.TRY_REGISTERING_AGAIN, true)
+				dispatchEvent(event)				
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	
+	<s:Label 
+		color="#000000"
+		text="Server Unavailable"
+		styleName="infoWindowHeader"
+		x="10" y="10"
+	    />	
+	        		
+			
+	<mx:HBox 
+		paddingBottom="5" 
+	    verticalAlign="middle"
+		 x="15" y="50">
+			
+		<mx:Image id="imgCake" source="@Embed('assets/img/cake.png')" />
+				
+		<s:Label 
+			color="#000000"
+			text="The authorization server is not available."
+			fontSize="14"
+		    />	
+			
+	</mx:HBox>
+	
+	<mx:Text htmlText="{_msg}"
+			x="15" y="120"
+			width="400"
+			height="300"
+			/>
+	
+	
+	<mx:HBox x="15" y="315" >
+		
+		<s:Button id="btnStartFreeVersion" 
+				  click="onStartFreeVersion()"
+				  styleName="blueButton"
+				  label="Start Free Version"
+				  width="170" height="30"
+				  />	
+		
+		<mx:Spacer width="30"/>			
+		
+		<s:Button id="btnTryAgain" 
+				  click="onTryAgain()"
+				  label="Try Again"
+				  width="170" height="30"
+				  styleName="blueButton"
+				  />	
+		
+		
+	</mx:HBox>
+					
+	
+		
+	
+</s:Group>

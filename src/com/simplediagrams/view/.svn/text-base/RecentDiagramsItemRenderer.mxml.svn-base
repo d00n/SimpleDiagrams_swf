@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer name="RecentDiagramsItemRenderer"
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        focusEnabled="false">
+	
+    <!-- states -->
+    <s:states>
+        <s:State name="normal" />
+        <s:State name="hovered" />
+        <s:State name="selected" />
+        <s:State name="normalAndShowsCaret"/>
+        <s:State name="hoveredAndShowsCaret"/>
+        <s:State name="selectedAndShowsCaret"/>
+    </s:states>
+ 
+    <fx:Script>
+        <![CDATA[
+        
+			[Embed('assets/img/icons/icon_project.png')]
+			[Bindable]
+			private var ProjectIcon:Class;
+        
+			[Bindable]
+        	public var rollOverColor:Number = 0xcedbef;
+        	
+			[Bindable]
+			public var selectionColor:Number = 0x90b4eb;
+        
+        ]]>
+    </fx:Script>
+ 
+    <s:Rect left="0" right="0" top="0" bottom="0" includeIn="hovered, hoveredAndShowsCaret, selected, selectedAndShowsCaret">
+		<!--      
+        <s:fill  >
+			
+            <s:SolidColor color.normal="{contentBackgroundColor}"
+                    color.normalAndShowsCaret="{contentBackgroundColor}"
+                    color.hovered="{rollOverColor}"	
+                    color.hoveredAndShowsCaret="{rollOverColor}"
+                    color.selected="{selectionColor}"
+                    color.selectedAndShowsCaret="{selectionColor}" />
+			
+        </s:fill>-->
+    </s:Rect>
+ 
+    <s:BitmapImage id="icon"
+            source="{ProjectIcon}"
+			top="3"
+            left="3" />    
+	
+	<s:Label id="labelDisplay" 
+			 paddingBottom="3"
+			 text="{data.label}"
+			 top="7"
+			 toolTip="{data.data}"
+			 width="160"
+			 maxDisplayedLines="1"
+			 left="25"  />
+ 
+</s:ItemRenderer>

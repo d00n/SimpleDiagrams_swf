@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:components="com.simplediagrams.view.components.*" 
+	mouseDown="onMouseDown(event)"
+	mouseUp="onMouseUp(event)"
+	creationComplete="onCC()"
+
+	width="45" >
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.ColorEvent;
+			import com.simplediagrams.events.PositionEvent;
+			import com.simplediagrams.events.StyleEvent;
+			import com.simplediagrams.events.ToolPanelEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.model.DiagramStyleManager;
+			import com.simplediagrams.util.Logger;
+			
+			import flash.events.MouseEvent;
+			
+			import org.swizframework.Swiz;
+			
+			[Bindable]
+			protected var _backgroundColor:Number = 0xFFFFFF;
+			
+			[Autowire(bean="diagramModel")]
+			[Bindable]
+			public var diagramModel:DiagramModel
+			
+			[Autowire(bean="diagramStyleManager")]
+			[Bindable]
+			public var diagramStyleManager:DiagramStyleManager
+			
+	
+			[Bindable]		
+			[Embed(source='assets/img/icons/pencil.png')]
+			private var pencilIcon:Class
+						
+			[Bindable]		
+			[Embed(source='assets/img/icons/arrow.png')]
+			private var arrowIcon:Class
+			
+			[Bindable]		
+			[Embed(source='assets/img/icons/picture_add.png')]
+			private var addPictureIcon:Class
+			
+			
+			[Bindable]		
+			[Embed(source='assets/img/icons/T_icon.png')]
+			private var textIcon:Class
+			
+			[Bindable]
+			[Embed(source='assets/img/icons/line_icon.png')]
+			private var lineIcon:Class
+			
+			
+			[Bindable]
+			[Embed(source='assets/img/icons/plus_sign.png')]
+			private var zoomIn:Class
+			
+			[Bindable]
+			[Embed(source='assets/img/icons/minus_sign.png')]
+			private var zoomOut:Class
+			
+			
+			[Bindable]
+			[Embed(source='assets/img/icons/move_backward.png')]
+			private var moveBackward:Class
+			
+			[Bindable]
+			[Embed(source='assets/img/icons/move_forward.png')]
+			private var moveForward:Class
+								
+			[Bindable]
+			[Embed(source='assets/img/icons/zoom.png')]
+			private var magnifier:Class
+			
+			
+			protected function onCC():void
+			{
+				Swiz.addEventListener(StyleEvent.STYLE_CHANGED, onStyleChanged)
+				cp.selectedColor = diagramStyleManager.defaultSymbolColor
+				//backgroundColor.color = diagramStyleManager.toolBarBackgroundColor
+			}
+			
+			protected function onStyleChanged(event:StyleEvent):void
+			{
+				cp.selectedColor = diagramStyleManager.defaultSymbolColor
+				cp.invalidateProperties()
+				//backgroundColor.color = diagramStyleManager.toolBarBackgroundColor
+				
+			}
+			
+			protected function onMouseDown(event:MouseEvent):void
+			{
+				this.startDrag()
+				event.stopPropagation()
+			}
+			
+			protected function onMouseUp(event:MouseEvent):void
+			{
+				this.stopDrag()
+				event.stopPropagation()
+			}
+			
+			protected function onPencilTool():void
+			{
+				var evt:ToolPanelEvent = new ToolPanelEvent(ToolPanelEvent.TOOL_SELECTED, true)
+				evt.toolTypeSelected = DiagramModel.PENCIL_TOOL
+				dispatchEvent(evt)
+			}
+			
+			
+			protected function onPointerTool():void	
+			{					
+				var evt:ToolPanelEvent = new ToolPanelEvent(ToolPanelEvent.TOOL_SELECTED, true)
+				evt.toolTypeSelected = DiagramModel.POINTER_TOOL
+				dispatchEvent(evt)					
+			}
+			
+			
+			protected function onLineTool():void
+			{				
+				var evt:ToolPanelEvent = new ToolPanelEvent(ToolPanelEvent.TOOL_SELECTED, true)
+				evt.toolTypeSelected = DiagramModel.LINE_TOOL
+				dispatchEvent(evt)
+			}
+						
+			protected function onTextTool():void
+			{	
+				var evt:ToolPanelEvent = new ToolPanelEvent(ToolPanelEvent.TOOL_SELECTED, true)
+				evt.toolTypeSelected = DiagramModel.TEXT_TOOL
+				dispatchEvent(evt)				
+			}
+
+			protected function onZoomTool():void
+			{								
+				var evt:ToolPanelEvent = new ToolPanelEvent(ToolPanelEvent.TOOL_SELECTED, true)
+				evt.toolTypeSelected = DiagramModel.ZOOM_TOOL
+				dispatchEvent(evt)
+			}			
+			
+			
+			protected function onColorChange():void
+			{
+				var evt:ColorEvent = new ColorEvent(ColorEvent.CHANGE_COLOR, true)
+				Logger.debug("color: " + cp.selectedColor, this)
+				evt.color = cp.selectedColor
+				Swiz.dispatchEvent(evt)
+			}
+			
+			protected function onMoveForward():void
+			{
+				dispatchEvent(new PositionEvent(PositionEvent.MOVE_FORWARD, true))
+			}
+			
+			protected function onMoveBackward():void
+			{
+				dispatchEvent(new PositionEvent(PositionEvent.MOVE_BACKWARD, true))				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+
+	<s:Rect radiusX="5" radiusY="5" width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor id="backgroundColor" alpha=".3" color="{_backgroundColor}"/>
+		</s:fill>
+	</s:Rect>
+		
+	<s:VGroup width="100%" height="100%" horizontalAlign="center" paddingTop="15" paddingBottom="15">
+		
+
+		<mx:Button icon="{arrowIcon}" click="onPointerTool()" width="30" height="30" toolTip="Pointer tool"/>
+		
+		<mx:Button icon="{pencilIcon}" click="onPencilTool()" width="30" height="30" toolTip="Pencil tool"/>
+	
+		<mx:Button icon="{lineIcon}" click="onLineTool()" width="30" height="30"  toolTip="Line tool"/>		
+								
+		<mx:Button icon="{textIcon}" click="onTextTool()" width="30" height="30" toolTip="Text tool"/>	
+		
+		<mx:Button icon="{magnifier}" click="onZoomTool()" width="30" height="30" toolTip="Zoom In/Out"/>	
+		
+		<mx:Button icon="{moveForward}" click="onMoveForward()" width="30" height="30" toolTip="Move selected object forward"/>	
+		
+		<mx:Button icon="{moveBackward}" click="onMoveBackward()" width="30" height="30" toolTip="Move selected object backward"/>	
+
+		
+		<components:AlignButtonPopUp 
+					id="alignButtonPopUp"
+					skinClass="com.simplediagrams.view.skins.AlignButtonPopUpSkin"
+					/>
+		
+		<mx:ColorPicker id="cp" width="30" height="30" close="onColorChange()" doubleClickEnabled="true" doubleClick="onColorChange()" color="0xFFFFFF"/>
+		
+		
+	</s:VGroup>
+		
+	
+		
+</s:Group>

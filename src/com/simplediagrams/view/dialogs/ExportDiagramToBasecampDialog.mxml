@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 title="Export Diagram to Basecamp"		 
+		 contentBackgroundColor="0xFFFFFF"
+		 creationComplete="onCC()"
+		 addedToStage="onATS()"
+		 xmlns:myComps="*" 
+		 
+		 xmlns:components="com.simplediagrams.view.components.*">
+		
+	<fx:Metadata>
+		[Event(name="OK", type="flash.events.Event")]
+		[Event(name='cancel', event='flash.events.Event')]
+		[Event(name='cancelUpload', event='flash.events.Event')]
+		[Event(name='changeLogin', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.BasecampEvent;
+			import com.simplediagrams.model.BasecampModel;
+			import com.simplediagrams.util.Logger;
+			
+			import flash.events.Event;
+			import flash.utils.ByteArray;
+			
+			import mx.controls.Alert;
+			
+			import org.swizframework.Swiz;
+			
+			
+			[Bindable]
+			[Autowire(name="basecampModel")]
+			public var basecampModel:BasecampModel
+			
+			[Bindable]
+			protected var _enableNotifications:Boolean
+			
+			public static const STATE_TRANSMITTING:String = "transmitting"
+			
+			public function set imageData(ba:ByteArray):void
+			{
+				imgDiagram.source = ba
+			}
+			
+			public function get messageTitle():String
+			{
+				return txtMessageTitle.text
+			}
+			
+			public function projectsRefreshed():void
+			{
+				btnRefresh.enabled = true
+				btnRefresh.label = "Refresh"
+			}
+			
+			public function get messageBody():String
+			{
+				return 	txtMessageBody.text
+			}
+					
+			public function get extendedMessageBody():String
+			{
+				return 	txtExtendedMessageBody.text
+			}
+			
+			protected function onCC():void
+			{
+				_enableNotifications = basecampModel.enableNotifications
+					
+				if (basecampModel.projectsAC.length == 0)
+				{
+					Logger.debug("dispatching event" ,this)
+					var evt:BasecampEvent = new BasecampEvent(BasecampEvent.GET_PROJECTS, true)
+					Swiz.dispatchEvent(evt)
+				}
+				
+			}
+			
+			protected function onATS():void
+			{
+				Logger.debug("onATS()",this)
+				
+			}
+			
+			protected function onOK():void
+			{
+				Logger.debug("setting basecampModel.selectedProjectID: " + basecampModel.selectedProjectID, this)
+					
+				if (cbxProjects.selectedItem==null)
+				{
+					Alert.show("No project selected")
+					return
+				}
+				else
+				{
+					basecampModel.selectedProjectID = cbxProjects.selectedItem.id		
+				}
+				
+				this.currentState = STATE_TRANSMITTING
+					
+				var evt:Event = new Event("OK", true)
+				dispatchEvent(evt)
+			}
+			
+			protected function onCancelUpload():void
+			{			
+				var evt:Event = new BasecampEvent(BasecampEvent.CANCEL_UPLOAD, true)
+				dispatchEvent(evt)				
+			}	
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}		
+			
+			protected function onRefreshProjects():void
+			{
+				Logger.debug("refreshing projects...", this)
+				
+				btnRefresh.enabled = false
+				btnRefresh.label = "Refreshing..."
+				var evt:BasecampEvent = new BasecampEvent(BasecampEvent.REFRESH_PROJECTS, true)
+				dispatchEvent(evt)
+			}
+			
+			protected function onChangeLogin():void
+			{
+				var evt:Event = new Event("changeLogin", true)
+				dispatchEvent(evt)
+			}
+			
+			protected function onEditNotifyList():void
+			{
+				var evt:BasecampEvent = new BasecampEvent(BasecampEvent.SHOW_CHANGE_NOTIFY_WINDOW, true)
+				dispatchEvent(evt)
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="transmitting"/>
+	</s:states>
+				
+	
+	<s:Group width="100%" height="100%" includeIn="transmitting">
+		
+		<s:Label width="100%" text="Uploading image..." verticalCenter="-30" textAlign="center" />
+		<myComps:LoadingBar verticalCenter="0" x="195"/>
+		
+		<s:Button label="CANCEL UPLOAD" styleName="blueButton" click="onCancelUpload()" right="10" bottom="10" height="30" width="120"/>
+		
+	</s:Group>
+	
+	<s:VGroup width="100%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="15" gap="5" excludeFrom="transmitting"> 
+					
+		<s:HGroup width="100%" paddingTop="10" paddingBottom="20">
+			
+			<s:VGroup width="100%" paddingRight="20" gap="10">
+				
+				<s:Label text="Logged in as: " styleName="formItemTitle"/>
+				<s:Label  text="{basecampModel.basecampLogin}"/>
+				
+				<s:Label text="Project:" width="100%"  styleName="formItemTitle"/>
+				<s:HGroup>
+					<mx:ComboBox id="cbxProjects" dataProvider="{basecampModel.projectsAC}" labelField="name" height="25" />
+					<mx:LinkButton id="btnRefresh" click="onRefreshProjects()" label="Refresh" height="25" styleName="linkButton"/>
+				</s:HGroup>
+				
+				<s:Label text="Message Title:" paddingTop="3"  styleName="formItemTitle"/>
+				<s:TextInput id="txtMessageTitle" width="250"  />
+				
+				<s:Group>
+					<s:HGroup verticalAlign="bottom" visible="{_enableNotifications==true}">						
+						<s:Label text="Notifications:" paddingTop="3"  styleName="formItemTitle" paddingBottom="3"/>	
+						<mx:LinkButton label="edit list" click="onEditNotifyList()"  styleName="linkButton"/>
+					</s:HGroup>
+					<s:HGroup verticalAlign="bottom" visible="{_enableNotifications==false}">					
+						<s:Label text="Notifications:" paddingTop="2"  styleName="formItemTitle"/>		
+						<s:Label text="(disabled)"/>
+					</s:HGroup>					
+				</s:Group>
+								
+				<s:Group width="250" height="100">
+					
+					<s:VGroup width="100%" height="100%" paddingLeft="0">
+						<s:List id="lstPeople" 
+								width="100%" 
+								height="100%"
+							    borderColor="#E1E1E1"
+							    contentBackgroundColor="#F9F9F9"
+								alternatingItemColors="[#F1F1F1,#E6E6E6]"
+								dataProvider="{basecampModel.selectedPeopleAC}" 
+							    labelField="fullName"
+								visible="{_enableNotifications==true}"  />
+					</s:VGroup>
+					
+									
+					<s:VGroup visible="{_enableNotifications==false}" width="100%" height="100%" paddingLeft="0">
+						<s:TextArea editable="false" 
+									borderVisible="false"
+									color="#888888"
+								    paddingLeft="0"
+									text="Hint: You can select people to notify when you post an image...just enable 'Notifications' in the SimpleDiagrams>Preferences menu." 
+									width="100%" height="100%"/>
+					</s:VGroup>
+					
+				</s:Group>
+				
+				
+			</s:VGroup>
+			
+			<s:VGroup width="200">
+				<s:Label text="Image Preview (not to scale):" paddingTop="3"  styleName="formItemTitle"/>
+				<mx:Image id="imgDiagram" width="150" height="150"/>
+				<mx:Text width="200" 
+							 color="#888888">
+						<mx:htmlText>
+							<![CDATA[Hint: If your image looks small on the background, try changing the diagram dimensions in the <b>diagrams > properties</b> menu.]]>
+						</mx:htmlText>
+					</mx:Text>
+			</s:VGroup>
+			
+		</s:HGroup>
+					
+		<s:Label text="Message Body:"  styleName="formItemTitle"/>
+		<s:TextArea id="txtMessageBody" width="100%" height="90"  />
+		
+		<s:Label text="Extended Message Body:"  styleName="formItemTitle"/>
+		<s:TextArea id="txtExtendedMessageBody" width="100%" height="90"  />
+		
+		
+		<s:VGroup horizontalAlign="right" width="100%" paddingTop="25" paddingBottom="5">				
+			<s:HGroup >								
+				<s:Button id="btnLogout" 
+						  label="CHANGE LOGIN" 
+						  click="onChangeLogin()"  
+						  styleName="blueButton"
+						  width="110" height="30" />
+				
+				<mx:Spacer width="100%"/>
+				
+				<s:Button id="btnCancel" label="CANCEL" 
+						  click="onCancel()"  						   
+						  styleName="blueButton"
+						  width="90" height="30" />	
+				
+				<s:Button id="btnDone" 
+						   label="EXPORT" 
+						   click="onOK()"  
+						   styleName="blueButton"
+						   width="90" height="30" />
+					
+			</s:HGroup>
+		</s:VGroup>
+		
+	</s:VGroup> 
+			
+		
+	
+		
+</s:Panel>

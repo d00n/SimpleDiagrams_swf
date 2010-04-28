@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx" 
+		alpha.disabled=".25"  xmlns:components="com.simplediagrams.view.components.*"> 
+	
+	<!-- host component -->
+	<fx:Metadata>
+		[HostComponent("com.simplediagrams.view.components.AlignButtonPopUp")]
+	</fx:Metadata> 
+	
+	<s:states>
+		<s:State name="normal" />
+		<s:State name="open" stateGroups="overStates" />
+		<s:State name="over" stateGroups="overStates" />
+		<s:State name="disabled" />
+	</s:states>
+		
+	<s:Group focusEnabled="false" >		
+		<components:IconButton id="openButton" 
+							   icon="@Embed('assets/img/icons/align_button.png')" 
+							   toolTip="Align selected objects"
+							   width="30" height="30"/>	
+	</s:Group>  
+		
+	<s:PopUpAnchor id="popup"   
+				   displayPopUp.normal="false" 
+				   displayPopUp.open="true" 
+				   left="0" 
+				   right="0" 
+				   top="0" 
+				   bottom="0" 
+				   popUpPosition="right" >
+		
+		<!--- 
+		The drop down area of the skin. This includes borders, background colors, scrollers, and filters. 
+		To create a custom drop down, edit this skin and create a custom skin class. 
+		-->
+		<s:Group id="dropDown"  >
+			
+			
+			<s:Rect id="background" left="3" right="0" top="0" bottom="0" >
+				<s:fill>
+					<!---  
+					The color of the drop down's background fill.
+					The default color is 0xFFFFFF.
+					-->
+					<s:SolidColor id="bgFill" color="0xFFFFFF" />
+				</s:fill>
+				<s:stroke>
+					<s:SolidColorStroke color="0x686868" weight="1" alpha=".1"/>
+				</s:stroke>
+			</s:Rect>
+			
+			<s:Group id="buttonHolder" left="10" right="10" top="5" bottom="5" alpha="0" alpha.open="1" >
+				<s:VGroup id="buttonGroup" gap="3">
+					<s:HGroup id="buttonGroup1" width="100%" height="100%" gap="3"  >							
+						<components:IconButton id="btnAlignLeft" icon="@Embed('assets/img/icons/align_left.png')" width="30" height="30" toolTip="align left"/>	
+						<components:IconButton id="btnAlignCenter" icon="@Embed('assets/img/icons/align_center.png')"  width="30" height="30" toolTip="align center"/>	
+						<components:IconButton id="btnAlignRight" icon="@Embed('assets/img/icons/align_right.png')"  width="30" height="30" toolTip="align right"/>
+					</s:HGroup>
+					<s:HGroup id="buttonGroup2" width="100%" height="100%" gap="3"  >	
+						<components:IconButton id="btnAlignTop" icon="@Embed('assets/img/icons/align_top.png')"  width="30" height="30" toolTip="align top"/>	
+						<components:IconButton id="btnAlignMiddle" icon="@Embed('assets/img/icons/align_middle.png')"  width="30" height="30" toolTip="align middle"/>	
+						<components:IconButton id="btnAlignBottom" icon="@Embed('assets/img/icons/align_bottom.png')" width="30" height="30" toolTip="align bottom"/>
+					</s:HGroup>	
+				</s:VGroup>	
+			</s:Group>
+			
+			<s:filters>
+				<s:DropShadowFilter id="dsf" blurX="2" blurY="2" distance="2" angle="45" alpha="0" alpha.open="0.35" />
+			</s:filters>
+		</s:Group>
+	</s:PopUpAnchor>
+</s:Skin>

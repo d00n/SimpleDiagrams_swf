@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" >
+	
+
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LicenseStatusEvent;
+			import com.simplediagrams.events.RegistrationViewEvent;
+			import com.simplediagrams.model.RegistrationManager;
+						
+			
+			[Bindable]
+			[Autowire(bean="registrationManager")]
+			public var registrationManager:RegistrationManager
+						
+			public function onContinue():void
+			{
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USE_IN_FULL_MODE, true)
+				dispatchEvent(evt)				
+			}
+			
+			public function onUpgrade():void
+			{
+				dispatchEvent(new Event("upgrade", true))
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+					
+	<s:Label 
+		color="#000000"
+		text="Welcome to SimpleDiagrams"
+		fontSize="16"
+		x="18" y="13"
+	    />	
+	        		
+			
+	<mx:HBox 
+		paddingBottom="5" 
+	    verticalAlign="middle"
+		 x="15" y="50">
+			
+		<mx:Image id="imgCake" source="@Embed('assets/img/cake.png')" />
+				
+		<s:Label 
+			color="#000000"
+			text="Registration complete."
+			fontSize="14"
+		    />	
+			
+	</mx:HBox>
+	
+	<mx:Text text="{registrationManager.registrationSuccessMsg}"
+			x="15" y="110"
+			width="400"
+			height="300"
+			/>
+	
+					
+	<mx:HBox x="15" y="315">
+	
+		<s:Button id="btnContinue" 
+			click="onContinue()"
+			styleName="blueButton"
+			label="Start SimpleDiagrams"
+			width="170" height="30"
+			/>			
+						
+	</mx:HBox>
+		
+	
+</s:Group>

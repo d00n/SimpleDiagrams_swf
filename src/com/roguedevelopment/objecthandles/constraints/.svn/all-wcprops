@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/50/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/constraints
+END
+MovementConstraint.as
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/constraints/MovementConstraint.as
+END
+SizeConstraint.as
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/!svn/ver/40/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/constraints/SizeConstraint.as
+END
+MaintainProportionConstraint.as
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/!svn/ver/50/trunk/flex-object-handles-2/src/com/roguedevelopment/objecthandles/constraints/MaintainProportionConstraint.as
+END

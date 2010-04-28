@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin 
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:mx="library://ns.adobe.com/flex/mx"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        minWidth="70" minHeight="70"
+        mouseChildren="{currentState=='selected'}"
+       >
+    
+    <fx:Metadata>
+    	<![CDATA[
+       		[HostComponent("com.simplediagrams.view.SDComponents.SDTextArea")]
+    	]]>
+    </fx:Metadata> 
+    
+    <!-- states -->
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="selected"/>
+    </s:states>
+    
+
+    <fx:Script>
+    	<![CDATA[
+	        /* Define the skin elements that should not be colorized.
+	           For text area, the skin itself is colorized but the individual parts are not. */
+	        static private const exclusions:Array = ["mainTextArea"];
+	
+	        override public function get colorizeExclusions():Array {return exclusions;}
+	
+	        	        
+	         [Bindable]
+	        [Embed(source='assets/tool_shapes/default_tools.swf', symbol='StickyNote')]
+	        public var StickyNote:Class
+	        
+    	]]>
+    </fx:Script>
+
+   
+   <mx:Image id="backgroundImage" source="{StickyNote}" width="{hostComponent.width+15}" height="{hostComponent.height+15}" />
+  	
+   <s:TextArea id="mainTextArea"
+        		  fontSize="{hostComponent.fontSize}"
+        		  contentBackgroundAlpha="0"
+        		  borderVisible="false"
+        		  selectable="true"
+        		  x = "10"
+        		  y = "10"
+        		  text="{hostComponent.text}"
+        		  width="{hostComponent.width-20}"
+        		  height="{hostComponent.height-25}"   		  
+        		  verticalScrollPolicy="off"
+        		  horizontalScrollPolicy="off"
+                  heightInLines="10"
+                  widthInChars="15"/>
+                  
+  
+   
+         
+    
+
+</s:SparkSkin>
+
+

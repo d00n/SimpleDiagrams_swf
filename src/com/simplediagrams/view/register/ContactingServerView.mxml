@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:myComps="*"
+	>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LicenseStatusEvent;
+			import com.simplediagrams.events.RegistrationViewEvent;
+			
+			public var _msg:String = "SimpleDiagrams needs to contact the licensing server to know how much longer you have in trial mode. " +
+									"If you don't have an internet connection (or if the licensing server isn't responding) " +
+									"you can alway use the program in 'trial finished' mode, which just means you'll get reminder messages to upgrade."
+		
+			protected function onUseInTrialFinishedMode():void
+			{
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USE_IN_FREE_MODE, true)
+				dispatchEvent(evt)
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<s:Label 
+		color="#000000"
+		text="Weclome to Simple Diagrams"
+		styleName="infoWindowHeader"
+		x="10" y="10"
+	    />	
+	
+	
+	<mx:Label text="Contacting license server..." x="125" y="145"/>
+		
+	<myComps:LoadingBar id="loadingBar" x="75" y="170" />
+	
+	<!--
+	<mx:TextArea selectable="false"
+	    borderVisible="false"
+	    contentBackgroundAlpha="0"
+		text="{_msg}" x="15" y="210"
+		width="350" height="100" />
+	-->
+							
+	<mx:HBox y="315" x="115" horizontalAlign="center">
+		
+		<mx:LinkButton label="( use in 'trial finished' mode )" click="onUseInTrialFinishedMode()" />
+		<!--
+		<s:Button id="btnCancelRegister" 
+			click="onUseInTrialFinishedMode()" 
+			label="Use in 'Trial Finished' mode"			
+			width="250" height="30"			
+			/>-->
+	</mx:HBox>
+	
+	
+	
+	
+			
+	
+</s:Group>

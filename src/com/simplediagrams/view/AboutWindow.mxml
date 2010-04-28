@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	creationComplete="onCC()"
+	width="620" height="360" 		
+	horizontalCenter="0"
+	verticalCenter="0"
+	>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Metadata> 
+        [Event(name="close", type="flash.events.Event")] 
+    </fx:Metadata> 
+
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.simplediagrams.util.AboutInfo;
+			import com.simplediagrams.util.Logger;
+			import flash.filters.DropShadowFilter
+    		
+			[Bindable]
+			[Embed(source='assets/img/registration_bg.png')]
+			protected var Bkgd:Class;
+			
+			[Bindable]
+			protected var _msg:String = "SimpleDiagrams was created by <font color='#3c69e1'><a href='http://www.mcquilleninteractive.com/'>McQuillen Interactive, LLC</a></font> " +
+										"to help you make simple diagrams quickly and easily." +
+										"<br/><br/>Confused? Need help?<br/>" + 
+										"<ul><li><font color='#3c69e1'><a href='http://www.simplediagrams.com/support'>Support Page</a></font></li>" +
+										"<ul><li><font color='#3c69e1'><a href='http://www.simplediagrams.com/tutorials'>Tutorials</a></font></li>" +
+										"<ul><li><font color='#3c69e1'><a href='http://www.simplediagrams.com/contact'>Contact Us</a></font></li>" +
+										"<br/>Big thanks to the following open source projects:<br/>" + 
+										"<ul><li><font color='#3c69e1'><a href='http://code.google.com/p/flex-object-handles/'>ObjectHandles</a></font></li>" + 
+										"<li><font color='#3c69e1'><a href='http://groups.google.com/group/swiz-framework'>Swiz</a></font></li>" +
+										"<br/>And thanks to <font color='#3c69e1'><a href='http://www.famfamfam.com'>FamFamFam</a></font> for a few of the icons<br/>" 
+										"<br/><br/><b>SimpleDiagrams is copyright 2009 McQuillen Interactive." + 
+										"<br/>All Rights Reserved.</b>"
+			
+			public function onCloseWindow():void
+			{
+				dispatchEvent(new Event('close'))
+			}
+			
+			protected function onCC():void
+			{
+				
+				var aboutInfo:AboutInfo = new AboutInfo()
+				lblVersion.text = "Version : " + AboutInfo.applicationVersion	
+			
+				var myFilter:DropShadowFilter = new DropShadowFilter ()
+				myFilter.alpha = .2
+				myFilter.color = 0x000000
+				myFilter.distance = 5
+				this.filters = [myFilter]
+				
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:Image source="{Bkgd}" />
+	
+	
+	<mx:Label text="About SimpleDiagrams" x="10" y="7" styleName="infoWindowHeader" />
+	
+	<mx:TextArea htmlText="{_msg}" 
+		x="10" y="45" 		
+		height="300" width="380"
+	    contentBackgroundAlpha="0"
+	    borderVisible="false"
+	    editable="false"
+	    selectable="true"
+		 />
+	
+	<!-- stuff for blue info section on right side of screen ... doesn't change across sub-views -->
+	<s:Label id="lblVersion"
+			color="#cddcff"
+			text="V3.0"
+			x="431"
+			y="37" 
+			/>	
+			
+			
+	<s:Button label="close" click="onCloseWindow()" styleName="blueButton" width="120" x="140" y="320" height="30" />
+	
+</s:Group>

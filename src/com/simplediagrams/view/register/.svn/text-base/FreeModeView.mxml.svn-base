@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" >
+	
+	<fx:Metadata>
+		[Event(name="upgrade", type="flash.events.Event")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.LicenseStatusEvent;
+			import com.simplediagrams.events.RegistrationViewEvent;
+			import com.simplediagrams.model.RegistrationManager;
+			
+			[Bindable]
+			[Autowire(bean="registrationManager")]
+			public var registrationManager:RegistrationManager		
+									
+			public function onStartFreeVersion():void
+			{
+				var evt:RegistrationViewEvent = new RegistrationViewEvent(RegistrationViewEvent.USE_IN_FREE_MODE, true)
+				dispatchEvent(evt)				
+			}
+			
+			public function onUpgrade():void
+			{
+				dispatchEvent(new Event("upgrade", true))
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+		
+	        		
+		
+		
+			
+	<s:Label 
+		color="#000000"
+		text="Welcome to SimpleDiagrams Free Version"
+		fontSize="16"
+		x="15" y="13"
+	    />	
+		
+	
+	<s:Rect x="15" y="60" width="385" height="240" radiusX="5">
+		
+		<s:fill>
+			<s:SolidColor color="#F9F9F9"/>
+		</s:fill>
+	</s:Rect>
+	
+	<!--
+	<s:HGroup x="20" y="70">		
+		<mx:Label text="{registrationManager.trialDaysRemaining + ' trial days remaining'}" styleName="trialDaysText"/>
+	</s:HGroup>
+	-->
+	
+	<mx:Text htmlText="{registrationManager.freeVersionMsg}"
+			x="20" y="70"
+			width="365"
+			height="400"
+			/>
+	
+					
+	<mx:HBox x="15" y="315" >
+	
+		<s:Button id="btnStartFreeVersion" 
+			click="onStartFreeVersion()"
+			styleName="blueButton"
+			label="Start Free Version"
+			width="170" height="30"
+			/>	
+			
+		<mx:Spacer width="30"/>			
+		
+		<s:Button id="btnUpgrade" 
+			click="onUpgrade()"
+			styleName="blueButton"
+			label="Upgrade Now!"
+			width="170" height="30"
+			/>	
+		
+						
+	</mx:HBox>
+		
+	
+</s:Group>

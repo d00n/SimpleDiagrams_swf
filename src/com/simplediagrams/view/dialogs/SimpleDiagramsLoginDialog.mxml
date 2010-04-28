@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:myComps="*"
+		 title="SimpleDiagrams Member Login"
+		 creationComplete="onCC()"
+		 >
+	
+	
+	<fx:Metadata>
+		[Event(name="attemptSimpleDiagramsLogin", type="com.simplediagrams.events.SimpleDiagramsLoginEvent")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.SimpleDiagramsLoginEvent;
+			import com.simplediagrams.model.UserModel;
+			
+			public static const STATE_ENTER_CREDENTIALS:String = "normal"
+			public static const STATE_LOGGING_IN:String = "loggingIn"
+			public static const STATE_LOGIN_ERROR:String = "loginError";
+			
+			[Bindable]
+			[Autowire(name="userModel")]
+			public var userModel:UserModel
+			
+			[Bindable]
+			private var _errorMessage:String = "Invalid Login. Please try again."
+			
+			protected function onCC():void
+			{
+				currentState = STATE_ENTER_CREDENTIALS
+				tipUsername.text = ""
+				tipPassword.text = ""
+			}
+				
+			public function errorMessage(message:String):void
+			{
+				
+			}
+			
+			public function rememberMe():Boolean
+			{
+				return cbxRememberMe.selected
+			}
+			
+			protected function onOK():void
+			{
+				currentState = STATE_LOGGING_IN
+					
+				if (userModel.username != tipUsername.text)
+				{
+					userModel.isDirty = true
+					userModel.username = tipUsername.text
+				}
+				if (userModel.password != tipPassword.text)
+				{
+					userModel.isDirty = true
+					userModel.password = tipPassword.text
+				}
+				
+				//this should probably be in controller but...
+				if (userModel.isDirty && cbxRememberMe.selected)
+				{
+					userModel.saveToEncryptedStore()
+				}
+				else if (userModel.isDirty && !cbxRememberMe.selected)
+				{
+					userModel.clearFromEncryptedStore()
+				}
+				var evt:SimpleDiagramsLoginEvent = new SimpleDiagramsLoginEvent(SimpleDiagramsLoginEvent.ATTEMPT_LOGIN, true)
+				dispatchEvent(evt)
+			}
+			
+			
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}
+			
+			protected function onChangeRememberMe():void
+			{
+				userModel.isDirty = true
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="loggingIn"/>
+		<s:State name="loginError"/>
+	</s:states>	
+	
+	<s:Group width="100%" height="100%" >
+		
+		<!-- Enter Credentials -->
+		
+		<s:VGroup width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingTop="10" gap="3" excludeFrom="loggingIn">		
+			
+			<s:VGroup width="100%" height="100%">
+					
+				<mx:Text width="100%" height="70">
+					<mx:htmlText>
+						<![CDATA[In order to download libraries from the server, you must enter your username and password below. For more info on getting a username and password, please visit www.simplediagrams.com/members.]]>
+					</mx:htmlText>
+				</mx:Text>
+				
+				<s:HGroup width="100%" height="20">
+					<mx:Spacer width="90"/>
+					<s:Label text="{_errorMessage}" includeIn="loginError" color="#CC0000"/>
+				</s:HGroup>
+											
+				<s:HGroup width="100%">
+					<s:Label text="Username: " width="90" paddingTop="3"/>
+					<s:TextInput id="tipUsername" 
+								 width="250"
+								 text="{userModel.username}"
+								 />
+				</s:HGroup>
+				
+				<s:HGroup width="100%">
+					<s:Label text="Password: " width="90" paddingTop="3"/>
+					<s:TextInput id="tipPassword" 
+								 width="250"
+								 displayAsPassword="true"
+								 text="{userModel.password}"
+								 />
+				</s:HGroup>
+							
+				<s:HGroup paddingLeft="95">			
+					<s:CheckBox id="cbxRememberMe" 
+								label="Remember me on this machine" 
+								change="onChangeRememberMe()"/>
+				</s:HGroup>
+				
+			</s:VGroup>
+			
+			<s:VGroup horizontalAlign="right" width="100%"  height="40" >
+				<s:HGroup verticalAlign="top">
+					<s:Button 	id="btnCancel" 
+								label="CANCEL" 
+								click="onCancel()"  
+								width="90" 
+								height="30" 
+								styleName="blueButton"
+								/>	
+					<s:Button 	id="btnOK" 
+								label="OK" 
+								click="onOK()"  
+								width="90" 
+								height="30" 								  
+								styleName="blueButton"
+							  />	
+				</s:HGroup>			
+			</s:VGroup>
+			
+		</s:VGroup>
+			
+	
+		<!-- progress bar -->
+		
+		<s:Group width="100%" height="100%" includeIn="loggingIn" >
+			
+			<s:Label text="Logging In..." x="120" y="90" textAlign="center" width="200"/>
+			<myComps:LoadingBar x="90" y="110" />
+										
+		</s:Group>
+		
+		
+		
+	</s:Group>
+	
+	
+</s:Panel>

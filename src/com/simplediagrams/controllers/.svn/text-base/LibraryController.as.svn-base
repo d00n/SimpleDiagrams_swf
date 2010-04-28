@@ -1,0 +1,278 @@
+package com.simplediagrams.controllers
+{
+	import com.simplediagrams.business.LibraryPluginsDelegate;
+	import com.simplediagrams.events.*;
+	import com.simplediagrams.model.ApplicationModel;
+	import com.simplediagrams.model.DiagramModel;
+	import com.simplediagrams.model.LibraryManager;
+	import com.simplediagrams.model.RegistrationManager;
+	import com.simplediagrams.model.libraries.ILibrary;
+	import com.simplediagrams.util.Logger;
+	import com.simplediagrams.view.dialogs.LoadingLibraryPluginProgressDialog;
+	import com.simplediagrams.view.dialogs.ManageLibrariesDialog;
+	
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.filesystem.File;
+	import flash.net.FileFilter;
+	
+	import mx.controls.Alert;
+	import mx.core.FlexGlobals;
+	import mx.events.CloseEvent;
+	
+	import org.swizframework.controller.AbstractController;
+	
+	
+	public class LibraryController extends AbstractController
+	{
+		[Bindable]
+		[Autowire(bean="libraryManager")]
+		public var libraryManager:LibraryManager;
+		
+		[Bindable]
+		[Autowire(bean="applicationModel")]
+		public var appModel:ApplicationModel;
+		
+		
+		[Bindable]
+		[Autowire(bean="registrationManager")]
+		public var registrationManager:RegistrationManager;
+		
+		[Bindable]	
+		[Autowire(bean="diagramModel")]
+		public var diagramModel:DiagramModel
+		
+		
+				
+		[Bindable]	
+		[Autowire(bean="dialogsController")]
+		public var dialogsController:DialogsController
+				
+		protected var _manageLibrariesDialog:ManageLibrariesDialog
+		protected var _loadingLibraryProgressDialog:LoadingLibraryPluginProgressDialog
+		protected var _selectedLibraryPluginToLoad:File
+		
+		public function LibraryController()
+		{
+		}
+		
+		[Mediate(event="LibraryEvent.MANAGE_LIBRARIES")]
+		public function onManageLibraries(event:LibraryEvent):void
+		{
+			_manageLibrariesDialog = dialogsController.showManageLibrariesDialog()
+			_manageLibrariesDialog.addEventListener("OK", onManageLibrariesComplete)
+			_manageLibrariesDialog.addEventListener(Event.CANCEL, onManageLibariesCancel)
+		}
+		
+		[Mediate(event="RegisterLicenseEvent.LICENSE_VALIDATED")]
+		public function onLicenseRegistered(event:RegisterLicenseEvent):void
+		{
+			libraryManager.showPremiumLibraries()
+		}
+		
+		protected function onManageLibrariesComplete(event:Event):void
+		{
+			for each(var library:ILibrary in libraryManager.librariesAC)
+			{
+				Logger.debug("library: " + library.displayName + " showInPanel: " + library.showInPanel, this)
+			}
+			
+			libraryManager.dispatchEvent(new Event(LibraryManager.PANEL_UPDATED, true))				
+			clearDialog()
+		}
+		
+		protected function onManageLibariesCancel(event:Event):void
+		{
+			clearDialog()
+		}
+		
+		protected function clearDialog():void
+		{
+			dialogsController.removeDialog(_manageLibrariesDialog)
+			_manageLibrariesDialog.removeEventListener("OK", onManageLibrariesComplete)
+			_manageLibrariesDialog.removeEventListener(Event.CANCEL, onManageLibariesCancel)
+			_manageLibrariesDialog = null
+		}
+		
+		
+		[Mediate(event="DeleteLibraryEvent.DELETE_LIBRARY")]
+		public function onDeleteLibrary(event:DeleteLibraryEvent):void
+		{
+			var library:ILibrary = event.library
+			try
+			{
+				deleteLibrary(library)
+			}
+			catch(err:Error)
+			{
+				Logger.error("Error deleting library : " + library.libraryName + " error: " + err, this)
+				Alert.show("Couldn't delete library. Please see log for details.", "Error")
+			}
+		}
+		
+		protected function deleteLibrary(library:ILibrary):void
+		{
+			if (library.isPlugin==false)
+			{
+				Logger.warn("selected library to delete wasn't a plugin",this)
+				return
+			}
+			var delegate:LibraryPluginsDelegate = new LibraryPluginsDelegate()
+			libraryManager.removeLibrary(library.libraryName)
+			try
+			{
+				Logger.debug("deleting library folder: " + library.fileName, this)
+				delegate.deleteLibraryFolder(library.fileName)	
+			}
+			catch(err:Error)
+			{
+				Logger.error("Couldn't delete library from application storage. Error: " + err, this)
+				Alert.show("Couldn't delete library from application storage.", this)
+			}
+			
+		}
+		
+		
+		[Mediate(event="LoadLibraryPluginEvent.LOAD_LIBRARY_PLUGIN_FROM_FILE")]
+		public function onLoadLibraryPlugin(event:LoadLibraryPluginEvent):void
+		{
+			//make sure user is licensed
+			if (registrationManager.isLicensed==false)
+			{
+				Alert.show("Sorry. This feature is only available to Full Version users. Visit simpledigrams.com and upgrade to Full Version today!", "Full Version Only")
+				return
+			}
+			
+			var libraryFile:File = new File()
+			var fileFilter:FileFilter = new FileFilter("SimpleDiagrams library plugin file","*.zip")
+			var filtersArr:Array = [fileFilter]
+			libraryFile.addEventListener(Event.SELECT, loadSelectedLibraryPluginFile)
+			libraryFile.browseForOpen("Select the SimpleDiagrams library plugin file (.zip) to load", filtersArr)			
+		}
+		
+		protected function loadSelectedLibraryPluginFile(event:Event):void
+		{
+			_selectedLibraryPluginToLoad = File(event.currentTarget)
+			Logger.debug("Load library plugin file: " + _selectedLibraryPluginToLoad.nativePath,this)
+			
+			//check to see whether this library is already loaded...if so get confirmation from user
+			var fileName:String = _selectedLibraryPluginToLoad.name
+			if (fileName.indexOf(".zip")!=-1)
+			{
+				fileName = fileName.slice(0,fileName.indexOf(".zip"))
+			}
+			
+			Logger.debug("looking to see if " + fileName + " is already loaded.", this)
+			if (libraryManager.libraryFileExists(fileName))
+			{
+				Alert.show("You already have this plugin installed. Do you want to overwrite it?", "Plugin already installed", Alert.OK | Alert.CANCEL, FlexGlobals.topLevelApplication as Sprite, onLoadLibraryPluginConfirm)
+			}
+			else
+			{				
+				loadLibraryPlugin()
+			}
+		}
+		
+		protected function onLoadLibraryPluginConfirm(event:CloseEvent):void
+		{
+			if (event.detail == Alert.CANCEL)
+			{
+				_selectedLibraryPluginToLoad = null
+				return
+			}
+			
+			//delete the existing library
+			
+			var libraryFileName:String = _selectedLibraryPluginToLoad.name
+			if (libraryFileName.indexOf(".zip")!=-1)
+			{
+				libraryFileName = libraryFileName.slice(0, libraryFileName.indexOf(".zip"))
+			}
+			
+			var existingLibrary:ILibrary = libraryManager.getLibraryByFileName(libraryFileName)
+			try
+			{	
+				deleteLibrary(existingLibrary)
+			}
+			catch(err:Error)
+			{
+				Logger.error("Error deleting library : " + existingLibrary.libraryName + " error: " + err, this)
+				Alert.show("Couldn't overwrite the existing library plugin. Please delete it manually first before loading the new library plugin.", "Error")
+				return
+			}
+						
+			loadLibraryPlugin()
+		}
+		
+		protected function loadLibraryPlugin():void
+		{
+			
+			
+			if (_loadingLibraryProgressDialog)
+			{
+				dialogsController.removeDialog(_loadingLibraryProgressDialog)
+			}
+			_loadingLibraryProgressDialog = dialogsController.showLoadingLibraryPluginProgressDialog()
+								
+			var delegate:LibraryPluginsDelegate = new LibraryPluginsDelegate()
+			delegate.addEventListener(LibraryPluginsDelegate.LOADING_FINISHED, onLoadSelectedLibraryPluginComplete)
+			delegate.addEventListener(LibraryPluginsDelegate.LOADING_FAILED, onLoadSelectedLibraryPluginFailed)
+			try
+			{
+				delegate.loadOneLibrary(_selectedLibraryPluginToLoad, libraryManager)
+			}
+			catch(error:Error)
+			{
+				Alert.show("There was a problem loading the selected library plugin. Please make sure that this plugin file was downloaded correctly from SimpleDiagrams.","Library Load Error")
+				delegate.deleteLibraryFolder(_selectedLibraryPluginToLoad.name)
+				libraryManager.removeLibrary(_selectedLibraryPluginToLoad.name)
+				removeLoadSelectedLibraryListeners(delegate)
+			}
+		}
+
+		
+		protected function onLoadSelectedLibraryPluginComplete(event:Event):void
+		{
+			
+			_selectedLibraryPluginToLoad = null
+			if (_loadingLibraryProgressDialog)
+			{
+				dialogsController.removeDialog(_loadingLibraryProgressDialog)
+			}
+			_loadingLibraryProgressDialog = null
+			Alert.show("SimpleDiagrams library plugin loaded. The library should now appear in your libraries panel.","Load complete")
+			var loader:LibraryPluginsDelegate = event.target as LibraryPluginsDelegate
+			libraryManager.updatePanel()
+			removeLoadSelectedLibraryListeners(loader)
+		}
+		
+		protected function onLoadSelectedLibraryPluginFailed(event:Event):void
+		{
+			if (_loadingLibraryProgressDialog)
+			{
+				dialogsController.removeDialog(_loadingLibraryProgressDialog)
+			}
+			_loadingLibraryProgressDialog = null
+			Alert.show("SimpleDiagrams could not load the selected library plugin. Please make sure the file is a valid SimpleDiagrams library plugin .zip file", "Load Error")
+			var loader:LibraryPluginsDelegate = event.target as LibraryPluginsDelegate
+			removeLoadSelectedLibraryListeners(loader)
+			
+		}
+		
+		protected function removeLoadSelectedLibraryListeners(loader:LibraryPluginsDelegate):void
+		{			
+			loader.removeEventListener(LibraryPluginsDelegate.LOADING_FINISHED, onLoadSelectedLibraryPluginComplete)
+			loader.removeEventListener(LibraryPluginsDelegate.LOADING_FAILED, onLoadSelectedLibraryPluginFailed)
+		}
+		
+		
+		
+		[Mediate(event="ClearRecentListEvent.CLEAR_RECENT_LIST")]
+		public function onClearRecentList(event:ClearRecentListEvent):void
+		{
+			libraryManager.clearRecentDiagrams()
+		}
+		
+		
+	}
+}

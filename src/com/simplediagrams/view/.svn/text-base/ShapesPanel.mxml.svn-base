@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:view="com.simplediagrams.view.*" >
+ 
+ 	<fx:Script>
+ 		<![CDATA[
+			import com.simplediagrams.events.LibraryEvent;
+ 			
+			protected function onManageLibraries():void
+			{
+				var evt:LibraryEvent = new LibraryEvent(LibraryEvent.MANAGE_LIBRARIES, true)
+				dispatchEvent(evt)
+			}
+			
+ 		]]>
+ 	</fx:Script>
+ 
+	<s:layout>
+		<s:VerticalLayout  gap="0" />
+	</s:layout>
+	
+
+	<view:DefaultObjectsPanel id="defaultToolsPanel" height="100" width="100%" />
+	
+	<s:VGroup height="100%" width="100%" gap="0">
+		
+		
+		<!-- library tab-->
+		<s:Group height="22" width="100%">
+				
+			<s:layout>
+				<s:BasicLayout/>
+			</s:layout>
+						
+			<s:Rect  width="100%" height="100%">
+				<s:fill>
+					<s:BitmapFill source="@Embed('assets/img/backgrounds/default_objects_bg.png')" fillMode="repeat"/>
+				</s:fill>					
+			</s:Rect>			
+			
+			
+			<s:Group>
+								
+				<mx:Image source="@Embed('assets/img/library_tab_bg.png')" x="5"/>
+				
+				<s:HGroup gap="0">
+					<s:Label text="LIBRARIES " color="#cad1e0" paddingTop="7" paddingLeft="15" paddingRight="10" fontSize="10"/>
+					<mx:Image source="@Embed('assets/img/library_tab_divider.png')"/>
+					<s:Button id="btnManageLibraries" 
+							  skinClass="com.simplediagrams.view.skins.ManageLibrariesButtonSkin"
+							  width="22"
+							  height="22"
+							  click="onManageLibraries()"
+							  toolTip="Show/Hide Libraries"
+							  />
+				</s:HGroup>				
+			</s:Group>
+			
+			
+		</s:Group>
+		
+		<!-- library accordian -->
+		<s:Group width="100%" height="100%">			
+			<s:Rect  width="100%" height="100%">
+				<s:fill>
+					<s:BitmapFill source="@Embed('assets/img/backgrounds/shape_library_bg.png')" fillMode="repeat"/>
+				</s:fill>					
+			</s:Rect>
+			<view:LibraryPanel id="libraryPanel" height="100%" width="100%" contentBackgroundAlpha="0" backgroundAlpha="0" />
+		</s:Group>
+	</s:VGroup>
+		
+							
+</s:Group>

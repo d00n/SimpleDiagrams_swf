@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Accordion xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	creationComplete="onCC()"
+	addedToStage="onATS()"
+	horizontalScrollPolicy="off" 
+	paddingLeft="0" 
+	paddingRight="0"
+	creationPolicy="all"
+    borderStyle="none"
+    borderColor="#000000"
+	headerStyleName="customAccordionHeadStyles"
+	>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.model.ApplicationModel;
+			import com.simplediagrams.model.DiagramStyleManager;
+			import com.simplediagrams.model.LibraryManager;
+			import com.simplediagrams.model.SDObjectModel;
+			import com.simplediagrams.model.RegistrationManager;
+			import com.simplediagrams.model.libraries.ILibrary;
+			import com.simplediagrams.util.Logger;
+			import com.simplediagrams.view.itemRenderers.LibraryItemRenderer;
+			
+			import flash.events.Event;
+			import flash.events.MouseEvent;
+			import flash.filters.ColorMatrixFilter;
+			
+			import mx.collections.ArrayCollection;
+			import mx.containers.Canvas;
+			import mx.controls.Image;
+			import mx.core.DragSource;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			import spark.components.List;
+			import spark.layouts.TileLayout;
+			
+			[Autowire(bean='applicationModel')]
+			[Bindable]
+			public var applicationModel:ApplicationModel;
+			
+			[Autowire(bean='registrationManager')]
+			[Bindable]
+			public var registrationManager:RegistrationManager;
+						
+			[Autowire(bean='libraryManager')]
+			[Bindable]
+			public var libraryManager:LibraryManager;
+			
+			[Autowire(bean='diagramStyleManager')]
+			[Bindable]
+			public var diagramStyleManager:DiagramStyleManager;
+			
+			[Bindable]
+			private var _libraryItemsAC:ArrayCollection 
+						
+			protected function onCC():void
+			{
+				
+				//create a library panel for each library
+				
+				createLibraryPanel()
+				libraryManager.addEventListener(LibraryManager.PANEL_UPDATED, onUpdatePanel)
+				
+			}
+			
+			protected function onUpdatePanel(event:Event):void
+			{
+				createLibraryPanel()
+			}
+			
+			protected function createLibraryPanel():void
+			{
+				this.removeAllChildren()
+				
+				for each (var library:ILibrary in libraryManager.librariesAC)
+				{
+					if (!library.showInPanel) continue
+					if (library.isPremium && registrationManager.isLicensed==false) continue						
+						
+					Logger.debug("adding library: "+ library.displayName, this)
+					var canvas:Canvas = new Canvas()
+					canvas.percentWidth = 100
+					canvas.percentHeight = 100
+					canvas.label = library.displayName
+					canvas.setStyle("backgroundAlpha", 0)
+										
+					var list:List = new List()
+					
+					list.styleName = "libraryTileList"
+					list.dataProvider = library.sdLibraryObjectsAC
+					list.itemRenderer = new ClassFactory(LibraryItemRenderer)
+					list.dragEnabled = true
+					list.dropEnabled = false
+					list.dragMoveEnabled = false
+					list.addEventListener(DragEvent.DRAG_START, onDragStart)
+					list.percentHeight = 100
+					list.percentWidth = 100
+					list.setStyle("rollOverColor","0x000000")
+					list.setStyle("selectionColor","0x000000")
+					
+					var tl:TileLayout = new TileLayout()
+					tl.horizontalGap = 7
+					tl.verticalGap = 7
+					tl.columnWidth = 50
+					tl.rowHeight = 50
+					
+					list.layout = tl
+					
+					canvas.addChild(list)
+					this.addChild(canvas)
+					
+				}
+				
+				this.invalidateDisplayList()
+			}
+			
+			protected function onATS():void
+			{
+				Logger.debug("onATS()", this)
+			}
+			
+			
+			private function onDragStart(event:MouseEvent):void
+			{
+												
+                var dragInitiator:List = event.currentTarget as List;
+                var dragSource:DragSource = new DragSource();
+               				
+                dragSource.addData(dragInitiator.selectedItem, 'libraryItem');
+                               
+				var dragProxy:Image = new Image()
+				var sdObjectModel:SDObjectModel = SDObjectModel(event.currentTarget.selectedItem)
+				var iconClass:Class = sdObjectModel.iconClass
+				
+				//color drag image to fit style setting
+				var defaultColorMatrix:Array = diagramStyleManager.defaultColorMatrix
+				
+				if (sdObjectModel.colorizable)
+				{
+					var filter:ColorMatrixFilter = new ColorMatrixFilter(defaultColorMatrix)
+					dragProxy.filters = [filter]				
+				}
+				
+				dragProxy.source = new iconClass()				
+					
+				var xPos:Number = event.target.parent.mouseX
+				var yPos:Number = event.target.parent.mouseY
+			
+				try
+				{	
+                	DragManager.doDrag(dragInitiator, dragSource, event, dragProxy, xPos, yPos)
+				}
+				catch(err:Error)
+				{
+					//TODO : figure out why sometimes I get a "TypeError: Error #2007: Parameter data must be non-null." when dragging here 
+					Logger.error("drag error: " + err, this)
+				}
+			}
+			
+			private function noSelectionEasingFunction(t:Number,b:Number,c:Number,d:Number):Number
+			{
+			     return 0;
+			}
+
+			
+		]]>
+	</fx:Script>
+	
+
+	
+
+</mx:Accordion>

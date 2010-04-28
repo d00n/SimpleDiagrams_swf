@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://blog.flexexamples.com/2009/06/09/changing-the-background-alpha-on-the-halo-textarea-control-in-flex-4/ -->
+<local:SparkSkinForHalo name="CustomHaloTextAreaBorderSkin"
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:local="mx.skins.spark.*"
+        implements="mx.core.IBorder">
+
+    <fx:Script>
+        <![CDATA[
+            import mx.core.EdgeMetrics;
+            import mx.core.IUIComponent;
+
+            /* Define the skin elements that should not be colorized. */
+            static private const exclusions:Array = ["background"];
+            override public function get colorizeExclusions():Array {return exclusions;}
+
+            /* Define the content fill items that should be colored by the "contentBackgroundColor" style. */
+            static private const contentFill:Array = ["bgFill"];
+            override public function get contentItems():Array {return contentFill};
+
+            /* Define the border items.*/
+            static private const borderItem:Array = ["borderEntry1", "borderEntry2"];
+            override protected function get borderItems():Array {return borderItem;}
+
+            static private const metrics:EdgeMetrics = new EdgeMetrics(2, 2, 2, 2);
+
+            public function get borderMetrics():EdgeMetrics {
+                return metrics;
+            }
+
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+
+                if (parent && (parent is IUIComponent) && !IUIComponent(parent).enabled) {
+                    alpha = 0.5;
+                } else {
+                    alpha = 1;
+                }
+            }
+        ]]>
+    </fx:Script>
+
+    <!-- border -->
+    <s:Rect left="0" right="0" top="0" bottom="0">
+        <s:stroke>
+            <s:LinearGradientStroke rotation="90" weight="1">
+                <s:GradientEntry id="borderEntry1" alpha="0" />
+                <s:GradientEntry id="borderEntry2" alpha="0" />
+            </s:LinearGradientStroke>
+        </s:stroke>
+    </s:Rect>
+
+    <!-- fill -->
+    <s:Rect id="background" left="1" right="1" top="1" bottom="1">
+        <s:fill>
+            <s:SolidColor id="bgFill" color="0xFFFFFF" alpha="0.0" />
+        </s:fill>
+    </s:Rect>
+
+
+</local:SparkSkinForHalo>

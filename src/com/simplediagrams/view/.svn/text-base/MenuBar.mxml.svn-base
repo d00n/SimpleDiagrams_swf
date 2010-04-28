@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:util="com.simplediagrams.util.*"
+	width="100%"
+    initialize="onInit()"
+    creationComplete="onCC()">
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.*;
+			import com.simplediagrams.model.ApplicationModel;
+			import com.simplediagrams.model.DiagramStyleManager;
+			import com.simplediagrams.util.DebugPanel
+			
+			
+			import mx.events.MenuEvent;
+			import mx.managers.PopUpManager;
+			
+			import org.swizframework.Swiz;
+    
+			[Bindable]
+			[Autowire(bean="applicationModel")]
+			public var applicationModel:ApplicationModel;
+									
+			private var _pnlDebug:DebugPanel
+									
+			private function onInit():void
+			{
+            } 
+			
+			private function onCC():void
+			{				
+								
+			}		
+			
+			private function onMenuOver():void
+			{
+				dispatchEvent(new ToolPanelEvent(ToolPanelEvent.SUSPEND_CURRENT_TOOL, true))
+			}
+							
+			private function menuHandler(event:MenuEvent):void
+			{
+								
+				var cmd:String = event.item.data
+				
+				switch(cmd)
+				{
+				
+					/* SimpleDiagrams */
+					case "preferences":						
+						var prefEvent:PreferencesEvent = new PreferencesEvent(PreferencesEvent.SHOW_PREFERENCES_WINDOW,true)
+						dispatchEvent(prefEvent)
+						break
+					
+					case "about":
+						var aboutEvent:AboutEvent = new AboutEvent(AboutEvent.SHOW_ABOUT_WINDOW,true)
+						dispatchEvent(aboutEvent)
+						break
+					
+					/* File */
+										
+					case "new_diagram":		
+						Swiz.dispatchEvent(new CreateNewDiagramEvent(CreateNewDiagramEvent.CREATE_NEW_DIAGRAM, true))
+						break
+						
+					case "open_diagram":
+						Swiz.dispatchEvent(new OpenDiagramEvent(OpenDiagramEvent.OPEN_DIAGRAM_EVENT, true))
+						break
+						
+					case "save_diagram":
+						Swiz.dispatchEvent(new SaveDiagramEvent(SaveDiagramEvent.SAVE_DIAGRAM, true))
+						break	
+						
+					case "save_diagram_as":
+						Swiz.dispatchEvent(new SaveDiagramEvent(SaveDiagramEvent.SAVE_DIAGRAM_AS, true))
+						break
+						
+					case "close_diagram":
+						Swiz.dispatchEvent(new CloseDiagramEvent(CloseDiagramEvent.CLOSE_DIAGRAM, true))
+						break
+									
+					
+					
+					/* Diagram */
+
+					case "export_diagram_to_file":
+						var exportEvent:ExportDiagramUserRequestEvent = new ExportDiagramUserRequestEvent(ExportDiagramUserRequestEvent.EXPORT_DIAGRAM, true)						
+						exportEvent.destination = ExportDiagramUserRequestEvent.DESTINATION_FILE
+						Swiz.dispatchEvent(exportEvent)
+						break
+										
+					case "export_diagram_to_basecamp":
+						exportEvent = new ExportDiagramUserRequestEvent(ExportDiagramUserRequestEvent.EXPORT_DIAGRAM, true)							
+						exportEvent.destination = ExportDiagramUserRequestEvent.DESTINATION_BASECAMP
+						Swiz.dispatchEvent(exportEvent)
+						break
+					
+					case "export_diagram_to_flickr":
+						exportEvent = new ExportDiagramUserRequestEvent(ExportDiagramUserRequestEvent.EXPORT_DIAGRAM, true)							
+						exportEvent.destination = ExportDiagramUserRequestEvent.DESTINATION_FLICKR
+						Swiz.dispatchEvent(exportEvent)
+						break
+										
+					case "edit_properties":	
+						Swiz.dispatchEvent(new PropertiesEvent(PropertiesEvent.EDIT_PROPERTIES, true))
+						break
+							
+					case "show_options":						
+						break
+												
+					case "quit_application":	
+						Swiz.dispatchEvent(new ApplicationEvent(ApplicationEvent.QUIT, true))
+						break
+					
+					/* EDIT */
+					case "undo":
+						var undoEvent:UndoRedoEvent = new UndoRedoEvent(UndoRedoEvent.UNDO, true)		
+						Swiz.dispatchEvent(undoEvent)
+						break
+					
+					case "redo":
+						var redoEvent:UndoRedoEvent = new UndoRedoEvent(UndoRedoEvent.REDO, true)		
+						Swiz.dispatchEvent(redoEvent)
+						break
+					
+					case "cut":
+						var cutEvent:CutEvent = new CutEvent(CutEvent.CUT, true)
+						Swiz.dispatchEvent(cutEvent)
+						break
+					
+					case "copy":
+						var copyEvent:CopyEvent = new CopyEvent(CopyEvent.COPY, true)
+						Swiz.dispatchEvent(copyEvent)
+						break
+										
+					case "paste":
+						var pasteEvent:PasteEvent = new PasteEvent(PasteEvent.PASTE, true)
+						Swiz.dispatchEvent(pasteEvent)
+						break
+					
+					case "delete":
+						var deleteEvent:DeleteSDObjectModelEvent = new DeleteSDObjectModelEvent(DeleteSDObjectModelEvent.DELETE_SELECTED_FROM_MODEL, true)
+						Swiz.dispatchEvent(deleteEvent)
+						break
+					
+					case "alignLeft":
+						var alignEvent:AlignEvent = new AlignEvent(AlignEvent.ALIGN_LEFT, true)
+						Swiz.dispatchEvent(alignEvent)
+						break
+					
+					case "alignRight":
+						alignEvent = new AlignEvent(AlignEvent.ALIGN_RIGHT, true)
+						Swiz.dispatchEvent(alignEvent)						
+						break
+					
+					case "alignCenter":
+						alignEvent = new AlignEvent(AlignEvent.ALIGN_CENTER, true)
+						Swiz.dispatchEvent(alignEvent)						
+						break
+					
+					case "alignTop":
+						alignEvent = new AlignEvent(AlignEvent.ALIGN_TOP, true)
+						Swiz.dispatchEvent(alignEvent)						
+						break
+					
+					case "alignBottom":
+						alignEvent = new AlignEvent(AlignEvent.ALIGN_BOTTOM, true)
+						Swiz.dispatchEvent(alignEvent)						
+						break
+					
+					
+					case "alignMiddle":
+						alignEvent = new AlignEvent(AlignEvent.ALIGN_MIDDLE, true)
+						Swiz.dispatchEvent(alignEvent)						
+						break
+					
+					
+					/* STYLE */
+					case "chalkboard_style":	
+						var styleEvent:StyleEvent = new StyleEvent(StyleEvent.CHANGE_STYLE, true)
+						styleEvent.styleName = DiagramStyleManager.CHALKBOARD_STYLE
+						Swiz.dispatchEvent(styleEvent)
+						break
+						
+					case "whiteboard_style":	
+						styleEvent = new StyleEvent(StyleEvent.CHANGE_STYLE, true)
+						styleEvent.styleName = DiagramStyleManager.WHITEBOARD_STYLE
+						Swiz.dispatchEvent(styleEvent)
+						break
+						
+					case "napkin_style":	
+						styleEvent = new StyleEvent(StyleEvent.CHANGE_STYLE, true)
+						styleEvent.styleName = DiagramStyleManager.NAPKIN_STYLE
+						Swiz.dispatchEvent(styleEvent)
+						break
+						
+					case "basic_style":	
+						styleEvent = new StyleEvent(StyleEvent.CHANGE_STYLE, true)
+						styleEvent.styleName = DiagramStyleManager.BASIC_STYLE
+						Swiz.dispatchEvent(styleEvent)
+						break
+					
+					
+					/* LIBRARIES */
+					
+					case "manage_local_libraries":
+						var libraryEvent:LibraryEvent = new LibraryEvent(LibraryEvent.MANAGE_LIBRARIES, true)
+						Swiz.dispatchEvent(libraryEvent)
+						break
+					
+					case "download_libraries":
+						var downloadLibraryEvent:DownloadLibraryEvent = new DownloadLibraryEvent(DownloadLibraryEvent.DOWNLOAD_AVAILABLE_LIBARIES_LIST, true)
+						Swiz.dispatchEvent(downloadLibraryEvent)
+						break
+					
+					case "load_library_plugin_from_file":
+						var loadFromFileEvent:LoadLibraryPluginEvent = new LoadLibraryPluginEvent(LoadLibraryPluginEvent.LOAD_LIBRARY_PLUGIN_FROM_FILE, true)
+						Swiz.dispatchEvent(loadFromFileEvent)
+						break
+					
+					/* VIEW MENU */
+					
+					case "zoom_out":
+						var zoomOutEvent:ZoomEvent = new ZoomEvent(ZoomEvent.ZOOM_OUT, true)
+						Swiz.dispatchEvent(zoomOutEvent)
+						break
+						
+					case "zoom_in":
+						var zoomInEvent:ZoomEvent = new ZoomEvent(ZoomEvent.ZOOM_IN, true)
+						Swiz.dispatchEvent(zoomInEvent)
+						break
+						
+					
+					/* Debugger */
+					
+					case "view_debugger":
+						if (_pnlDebug)
+						{
+							PopUpManager.removePopUp(_pnlDebug)	
+						}
+						
+		 				_pnlDebug = new DebugPanel()
+						PopUpManager.addPopUp(_pnlDebug, this.parent)
+						_pnlDebug.width=700
+						_pnlDebug.height=600
+						PopUpManager.centerPopUp(_pnlDebug)		
+					
+						break
+					
+					/* HELP MENU */
+					
+					case "view_help":
+						var req:URLRequest = new URLRequest("http://www.simplediagrams.com/support.html")
+						navigateToURL(req, "_blank")
+						
+						break
+								
+
+										
+				
+				}
+				
+				
+			}
+					
+			
+		]]>
+	</fx:Script>
+	
+	
+	<mx:MenuBar id="appMenu"
+			    showRoot="false"
+			    mouseOver="onMenuOver()"
+			    itemClick="menuHandler(event)"
+			    width="100%" height="100%"
+			    enabled="{applicationModel.menuEnabled}"
+			     >
+			     
+		<util:MenuItem id="rootMenu">
+		
+			<util:MenuItem label="SimpleDiagrams" id="simpleDiagrams">
+				
+				<util:MenuItem label="About SimpleDiagrams" id="about" data="about"/>
+				<util:MenuItem label="Preferences..." id="preferences" data="preferences"/>
+				<util:MenuItem type="separator"/>
+				<util:MenuItem label="Quit" id="quit_application" data="quit_application" />
+			</util:MenuItem>
+			
+			<util:MenuItem label="File" id="file">
+				<util:MenuItem label="New" id="new_diagram" data="new_diagram"/>
+ 				<util:MenuItem label="Open File..." id="open_diagram" data="open_diagram"/>
+				<util:MenuItem type="separator"/>
+				<util:MenuItem label="Save" id="save_diagram"  data="save_diagram" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>
+				<util:MenuItem label="Save As..." id="save_diagram_as"  data="save_diagram_as" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>
+				<util:MenuItem type="separator"/>
+				<util:MenuItem label="Close" id="close_diagram" data="close_diagram" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>
+			</util:MenuItem>
+			
+			<util:MenuItem label="Diagram" id="diagram">
+				<util:MenuItem label="Properties" id="edit_properties"  data="edit_properties" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				<util:MenuItem type="separator"/>
+				<util:MenuItem label="Export to PNG" id="export_diagram_to_file"  data="export_diagram_to_file" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
+				<util:MenuItem label="Export to Basecamp" id="export_diagram_to_basecamp"  data="export_diagram_to_basecamp" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
+				<!--
+				<util:MenuItem label="Export to Flickr" id="export_diagram_to_flickr"  data="export_diagram_to_flickr" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
+				-->
+			</util:MenuItem>
+			
+			<util:MenuItem label="Edit" id="edit">
+				
+				<util:MenuItem label="Undo" id="undo"  data="undo" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				<util:MenuItem label="Redo" id="redo"  data="redo" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				
+				<util:MenuItem type="separator"/>
+				
+				<util:MenuItem label="Cut" id="cut" data="cut" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				<util:MenuItem label="Copy" id="copy" data="copy" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				<util:MenuItem label="Paste" id="paste" data="paste" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />
+				
+				
+				<util:MenuItem type="separator"/>
+				
+				<util:MenuItem label="Align"  >					
+					<util:MenuItem label="Top" id="alignTop" data="alignTop" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+					<util:MenuItem label="Bottom" id="alignBottom" data="alignBottom" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+					<util:MenuItem label="Middle" id="alignMiddle" data="alignMiddle" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+					<util:MenuItem label="Left" id="alignLeft" data="alignLeft" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+					<util:MenuItem label="Right" id="alignRight" data="alignRight" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+					<util:MenuItem label="Center" id="alignCenter" data="alignCenter" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />	
+				</util:MenuItem>
+				
+			</util:MenuItem>
+			
+			<util:MenuItem label="Style" id="style">				
+				<util:MenuItem label="Chalkboard" id="chalkboard_style"  data="chalkboard_style" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
+				<util:MenuItem label="Whiteboard" id="whiteboard_style"  data="whiteboard_style" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
+				<!--<util:MenuItem label="Napkin" id="napkin_style"  data="napkin_style" />-->
+				<util:MenuItem label="Basic" id="basic_style"  data="basic_style" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />			
+			</util:MenuItem>
+							
+			<util:MenuItem label="Libraries" id="libraries">				
+				<util:MenuItem label="Manage libraries" id="manage_local_libraries"  data="manage_local_libraries" />	
+				<!--
+				<util:MenuItem label="Download new libraries" id="download_libraries"  data="download_libraries" />					
+				-->
+				<util:MenuItem label="Load library plugin from file" id="load_library_plugin_from_file"  data="load_library_plugin_from_file" />		
+					
+			</util:MenuItem>
+			
+			<util:MenuItem label="View" id="view">
+				<util:MenuItem label="Zoom out" id="zoom_out" data="zoom_out" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>				
+				<util:MenuItem label="Zoom in" id="zoom_in" data="zoom_in" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>
+			</util:MenuItem>   
+			
+			<!--
+			<util:MenuItem label="Debug" id="debug">
+				<util:MenuItem label="View debugger" id="view_debugger" data="view_debugger"/>
+			</util:MenuItem>   
+			-->
+			<util:MenuItem label="Help" id="help">
+				<util:MenuItem label="Get Help" id="view_help" data="view_help"/>	
+			</util:MenuItem>   
+			
+			
+		</util:MenuItem>
+		
+	</mx:MenuBar>
+	
+
+</s:Group>

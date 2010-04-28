@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs
+END
+ManageLibrariesDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/ManageLibrariesDialog.mxml
+END
+OpenDiagramDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/OpenDiagramDialog.mxml
+END
+SimpleDiagramsLoginDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/SimpleDiagramsLoginDialog.mxml
+END
+PreferencesDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/PreferencesDialog.mxml
+END
+FlickrLoginDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/FlickrLoginDialog.mxml
+END
+BasecampLoginDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/BasecampLoginDialog.mxml
+END
+DownloadLibrariesDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/DownloadLibrariesDialog.mxml
+END
+ExportDiagramToFlickrDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/ExportDiagramToFlickrDialog.mxml
+END
+LoadingLibraryPluginsDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/LoadingLibraryPluginsDialog.mxml
+END
+NotifyListDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/NotifyListDialog.mxml
+END
+ExportDiagramToBasecampDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/ExportDiagramToBasecampDialog.mxml
+END
+ExportDiagramDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/ExportDiagramDialog.mxml
+END
+LoadingLibraryPluginProgressDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/LoadingLibraryPluginProgressDialog.mxml
+END
+VerifyQuitDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/simplediagrams/!svn/ver/195/trunk/src/com/simplediagrams/view/dialogs/VerifyQuitDialog.mxml
+END
+LoadingFileDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/LoadingFileDialog.mxml
+END
+NewDiagramDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/NewDiagramDialog.mxml
+END
+SaveBeforeActionDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/SaveBeforeActionDialog.mxml
+END
+DiagramPropertiesDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/DiagramPropertiesDialog.mxml
+END
+LoadImageDialog.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/dialogs/LoadImageDialog.mxml
+END

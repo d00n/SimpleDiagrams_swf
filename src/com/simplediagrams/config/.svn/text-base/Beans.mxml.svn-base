@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<swiz:BeanLoader
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:swiz="org.swizframework.util.*"
+	xmlns:business="com.simplediagrams.business.*"
+  	xmlns:controllers="com.simplediagrams.controllers.*"
+	xmlns:model="com.simplediagrams.model.*">
+		
+ 
+	<fx:Declarations>
+	
+		
+		<controllers:UndoRedoController id="undoRedoController" /> 
+		<controllers:ObjectHandlesController id="objectHandlesController" /> 
+		<controllers:DownloadController id="downloadController" /> 
+		<controllers:DialogsController id="dialogsController" /> 
+        <controllers:ApplicationController id="applicationController"/> 
+        <controllers:LoginController id="loginController"/> 
+        <controllers:DiagramController id="diagramController"/> 
+        <controllers:ToolPanelController id="toolPanelController"/>  
+        <controllers:FileController id="fileController" /> 
+        <controllers:DiagramStyleController id="diagramStyleController" /> 
+        <controllers:ClipboardController id="clipboardController" /> 
+        <controllers:RegistrationController id="registrationController" /> 
+        <controllers:PropertiesPanelController id="propertiesPanelController" /> 
+		<controllers:LibraryController id="libraryController" /> 
+		<controllers:BasecampController id="basecampController" /> 
+		<controllers:MenuController id="menuController" /> 
+		<controllers:SymbolEditController id="symbolEditController" /> 
+		<controllers:FlickrController id="flickrController" /> 
+		
+		<model:UndoRedoManager id="undoRedoManager" />    
+		<model:DownloadManager id="downloadManager" />    
+        <model:ApplicationModel id="applicationModel" />    
+        <model:DiagramModel id="diagramModel" />                 
+        <model:LibraryManager id="libraryManager" />          
+        <model:DefaultToolsManager id="defaultToolsManager" /> 
+        <model:DiagramStyleManager id="diagramStyleManager" /> 
+        <model:SettingsModel id="settingsModel" /> 
+        <model:RegistrationManager id="registrationManager" /> 
+        <model:PropertiesPanelModel id="propertiesPanelModel" /> 
+		<model:BasecampModel id="basecampModel" /> 
+		<model:UserModel id="userModel" /> 
+		<model:SDObjectHandles id="sdObjectHandles" /> 
+		<model:FlickrModel id="flickrModel" /> 
+        
+        <business:FileManager id="fileManager" />                                    
+        <business:SettingsManager id="settingsManager" />                         
+		<business:BasecampDelegate id="basecampDelegate" />                  
+		<business:SimpleDiagramsDelegate id="simpleDiagramsDelegate" />     
+		<business:FlickrDelegate id="flickrDelegate" />
+		
+		<mx:HTTPService id="basecampService"
+					     contentType="application/xml"
+						 method="GET"
+						 useProxy="false" 
+						/>   
+		
+		<mx:HTTPService id="flickrService"
+						method="GET"
+						useProxy="false" 
+					    resultFormat="e4x"
+						/>   
+		
+		<!--
+			<business:SimpleDiagramDelegate id="simpleDiagramDelegate" />   
+		-->
+		
+
+        
+	</fx:Declarations>
+	
+</swiz:BeanLoader>

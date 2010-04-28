@@ -1,0 +1,191 @@
+package com.simplediagrams.business
+{
+	import com.adobe.crypto.MD5;
+	import com.simplediagrams.model.FlickrModel;
+	import com.simplediagrams.util.Logger;
+	
+	import flash.net.URLRequest;
+	
+	import mx.rpc.AsyncToken;
+	import mx.rpc.http.HTTPService;
+	import flash.net.navigateToURL;
+//	import flash.net.FileReference;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
+
+
+	
+	public class FlickrDelegate 
+	{
+		public static const METHOD_GET_FROB:String = "flickr.auth.getFrob";
+		public static const METHOD_GET_TOKEN:String = "flickr.auth.getToken";
+		
+		[Autowire(bean="flickrService")]
+		public var service:HTTPService 
+		
+		[Autowire(bean="flickrModel")]
+		public var flickrModel:FlickrModel;
+		
+		
+		private var _flickrAuthURL:String = "http://www.flickr.com/services/auth/"
+		private var _flickrRestURL:String = "http://api.flickr.com/services/rest/"
+		private var _flickrUploadURL:String = "http://api.flickr.com/services/upload/"
+			
+		private var _token:AsyncToken
+		
+		public function FlickrDelegate()
+		{
+			
+		}
+		
+		public function getFrob():AsyncToken
+		{
+			Logger.debug("getFrob() ", this)				
+			service.url = _flickrRestURL + getFrobRequest()
+			service.method="GET"	
+			
+			Logger.debug("sending call with request" +  getFrobRequest(), this)
+			
+			return service.send()			
+		}
+		
+		public function getToken():AsyncToken
+		{
+			Logger.debug("getToken() ", this)				
+			service.url = _flickrRestURL + getTokenRequest()
+			service.method="GET"	
+			
+			Logger.debug("sending call with request" +  getTokenRequest(), this)
+			
+			return service.send()			
+		}
+		
+		
+		public function showAuthorizePage():void
+		{
+			Logger.debug("getFrob() ", this)				
+			var url:String = _flickrAuthURL + getAuthorizeURLPageRequest()			
+			Logger.debug("sending call with request" +  getAuthorizeURLPageRequest(), this)
+			
+			var urlRequest:URLRequest = new URLRequest(url)
+			navigateToURL(urlRequest, "_blank");
+
+				
+		}
+		
+		
+		
+		public function cancelServiceCall():void
+		{
+			service.cancel()
+		}
+		
+		
+		protected function getFrobRequest():String
+		{
+			var sig:String = FlickrModel.FLICKR_API_SECRET;
+			sig += "api_key" + FlickrModel.FLICKR_API_KEY
+			sig += "method" + METHOD_GET_FROB
+			sig = MD5.hash(sig)
+				
+			var request:String = "?api_key=" + FlickrModel.FLICKR_API_KEY;
+			request += "&method=" + METHOD_GET_FROB;
+			request += "&api_sig=" + sig
+								
+			return request			
+				
+		}
+		
+		protected function getAuthorizeURLPageRequest():String
+		{
+			var sig:String = FlickrModel.FLICKR_API_SECRET;
+			sig += "api_key" + FlickrModel.FLICKR_API_KEY
+			sig += "frob" + flickrModel.frob
+			sig += "permswrite"
+			sig = MD5.hash(sig)
+			
+			var request:String = "?api_key=" + FlickrModel.FLICKR_API_KEY;
+			request += "&perms=write"
+			request += "&frob=" + flickrModel.frob
+			request += "&api_sig=" + sig
+			
+			return request			
+			
+		}
+		
+		protected function getTokenRequest():String
+		{
+			var sig:String = FlickrModel.FLICKR_API_SECRET;
+			sig += "api_key" + FlickrModel.FLICKR_API_KEY
+			sig += "frob" + flickrModel.frob
+			sig += "method" + METHOD_GET_TOKEN
+			sig = MD5.hash(sig)
+			
+			var request:String = "?api_key=" + FlickrModel.FLICKR_API_KEY;
+			request += "&frob=" + flickrModel.frob
+			request += "&method=" + METHOD_GET_TOKEN
+			request += "&api_sig=" + sig
+			
+			return request			
+			
+		}
+	
+		
+//		public function uploadImage(fileReference:FileReference) : void 
+//		{
+//					
+//			// Flash sends both the 'Filename' and the 'Upload' values
+//			// in the body of the POST request, so these are needed for the signature
+//			// as well, otherwise Flickr returns a error code 96 'invalid signature'
+//			var sig:String = FlickrModel.FLICKR_API_SECRET;
+//			sig += "Filename" + fileReference.name;
+//			sig += "UploadSubmit Query"; //                        
+//			sig += "api_key" + FlickrModel.FLICKR_API_KEY
+//			sig += "auth_token" + flickrModel.authToken    
+//			
+//			// optional values, in alphabetical order as required
+//			if ( flickrModel.contentType != FlickrModel.FLICKR_CONTENT_TYPE_DEFAULT ) sig += "content_type" + flickrModel.contentType
+//			if ( flickrModel.description != "" ) sig += "description" + flickrModel.description
+//			if ( flickrModel.hidden ) sig += "hidden" + ( flickrModel.hidden ? 1 : 0 )
+//			if ( flickrModel.isFamily ) sig += "is_family" + ( flickrModel.isFamily ? 1 : 0 )
+//			if ( flickrModel.isFriend ) sig += "is_friend" + ( flickrModel.isFriend ? 1 : 0 )
+//			if ( flickrModel.isPublic ) sig += "is_public" + ( flickrModel.isPublic ? 1 : 0 )
+//			if ( flickrModel.safetyLevel != FlickrModel.FLICKR_SAFETY_LEVEL_DEFAULT ) sig += "safety_level" + flickrModel.safetyLevel
+//			if ( flickrModel.tags != "" ) sig += "tags" + flickrModel.tags
+//			if ( flickrModel.title != "" ) sig += "title" + flickrModel.title
+//						
+//			var vars:URLVariables = new URLVariables();
+//			vars.auth_token = flickrModel.authToken
+//			vars.api_sig = MD5.hash( sig );
+//			vars.api_key = FlickrModel.FLICKR_API_KEY
+//			
+//			// optional values, in alphabetical order as required
+//			if ( flickrModel.contentType != FlickrModel.FLICKR_CONTENT_TYPE_DEFAULT ) vars.content_type = flickrModel.contentType;
+//			if ( flickrModel.description != "" ) vars.description = flickrModel.description;
+//			if ( flickrModel.hidden ) sig += vars.hidden = ( flickrModel.hidden ? 1 : 0 );
+//			if ( flickrModel.isFamily ) vars.is_family = ( flickrModel.isFamily ? 1 : 0 );
+//			if ( flickrModel.isFriend ) vars.is_friend = ( flickrModel.isFriend ? 1 : 0 );
+//			if ( flickrModel.isPublic ) vars.is_public = ( flickrModel.isPublic ? 1 : 0 );
+//			if ( flickrModel.safetyLevel != FlickrModel.FLICKR_SAFETY_LEVEL_DEFAULT ) vars.safety_level = flickrModel.safetyLevel;
+//			if ( flickrModel.tags != "" ) vars.tags = flickrModel.tags;
+//			if ( flickrModel.title != "" ) vars.title = flickrModel.title;
+//			
+//			var request:URLRequest = new URLRequest( _flickrUploadURL );
+//			request.data = vars;
+//			request.method = URLRequestMethod.POST;
+//			
+//			// Flickr expects the filename parameter to be named 'photo'
+//			fileReference.upload( request, "photo" );
+//			
+//		}
+
+
+		
+		
+		
+		
+		
+	}
+}

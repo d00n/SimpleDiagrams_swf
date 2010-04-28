@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:properties="com.simplediagrams.view.properties.*"
+	currentState="{_propertiesPanelModel.viewing}"
+	creationComplete="onCC()"
+	>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.PropertiesEvent;
+			import com.simplediagrams.events.StyleEvent;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.model.DiagramStyleManager;
+			import com.simplediagrams.model.PropertiesPanelModel;
+			import com.simplediagrams.util.Logger;
+			
+			import flash.events.Event;
+			
+			import org.swizframework.Swiz;
+			
+			[Bindable]
+			protected var _backgroundColor:Number = 0xFFFFFF;
+			
+			[Bindable]
+			protected var _diagramStyleManager:DiagramStyleManager
+			
+			[Bindable]
+			[Autowire(bean="diagramModel")]
+			public var diagramModel:DiagramModel
+			
+			[Autowire(bean="diagramStyleManager")]
+			public function set diagramStyleManager(model:DiagramStyleManager):void
+			{
+				_diagramStyleManager = model
+				_backgroundColor = _diagramStyleManager.toolBarBackgroundColor
+			}
+			
+			
+			[Bindable]			
+			protected var _propertiesPanelModel:PropertiesPanelModel
+					
+			[Autowire(bean="propertiesPanelModel")]
+			public function set propertiesPanelModel( model : PropertiesPanelModel) : void 
+			{
+				_propertiesPanelModel = model
+				_propertiesPanelModel.addEventListener(PropertiesPanelModel.SELECTION_CHANGED, onSelectionChanged)
+			} 
+			
+			protected function onCC():void
+			{	
+				Swiz.addEventListener(StyleEvent.STYLE_CHANGED, onStyleChanged)
+			}
+			
+			
+			protected function onStyleChanged(event:StyleEvent):void
+			{
+				//_backgroundColor = _diagramStyleManager.toolBarBackgroundColor				
+			}
+			
+			protected function onPropertiesEvent(event:PropertiesEvent):void
+			{
+				
+			}
+			
+			protected function onEnterLineState():void
+			{
+				propLine.resetProperties() //wait for all components to be added to diagramModel.selected
+			}
+			
+			protected function onEnterTextAreaState():void
+			{
+				propText.resetProperties()
+			}
+			
+			protected function onEnterSymbolState():void
+			{
+				propSymbol.resetProperties()
+			}
+			
+			protected function onSelectionChanged(event:Event):void
+			{
+				switch (this.currentState)
+				{
+					case "propertiesText":
+						propText.resetProperties()
+						break
+				
+					case "propertiesLine":
+						propLine.resetProperties()
+						break
+					
+					case "propertiesSymbol":
+						propSymbol.resetProperties()
+						break
+					
+					case "none":
+						
+						break
+					
+					default:
+						Logger.warn("Unrecognized state:" + this.currentState,this)
+				
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="none" />
+		<s:State name="propertiesText" enterState="onEnterTextAreaState()" />
+		<s:State name="propertiesLine" enterState="onEnterLineState()"/>
+		<s:State name="propertiesSymbol" enterState="onEnterSymbolState()"/>
+	</s:states>
+	
+	<s:Rect left="20" right="30" top="-4" bottom="0" excludeFrom="none" radiusX="4" radiusY="4" >
+		<s:fill>
+			<s:SolidColor id="backgroundColor" color="{_backgroundColor}" alpha=".3"/>
+		</s:fill>
+	</s:Rect>
+	
+	<properties:PropertiesPanelText id="propText" 
+									width="100%" 
+									height="100%" 
+									includeIn="propertiesText" 
+									itemCreationPolicy="immediate"									
+									left="20"
+									/>
+	
+	<properties:PropertiesPanelSymbol id="propSymbol" 
+									  width="100%" 
+									  height="100%" 
+									  includeIn="propertiesSymbol" 
+									  itemCreationPolicy="immediate"
+									  left="20"
+									  />
+	
+	<properties:PropertiesPanelLine id="propLine" 
+									width="100%" 
+									height="100%" 
+									includeIn="propertiesLine" 
+									itemCreationPolicy="immediate"
+									left="20"
+									/>
+	
+	
+</s:Group>

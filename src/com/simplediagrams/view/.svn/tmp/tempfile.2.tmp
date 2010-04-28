@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:components="com.simplediagrams.view.SDComponents.*" 
+	xmlns:view="com.simplediagrams.view.*" 
+	xmlns:properties="com.simplediagrams.view.properties.*"
+	xmlns:myComps="*" 
+    nativeDragEnter="onNativeDragEnter(event)"
+    nativeDragDrop="onNativeDragDrop(event)"
+    dragEnter="onDragEnter(event)"
+    dragDrop="onDragDrop(event)"
+    mouseChildren="true"
+    keyDown="onKeyDown(event)"
+    creationComplete="onCC()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.roguedevelopment.objecthandles.constraints.*;
+			import com.simplediagrams.controllers.RemoteSharedObjectController;
+			import com.simplediagrams.events.*;
+			import com.simplediagrams.model.DefaultToolsManager;
+			import com.simplediagrams.model.DiagramModel;
+			import com.simplediagrams.model.DiagramStyleManager;
+			import com.simplediagrams.model.SDSymbolModel;
+			import com.simplediagrams.util.Logger;
+			import com.simplediagrams.view.SDComponents.*;
+			
+			import flash.events.KeyboardEvent;
+			
+			import mx.binding.utils.ChangeWatcher;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			import mx.events.DragEvent;
+			import mx.events.DynamicEvent;
+			import mx.managers.DragManager;
+			
+			import org.swizframework.Swiz;
+						
+			//Autowire isn't working here, even though I'm using the "immediate" property at the top screen
+			//[Bindable]
+			[Autowire(bean="diagramModel")]
+			[Bindable]
+			public var diagramModel:DiagramModel
+			
+			[Autowire(bean="diagramStyleManager")]
+			[Bindable]
+			public var diagramStyleManager:DiagramStyleManager
+			
+			[Autowire(bean="remoteSharedObjectController")]
+			public var remoteSharedObjectController:RemoteSharedObjectController
+			
+			protected var _dragProxy:DragCircle 
+			
+			protected var _marqueeX:Number
+			protected var _marqueeY:Number
+			protected var _marqueeDrawn:Boolean = false
+			protected var _clickedBackground:Boolean = false //  a flag that helps us decide if a user really wants to clear the selection (by mouse down and mouse up on background)
+			
+			protected function onCC():void
+			{
+				diagramModel.addEventListener(ClearDiagramEvent.CLEAR_DIAGRAM, onClearDiagram)
+				
+				initDrawingBoard()
+            	       				
+            	diagramModel = Swiz.getBean("diagramModel") as DiagramModel
+				diagramModel.setContainer(sdObjectsHolder)
+				diagramModel.setHandlesContainer(sdObjectsHandlesHolder)
+						
+            	diagramModel.addEventListener(DiagramModel.SD_OBJECT_ADDED, onSDObjectAddedToDiagramModel)
+            	diagramModel.addEventListener(DiagramModel.TOOL_CHANGED, onToolChange)    
+            	
+				Swiz.addEventListener(DeleteSDComponentEvent.DELETE_FROM_DIAGRAM, onDeleteSDComponentFromDiagram)
+            	Swiz.addEventListener(PropertiesEvent.PROPERTIES_EDITED, onDiagramPropertiesChanged)        	
+				Swiz.addEventListener(LoadDiagramEvent.DIAGRAM_LOADED, onDiagramLoaded)     
+				Swiz.addEventListener(ColorEvent.CHANGE_COLOR, onChangeColor)
+				addEventListener(EditSymbolTextEvent.EDIT_SYMBOL_TEXT, onEditSymbolText)
+            	
+            	diagramModel.buildDiagram()
+					
+            	drawingSurface.pencilColor = drawingSurface.lineColor = diagramModel.getColor()
+            	
+            	setListeners()
+            	
+			}
+			
+			public function initDrawingBoard():void
+			{
+				//clean up drawing board	
+				if (sdObjectsHolder)
+				{					
+					sdObjectsHolder.removeAllElements()
+					sdAnnotationsHolder.removeAllChildren()
+					drawingSurface.graphics.clear()					
+				}			
+			}
+			
+			public function onKeyDown(event:KeyboardEvent):void
+			{
+				Logger.debug("onKeyDown() event: " + event, this)
+			}
+			
+			protected function setListeners():void
+			{				
+				this.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver)
+				this.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown)
+				this.addEventListener(MouseEvent.MOUSE_UP, onMouseUp)
+			}
+			
+			/*
+			protected function removeListeners():void
+			{
+				this.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown)
+				this.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp)
+			}
+			*/
+			
+			protected function onDiagramPropertiesChanged(event:Event):void
+			{
+				this.holderGroup.invalidateDisplayList()
+			}
+			
+			
+            
+                        
+            protected function onChangeColor(event:ColorEvent):void
+            {
+				Logger.debug("onChangeColor() diagramModel.currToolType: " + diagramModel.currToolType, this)
+				if (diagramModel.currToolType==DiagramModel.PENCIL_TOOL) 
+				{	
+					/* If user is drawing with pencil and color changed, we need to 
+					grab the current drawing and turn it into an object before continuing
+					since an SDPencilDrawing can ony have one color 
+					*/
+					finishPencilDrawing()  
+					
+					drawingSurface.pencilColor = event.color
+					drawingSurface.lineColor = event.color
+					drawingSurface.clear()
+					
+					diagramModel.clearSelection()	
+				}
+				
+            }
+            
+           
+           
+           	public function onDiagramLoaded(event:Event):void
+           	{
+				Logger.debug("onDiagramLoaded()....building diagram.",this)
+           		diagramModel.buildDiagram()
+           	}
+            			
+			public function onClearDiagram(event:Event):void
+			{
+				initDrawingBoard()
+				
+            	background.width = diagramModel.width
+            	background.height = diagramModel.height
+            	sdObjectsHolder.width = diagramModel.width
+            	sdObjectsHolder.height = diagramModel.height
+			}
+							
+			private function onDragEnter(event:DragEvent):void 
+            {
+                if (event.dragSource.hasFormat('libraryItem') || event.dragSource.hasFormat('defaultTool')) 
+                {
+                    DragManager.acceptDragDrop(this);          
+                }
+            }            
+            
+            private function onNativeDragEnter(event:NativeDragEvent):void
+            {            	
+            	if (event.clipboard.hasFormat(ClipboardFormats.FILE_LIST_FORMAT))
+    			{    				
+    				NativeDragManager.acceptDragDrop(this)
+    			}
+            }
+              		
+			private function onNativeDragDrop(event:NativeDragEvent):void
+          	{
+            	NativeDragManager.dropAction = NativeDragActions.COPY;
+            	var dropFiles:Array = NativeDragEvent(event).clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;		
+            	if (dropFiles==null) return
+            	
+				var file:File = dropFiles[0]
+				
+				if (file.extension != "png" && file.extension!= "jpg")
+				{
+					Alert.show("Image files can only be .png or .jpg formats","Wrong image format")
+					return
+				}
+				
+				var p:Point = new Point(event.stageX, event.stageY)
+				p = sdObjectsHolder.globalToLocal(p)
+				var evt:LoadImageEvent = new LoadImageEvent(LoadImageEvent.LOAD_IMAGE_FILE, true)
+				evt.file = file				
+				evt.dropX = p.x
+                evt.dropY = p.y
+                dispatchEvent(evt)
+				
+			}
+           
+            private function onDragDrop(event:DragEvent):void
+            {            	
+            	var evt:DrawingBoardItemDroppedEvent
+            	            	
+				if (event.dragSource.hasFormat("libraryItem"))
+				{					
+					
+                    //grab SDObjectModel from dropped item and launch and event to begin adding item to drawingBoard
+                    
+                    //var arr:Array = event.dragSource.dataForFormat("libraryItem") as Array
+                    var symbol:SDSymbolModel = event.dragSource.dataForFormat("libraryItem") as SDSymbolModel
+                    
+            		evt = new DrawingBoardItemDroppedEvent(DrawingBoardItemDroppedEvent.LIBRARY_ITEM_ADDED, true)                        
+                    evt.libraryName = symbol.libraryName                    
+                    evt.symbolName = symbol.symbolName
+                    
+					var p:Point = new Point(event.stageX, event.stageY)
+					p = this.sdObjectsHolder.globalToLocal(p)
+					evt.dropX = p.x
+	                evt.dropY = p.y 
+	                dispatchEvent(evt)
+                    
+				}
+				if (event.dragSource.hasFormat("defaultTool"))
+				{
+                    //arr = event.dragSource.dataForFormat("defaultTool") as Array
+					var toolObject:SDSymbolModel =  event.dragSource.dataForFormat("defaultTool") as SDSymbolModel
+					
+					Logger.debug("toolObject.symbolName: " + toolObject.symbolName, this)
+					switch (toolObject.symbolName)
+					{
+						case DefaultToolsManager.IMAGE_TOOL:
+							evt = new DrawingBoardItemDroppedEvent(DrawingBoardItemDroppedEvent.IMAGE_ITEM_ADDED, true)     
+            				break
+            			case  DefaultToolsManager.STICKY_NOTE_TOOL:
+            				evt = new DrawingBoardItemDroppedEvent(DrawingBoardItemDroppedEvent.STICKY_NOTE_ADDED, true)      
+            				break
+						case  DefaultToolsManager.NAPKIN:
+							evt = new DrawingBoardItemDroppedEvent(DrawingBoardItemDroppedEvent.NAPKIN_ADDED, true)      
+							break
+            			case  DefaultToolsManager.INDEX_CARD:
+            				evt = new DrawingBoardItemDroppedEvent(DrawingBoardItemDroppedEvent.INDEX_CARD_ADDED, true)      
+            				break
+            			default:
+            				Logger.warn("Unrecognized tool type: " + toolObject.symbolName, this)
+            				return
+					}			
+						
+					p = new Point(event.stageX, event.stageY)					
+					p = this.sdObjectsHolder.globalToLocal(p)
+					evt.dropX = p.x 
+	                evt.dropY = p.y
+	                dispatchEvent(evt)		        
+				}
+				
+						
+            }
+            
+            
+			protected function onMouseOver(event:MouseEvent):void
+			{
+				dispatchEvent(new DrawingBoardEvent(DrawingBoardEvent.MOUSE_OVER, true))
+			}
+			
+            /* TOOOO DOOO: Finish this so that we find out what object a model relates to and delete both of them (through the controller) */
+                                                
+			public function onDeleteSDComponentFromDiagram(event:DeleteSDComponentEvent):void 
+			{
+				Logger.debug("deleteSDComponentFromDiagram()",this)				
+				sdObjectsHolder.removeElement(UIComponent(event.sdComponent))
+				event.sdComponent.objectModel.destroy()
+   			}
+                                             
+            
+            
+            public function onToolChange(event:ToolEvent):void
+            {           	
+            	
+            	//cleanup after previous tool
+            	if (event.prevTool==DiagramModel.ZOOM_TOOL)
+            	{
+            		this.removeEventListener(MouseEvent.CLICK, onZoomEvent)
+            	}
+            	            	
+            	if (event.prevTool==DiagramModel.PENCIL_TOOL || event.prevTool == DiagramModel.LINE_TOOL)
+            	{
+            		
+            		if (event.prevTool==DiagramModel.PENCIL_TOOL && drawingSurface.mouseEnabled) finishPencilDrawing()
+            		
+            		drawingSurface.visible = false   
+            		drawingSurface.mouseEnabled = false          		
+	            		
+	            }
+            	
+            	//update state to reflect current tool  	            	
+            	if (diagramModel.currToolType==DiagramModel.LINE_TOOL || diagramModel.currToolType==DiagramModel.PENCIL_TOOL)
+            	{           		
+            		drawingSurface.visible = true
+            		drawingSurface.toolType = diagramModel.currToolType            		
+            	}	   
+            	
+            	if (diagramModel.currToolType == DiagramModel.ZOOM_TOOL)
+            	{
+            		this.addEventListener(MouseEvent.CLICK, onZoomEvent)
+            	}         	
+            	
+            }
+            
+            protected function onZoomEvent(event:MouseEvent):void
+            {
+            	if (event.shiftKey)
+            	{
+            		var zoomOutEvent:ZoomEvent = new ZoomEvent(ZoomEvent.ZOOM_OUT, true)
+            		dispatchEvent(zoomOutEvent)
+            	}
+            	else
+            	{
+            		var zoomInEvent:ZoomEvent = new ZoomEvent(ZoomEvent.ZOOM_IN, true)
+            		dispatchEvent(zoomInEvent)
+            	}
+            }
+            
+            protected function finishPencilDrawing():void
+            {
+				Logger.debug("finishPencilDrawing()",this)
+            	var evt:PencilDrawingEvent = new PencilDrawingEvent(PencilDrawingEvent.DRAWING_CREATED, true)
+        		evt.path = drawingSurface.getPath()
+        		evt.color = drawingSurface.pencilColor
+        		evt.initialPoint = drawingSurface.getInitialPoint()
+        		evt.width = drawingSurface.getWidth()
+        		evt.height = drawingSurface.getHeight()
+        		dispatchEvent(evt)
+            }
+            
+            
+			/* When a new MODEL + SDComponent is added to the diagramModel, the diagramModel will launch an event.
+			   Catch that event here and add the new component to the display */
+            public function onSDObjectAddedToDiagramModel(event:DynamicEvent):void
+            {
+				
+            	//create appropriate object and add to drawingBoard
+            	var newSDComponent:UIComponent = event.newSDComponent            	
+            	
+				Logger.debug("adding component to stage. componetn: " + newSDComponent, this)
+            	sdObjectsHolder.addElement(newSDComponent)
+				newSDComponent.focusManager.getFocus()
+				newSDComponent.depth = sdObjectsHolder.numChildren-1
+				
+				sdObjectsHolder.invalidateDisplayList()
+				sdObjectsHolder.invalidateSize()
+            }
+			
+			protected function onDragMarquee(event:MouseEvent):void
+			{		
+				var g:Graphics = this.marqueeSurface.graphics					
+				g.clear()				
+				
+				g.lineStyle(1, diagramStyleManager.marqueeBorderColor, .8)
+				g.beginFill(diagramStyleManager.marqueeColor, .2)
+				var mw:Number = marqueeSurface.mouseX - _marqueeX
+				var mh:Number = marqueeSurface.mouseY - _marqueeY
+				g.drawRect(_marqueeX, _marqueeY, mw, mh)
+				_marqueeDrawn = true
+			}
+			
+			
+            protected function onMouseDown(event:MouseEvent):void
+            {
+            	//Logger.debug("onMouseDown() event.target: " + event.target,this)
+				//Logger.debug("onMouseDown() currToolType: " + diagramModel.currToolType,this)
+									
+            	//make sure marquee listener isn't hanging around
+            	this.removeEventListener(MouseEvent.MOUSE_MOVE, onDragMarquee)
+            	            	            	
+            	///don't do anything if the original target of the click was something other than the background
+            	if (event.target!=background && diagramModel.currToolType!=DiagramModel.TEXT_TOOL) return
+            						
+				_clickedBackground = true 	
+									
+				if (diagramModel.currToolType == DiagramModel.POINTER_TOOL)
+				{
+					
+					Logger.debug("onMouseDown is calling clearSelection",this)
+					diagramModel.objectHandles.selectionManager.clearSelection()
+					this.addEventListener(MouseEvent.MOUSE_MOVE, onDragMarquee)
+					
+					_marqueeX = marqueeSurface.mouseX
+					_marqueeY = marqueeSurface.mouseY
+				}
+				else if (diagramModel.currToolType == DiagramModel.TEXT_TOOL)
+				{
+					// if a something is already selected, just deselect that text (don't add a new text field...it's annoying when
+					// you add a text field and then click on the background to deselect it and wind up with a new text field
+														
+					var textAreaEvent:TextAreaCreatedEvent = new TextAreaCreatedEvent(TextAreaCreatedEvent.CREATED, true)      					
+					var p:Point = new Point(event.stageX, event.stageY)					
+					p = this.sdObjectsHolder.globalToLocal(p)
+					textAreaEvent.dropX = p.x 
+					textAreaEvent.dropY = p.y
+					dispatchEvent(textAreaEvent)	
+				}
+			}
+            
+          
+			
+            protected function onMouseUp(event:MouseEvent):void
+            {   
+								
+					
+				//this is a hack, but I have to check here whether we were rotating an object, because the mouse won't
+				//be on the actual handle, so this is the only function called when the user mouses up
+				//We need to make sure the transformation was captured by the ObjectHandles controller before clearing
+				//the selection
+				if(diagramModel.objectHandles.isHandleDragging)
+				{
+					var changedEvt:ObjectChangedEvent = new ObjectChangedEvent(diagramModel.selectedArray, ObjectChangedEvent.OBJECT_RESIZED, true)
+					dispatchEvent(changedEvt)
+				}
+									
+				this.removeEventListener(MouseEvent.MOUSE_MOVE, onDragMarquee)
+									
+				//If user clicked background, then we should deselect anything that's selected
+				if (event.target == background  &&	_clickedBackground  )
+				{
+					Logger.debug("onMouseUp is calling clearSelection",this)
+					diagramModel.objectHandles.selectionManager.clearSelection() 
+					_clickedBackground = false
+					this.stage.focus = null
+				}
+										
+            	if (_marqueeDrawn)
+            	{	          		
+					_marqueeDrawn = false
+						
+				    //don't do anything if marquee is small .. user probably didn't mean to draw it
+				    if (Math.abs(mw)<10 && Math.abs(mh)<10)
+				    {
+						marqueeSurface.graphics.clear()
+				    	return
+				    }
+            		
+            		var evt:MultiSelectEvent = new MultiSelectEvent(MultiSelectEvent.DRAG_MULTI_SELECTION_MADE, true)
+										
+            		//see if any objects were in drawn marquee
+            		var numChildren:uint = this.sdObjectsHolder.numChildren
+					Logger.debug("this.sdObjectsHolder.numChildren: " + sdObjectsHolder.numChildren, this)
+						
+					for (var i:uint=0;i<numChildren;i++)
+					{
+						var sdBase:SDBase = this.sdObjectsHolder.getChildAt(i) as SDBase
+						if (sdBase.hitTestObject(this.marqueeSurface))
+						{
+							evt.selectedArr.push(sdBase)						
+						}
+					}
+					if (evt.selectedArr.length<1)
+					{
+						marqueeSurface.graphics.clear()
+						return    		
+					} 
+					
+            		// collect info and dispatch multiSelect event							
+					var mw:Number = background.mouseX - _marqueeX
+					var mh:Number = background.mouseY - _marqueeY
+				   				     				  	
+					if (mw<_marqueeX) 
+					{
+						evt.startX = mw 
+						evt.endX = _marqueeX
+					}
+					else
+					{
+						evt.startX =  _marqueeX
+						evt.startY = mw					
+					}
+					
+					if (mh<_marqueeY) 
+					{
+						evt.startY = mw 
+						evt.endY = _marqueeY
+					}
+					else
+					{
+						evt.startY =  _marqueeY
+						evt.endY = mw					
+					}
+														
+					marqueeSurface.graphics.clear()					
+					
+					Logger.debug("dispatching event..."+ evt,this)					
+					Swiz.dispatchEvent(evt)	
+					return
+							            	            	
+            	}
+				
+				
+				
+				
+            }
+       			
+			      		
+      		protected function onLineDrawn(event:Event):void
+      		{
+      			Logger.debug("onLineDrawn()",this)
+				//create a line component
+				var evt:CreateLineComponentEvent = new CreateLineComponentEvent(CreateLineComponentEvent.CREATE, true) 
+				
+				var initialPoint:Point = new Point(drawingSurface.initialX, drawingSurface.initialY)
+				var finalPoint:Point = new Point(drawingSurface.finalX, drawingSurface.finalY)
+				
+				initialPoint = sdObjectsHolder.globalToLocal(this.localToGlobal(initialPoint))
+				finalPoint = sdObjectsHolder.globalToLocal(this.localToGlobal(finalPoint))
+				 
+				evt.initialX = initialPoint.x
+				evt.initialY = initialPoint.y 
+				evt.finalX = finalPoint.x 
+				evt.finalY = finalPoint.y 
+				
+				dispatchEvent(evt)
+      		}
+      	
+      		
+
+      		
+      		/* CONNECTION DRAGGER 
+      		
+      		/*
+      		 public function onConnectorAdded(event:ConnectorAddedEvent):void
+            {
+            	Logger.debug("onConnectorAdded()", this)
+            	//the drawingboard doesn't catch the mouseUp when the drag is accepted, so call it explicitly here to stop dragLine being drawn
+            	stopDrawDragLine(null)
+            	sdObjectsHolder.addChild(event.connector)
+            }
+      		
+			[Mediate(event='ConnectionEvent.START_CONNECTION_DRAG')]
+			public function onStartConnectionDrag(event:ConnectionEvent):void
+			{
+	        	dragCircle.visible = false
+				var dragInitiator:SDBase = event.startingComponent
+	            var dragSource:DragSource = new DragSource();
+	            dragSource.addData(event.startingComponent.id, 'dragConnection');
+	            var offsetX:Number = - ((dragInitiator.width / 2) + 5)
+	            var offsetY:Number = - ((dragInitiator.height /2 ) + 5)
+	            _dragProxy = new DragCircle()       
+	           	      
+	            this.addEventListener(MouseEvent.MOUSE_MOVE, drawDragLine)
+	            this.addEventListener(MouseEvent.MOUSE_UP, stopDrawDragLine)
+	            DragManager.doDrag(dragInitiator, dragSource, event.mouseEvent, _dragProxy, offsetX, offsetY);
+			}
+			      		
+			public function drawDragLine(event:MouseEvent):void
+	        {
+	        	var g:Graphics = drawingSurface.graphics
+	        	g.clear()
+	        	g.lineStyle(3, 0x00CC00)
+	        	g.moveTo(dragCircle.x, dragCircle.y)
+	        	g.lineTo(this.mouseX, this.mouseY)
+	        }
+	        
+	        public function stopDrawDragLine(event:MouseEvent):void
+	        {
+	        	Logger.debug("stopDrawDragLine()",this)
+	        	this.removeEventListener(MouseEvent.MOUSE_MOVE, drawDragLine)
+	            this.removeEventListener(MouseEvent.MOUSE_UP, stopDrawDragLine)
+	        	drawingSurface.graphics.clear()
+	        	_dragProxy = null
+	        	dragCircle.visible = false
+	        	drawingSurface.invalidateProperties()
+	        }
+	      		
+		
+			
+			*/
+			
+			protected function interceptArrowKeys(event:KeyboardEvent):void
+			{
+				
+			}
+		
+			protected var _watchTextAreaYPos:ChangeWatcher 		
+			protected var _watchTextAreaAlign:ChangeWatcher 	
+			protected var _watchTextAreaFontSize:ChangeWatcher 		
+			protected var _watchTextAreaFontWeight:ChangeWatcher
+
+			
+			protected function onEditSymbolText(event:EditSymbolTextEvent):void
+			{
+				Logger.debug("onEditSymbolText()", this)
+				
+				if (_watchTextAreaYPos!=null)
+				{
+					_watchTextAreaYPos.unwatch()
+				}
+				if (_watchTextAreaAlign!=null)
+				{
+					_watchTextAreaAlign.unwatch()
+				}
+				if (_watchTextAreaFontSize!=null)
+				{
+					_watchTextAreaFontSize.unwatch()
+				}
+				if (_watchTextAreaFontWeight!=null)
+				{
+					_watchTextAreaFontWeight.unwatch()
+				}
+				
+				var sdSymbolModel:SDSymbolModel = event.sdSymbolModel					
+				symbolTextArea.text = sdSymbolModel.text
+				symbolTextArea.width = sdSymbolModel.width
+				symbolTextArea.height = sdSymbolModel.height
+				symbolTextArea.x = sdSymbolModel.x
+				
+				_watchTextAreaYPos = ChangeWatcher.watch(sdSymbolModel, "textPosition", updateTextAreaYPos);
+				_watchTextAreaFontSize = ChangeWatcher.watch(sdSymbolModel, "fontSize", updateFontSize);
+				_watchTextAreaAlign = ChangeWatcher.watch(sdSymbolModel, "textAlign", updateTextAlign);
+				_watchTextAreaFontWeight = ChangeWatcher.watch(sdSymbolModel, "fontWeight", updateFontWeight);
+				
+				//place text area over where text appears in symbol				
+				symbolTextArea.y = sdSymbolModel.y + sdSymbolModel.getTextYPosition()	
+				symbolTextArea.setStyle("fontSize", sdSymbolModel.fontSize)	
+				symbolTextArea.setStyle("fontWeight", sdSymbolModel.fontWeight)	
+					
+				symbolTextArea.visible = true
+				symbolTextArea.setStyle("textAlign", sdSymbolModel.textAlign)
+				symbolTextArea.addEventListener(MouseEvent.MOUSE_DOWN, onSymbolTextAreaMouseDown)
+				symbolTextArea.addEventListener(Event.COPY, onInterceptKeyEvent)
+				symbolTextArea.addEventListener(Event.PASTE, onInterceptKeyEvent)
+				editHolder.addEventListener(MouseEvent.MOUSE_DOWN, completeSymbolTextEdit)
+				symbolTextArea.selectAll()
+				focusManager.setFocus(symbolTextArea)
+			}
+			
+			protected function updateTextAreaYPos(event:Event):void
+			{
+				var sdSymbolModel:SDSymbolModel = event.target as SDSymbolModel
+				symbolTextArea.y = sdSymbolModel.y + sdSymbolModel.getTextYPosition()
+			}
+			
+			protected function updateFontSize(event:Event):void
+			{
+				var sdSymbolModel:SDSymbolModel = event.target as SDSymbolModel
+				symbolTextArea.setStyle("fontSize", sdSymbolModel.fontSize)
+			}
+			
+			protected function updateFontWeight(event:Event):void
+			{
+				var sdSymbolModel:SDSymbolModel = event.target as SDSymbolModel
+				symbolTextArea.setStyle("fontWeight", sdSymbolModel.fontWeight)
+			}
+			
+			protected function updateTextAlign(event:Event):void
+			{
+				var sdSymbolModel:SDSymbolModel = event.target as SDSymbolModel
+				symbolTextArea.setStyle("textAlign", sdSymbolModel.textAlign)
+			}
+				
+			protected function onInterceptKeyEvent(event:Event):void
+			{
+				event.stopPropagation()
+			}
+									
+			protected function onSymbolTextAreaMouseDown(event:MouseEvent):void
+			{
+				event.stopPropagation()
+			}
+			
+			protected function completeSymbolTextEdit(event:MouseEvent):void
+			{
+				Logger.debug("completeSymbolTextEdit() currentTarget: " + event.currentTarget, this)
+				Logger.debug("completeSymbolTextEdit() target: " + event.target, this)
+				event.stopPropagation()
+					
+				if (event.target == symbolTextArea) return
+				
+				SDSymbolModel(diagramModel.selectedArray[0]).text = symbolTextArea.text
+					
+				remoteSharedObjectController.dispatchUpdate_SymbolTextEdit(diagramModel.selectedArray[0]);
+				
+				
+				symbolTextArea.visible = false
+				symbolTextArea.text = ""
+					
+				symbolTextArea.removeEventListener(MouseEvent.MOUSE_DOWN, onSymbolTextAreaMouseDown)
+				symbolTextArea.removeEventListener(Event.COPY, onInterceptKeyEvent)
+				symbolTextArea.removeEventListener(Event.PASTE, onInterceptKeyEvent)
+				editHolder.removeEventListener(MouseEvent.MOUSE_DOWN, completeSymbolTextEdit)
+					
+				_watchTextAreaYPos.unwatch()
+				_watchTextAreaYPos = null
+					
+				_watchTextAreaFontWeight.unwatch()
+				_watchTextAreaFontWeight= null
+			}
+			
+			
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<mx:Canvas id="bg" width="100%" height="100%" backgroundColor="#111111" />
+		
+	<mx:Canvas id="scrollingHolder" width="100%" height="100%" backgroundAlpha="0" >
+		
+		<s:Group id="holderGroup"  >
+					
+			<s:layout>
+				<s:BasicLayout />
+			</s:layout>
+			
+			<view:Background 
+				id="background"
+		   	 	width="{diagramModel.width}"
+		    	height="{diagramModel.height}"
+				scaleX="{diagramModel.scaleX}"
+				scaleY="{diagramModel.scaleY}"	
+				/>
+			
+			<s:Group id="sdObjectsHolder"  
+		   	 	width="{diagramModel.width}"
+		   		height="{diagramModel.height}"
+				scaleX="{diagramModel.scaleX}"
+				scaleY="{diagramModel.scaleY}"  
+			    >	 
+				<s:layout>
+					<s:BasicLayout />
+				</s:layout>
+			</s:Group>
+			
+			<s:Group id="sdObjectsHandlesHolder"  
+					 x="-5"
+					 y="-5"
+			   	width="{diagramModel.width}"
+			   	height="{diagramModel.height}"
+			   	scaleX="{diagramModel.scaleX}"
+			   	scaleY="{diagramModel.scaleY}"    
+			   >	
+			</s:Group>
+				
+			<s:Group id="editHolder"
+					 
+					 width="{diagramModel.width}"
+					 height="{diagramModel.height}"
+					 scaleX="{diagramModel.scaleX}"
+					 scaleY="{diagramModel.scaleY}">
+				
+				<s:TextArea id="symbolTextArea"
+							contentBackgroundAlpha="1"
+							doubleClickEnabled="true"
+							selectable="true"
+							borderColor="#555555"
+						    contentBackgroundColor="#FFFFFF"
+							color="#000000"
+							horizontalScrollPolicy="off"
+							verticalScrollPolicy="off"
+							visible="false"
+							x="0"
+							y="0"
+							/>
+			</s:Group>
+													 
+		
+		</s:Group>	
+
+	</mx:Canvas>
+
+		  
+	<mx:Canvas id="marqueeSurface" 
+		width="100%" 
+		height="100%" />
+				
+	<mx:Canvas id="sdAnnotationsHolder" 	
+		backgroundAlpha="0"/>
+			
+		
+	<view:DrawingSurface id="drawingSurface" 
+		width="100%" 
+		height="100%" 
+		lineDrawn="onLineDrawn(event)"
+		backgroundColor="0x000000"
+		backgroundAlpha="0"
+		visible="false"
+		 />
+		
+	
+	<properties:PropertiesPanel id="propPanel" x="0" y="0" height="32" width="100%"/>
+	
+	<!--
+	<myComps:DragCircle 
+   		id="dragCircle" 
+   		x="{diagramModel.objectConnectors.dragCircleX}"
+   		y="{diagramModel.objectConnectors.dragCircleY}"
+   		visible="false"
+   		 />
+   	--> 
+	
+	
+</s:Group>

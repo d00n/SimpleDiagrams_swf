@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register
+END
+ServerUnavailableView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/ServerUnavailableView.mxml
+END
+ContactingServerView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/ContactingServerView.mxml
+END
+RegistrationSuccessView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/RegistrationSuccessView.mxml
+END
+RegisterView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/RegisterView.mxml
+END
+EULAView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/EULAView.mxml
+END
+FreeModeView.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/register/FreeModeView.mxml
+END

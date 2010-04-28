@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/simplediagrams/!svn/ver/302/trunk/src/com/simplediagrams/util
+END
+DragPanel.as
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/util/DragPanel.as
+END
+Logger.as
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/simplediagrams/!svn/ver/302/trunk/src/com/simplediagrams/util/Logger.as
+END
+DebugPanel.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/util/DebugPanel.mxml
+END
+MenuItem.as
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/util/MenuItem.as
+END
+TextAreaTarget.as
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/util/TextAreaTarget.as
+END
+AboutInfo.as
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/simplediagrams/!svn/ver/282/trunk/src/com/simplediagrams/util/AboutInfo.as
+END

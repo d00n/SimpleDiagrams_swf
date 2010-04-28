@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 		
+		 xmlns:view="com.simplediagrams.view.*"
+		 xmlns:swiz="org.swizframework.*" 
+		 currentState="{applicationModel.viewing}"
+		 width="400" height="300">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.simplediagrams.model.ApplicationModel;
+			
+			[Bindable]
+			[Autowire]
+			public var applicationModel:ApplicationModel
+			
+			
+		]]>
+	</fx:Script>
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:layout>
+		<s:VerticalLayout gap="0"/>
+	</s:layout>
+	
+	<s:states>
+		<!-- Define the new view states. -->
+		<s:State name="registrationView"/>
+		<s:State name="startupView" />
+		<s:State name="diagramView"/>
+	</s:states>    
+	
+	<s:transitions>
+		<s:Transition fromState="registrationView" toState="startupView">
+			<s:Fade targets="{[registration, startup]}"/>
+		</s:Transition>
+	</s:transitions>
+	
+	<view:MenuBar id="menuBar" width="100%" height="35" />
+	
+	<s:Group width="100%" height="100%" >
+		
+		<s:layout>
+			<s:BasicLayout/>
+		</s:layout>
+		
+		<!-- background fill -->  
+		<s:Rect id="background" left="0" top="0" right="0" bottom="0" alpha="1">  
+			<s:fill>  
+				<s:BitmapFill source="@Embed(source='assets/img/backgrounds/chalkboard_tile.png')"/>  
+			</s:fill>  
+		</s:Rect>  
+		
+		<view:DiagramView id="diagram" 
+						  width="100%" 
+						  height="100%" 
+						  includeIn="diagramView" 
+						  itemCreationPolicy="immediate"
+						  itemDestructionPolicy="never"		    
+						  />	
+		
+		<view:StartupMenuView id="startup" 
+							  includeIn="startupView"	
+							  horizontalCenter="0"
+							  verticalCenter="0"
+							  itemCreationPolicy="immediate"	
+							  itemDestructionPolicy="never"	
+							  />			 
+		
+		
+		<view:RegistrationView id="registration"
+							   includeIn="registrationView"
+							   itemCreationPolicy="immediate"		
+							   horizontalCenter="0"
+							   verticalCenter="0"
+							   />		
+		
+
+		
+	</s:Group>
+
+	
+</s:Group>

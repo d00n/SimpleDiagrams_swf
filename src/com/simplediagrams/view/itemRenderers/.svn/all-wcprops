@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/itemRenderers
+END
+CheckBoxRenderer.as
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/simplediagrams/!svn/ver/165/trunk/src/com/simplediagrams/view/itemRenderers/CheckBoxRenderer.as
+END
+BasicToolsItemRenderer.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/itemRenderers/BasicToolsItemRenderer.mxml
+END
+LibraryItemRenderer.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/itemRenderers/LibraryItemRenderer.mxml
+END
+DisplayInPanelCheckboxItemRenderer.as
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/simplediagrams/!svn/ver/165/trunk/src/com/simplediagrams/view/itemRenderers/DisplayInPanelCheckboxItemRenderer.as
+END
+LineEndingItemRenderer.mxml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/simplediagrams/!svn/ver/306/trunk/src/com/simplediagrams/view/itemRenderers/LineEndingItemRenderer.mxml
+END

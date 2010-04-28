@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:myComps="*" 		
+		 creationComplete="onCC()"
+		 title="Basecamp Login"
+		 >
+	
+	
+	<fx:Metadata>
+		[Event(name="attemptLogin", type="com.simplediagrams.events.BasecampEvent")]
+		[Event(name='cancel', event='flash.events.Event')]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.events.BasecampEvent;
+			import com.simplediagrams.model.BasecampModel;
+			import com.simplediagrams.util.Logger;
+			
+			import mx.collections.ArrayCollection;
+			
+			public static const STATE_LOGGING_IN:String = "loggingIn";
+			
+			
+			[Bindable]
+			private var _urlsAC:ArrayCollection = new ArrayCollection([{label:"http://", data:"http://"}, {label:"https://", data:"https://"}]);
+			
+			[Bindable]
+			private var _errorMsg:String = "";
+				
+			[Bindable]
+			[Autowire(name="basecampModel")]
+			public var basecampModel:BasecampModel
+			
+			protected function onCC():void
+			{
+			}
+			
+			public function loginFailed():void
+			{
+				currentState = "normal"
+				_errorMsg = "Login failed. Please try again."
+				btnOK.enabled = true
+			}
+			
+			public function rememberMe():Boolean
+			{
+				return cbxRememberMe.selected
+			}
+			
+			protected function onOK():void
+			{
+				this.currentState = "normal"
+				
+				_errorMsg = ""
+				
+				if (tipURL.text=="")
+				{
+					_errorMsg = "Please enter a URL"
+					this.currentState = "error"
+					return
+				}
+				
+					
+				if (tipLogin.text=="")
+				{
+					_errorMsg = "Please enter a username"
+					this.currentState = "error"
+					return
+				}
+				
+				if (tipPassword.text=="")
+				{
+					_errorMsg = "Please enter a password"
+					this.currentState = "error"
+					return
+				}
+								
+					
+				var url:String = tipURL.text
+					
+				//make sure http:// or https:// is in front
+				if (url.indexOf("http://")>-1 || url.indexOf("https://")>-1)
+				{
+					_errorMsg = "Don't include http:// or https:// in your url, just use the pulldown"
+					this.currentState = "error"
+					return
+				}
+										
+				if (url.indexOf("/") == url.length-1)
+				{
+					url = url.substr(0, url.length-1)		
+					Logger.debug("User added ending slash, which isn't needed, so take off URL, which is now: " + url,this)
+
+				}
+				
+				url = cbxUrlPrefix.selectedItem.data + url
+				
+				//test that credentials work
+				if (basecampModel.basecampURL != url)
+				{
+					basecampModel.isDirty = true
+					basecampModel.basecampURL = url
+				}
+				if (basecampModel.basecampLogin != tipLogin.text)
+				{
+					basecampModel.isDirty = true
+					basecampModel.basecampLogin = tipLogin.text
+				}
+				if (basecampModel.basecampPassword != tipPassword.text)
+				{
+					basecampModel.isDirty = true
+					basecampModel.basecampPassword = tipPassword.text
+				}
+				
+				//this should probably be in controller but...
+				if (basecampModel.isDirty && cbxRememberMe.selected)
+				{
+					basecampModel.saveToEncryptedStore()
+				}
+				else if (basecampModel.isDirty && !cbxRememberMe.selected)
+				{
+					basecampModel.clearFromEncryptedStore()
+				}
+				
+				
+				this.currentState = STATE_LOGGING_IN
+				btnOK.enabled = false
+				
+				dispatchEvent(new BasecampEvent(BasecampEvent.GET_PROJECTS, true))
+			}
+			
+						
+			protected function onCancel():void
+			{			
+				var evt:Event = new Event(Event.CANCEL, true)
+				dispatchEvent(evt)				
+			}
+			
+			protected function onChangeRememberMe():void
+			{
+				basecampModel.isDirty = true
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="error"/>
+		<s:State name="loggingIn"/>
+	</s:states>	
+	
+	<s:transitions>
+		<s:Transition>
+			<s:Parallel target="{lblMsg}">
+				<s:Fade duration="200" />
+			</s:Parallel>
+		</s:Transition>
+	</s:transitions>
+	
+	<s:VGroup width="100%" height="100%" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">		
+					
+			<s:Group includeIn="loggingIn" width="430" height="100%">
+				
+				<s:layout>
+					<s:BasicLayout/>
+				</s:layout>					
+				
+				<s:Label height="20" textAlign="center" text="Logging in..."  y="50" width="430"/>
+				<myComps:LoadingBar y="75" x="80" />
+				
+			</s:Group>
+			
+			<s:VGroup excludeFrom="loggingIn" width="100%" height="100%">		
+							
+				<s:Label id="lblMsg" text="{_errorMsg}" width="100%" height="25" color="#CC0000" alpha.normal="0" alpha.error="1"/>		
+				
+				<s:HGroup width="100%">
+					<s:Label text="Account URL: " width="90" paddingTop="3"/>
+					<s:ComboBox id="cbxUrlPrefix" dataProvider="{_urlsAC}" width="65" selectedIndex="0" />
+					<s:TextInput id="tipURL" 
+								 width="100%"
+								 />
+				</s:HGroup>
+								
+				<s:HGroup width="100%">
+					<s:Label text="Username: " width="90" paddingTop="3"/>
+					<s:TextInput id="tipLogin" 
+								 width="100%"
+								 />
+				</s:HGroup>
+				
+				<s:HGroup width="100%">
+					<s:Label text="Password: " width="90" paddingTop="3"/>
+					<s:TextInput id="tipPassword" 
+								 width="100%"
+								 displayAsPassword="true"
+								 />
+				</s:HGroup>
+				
+				<s:HGroup paddingLeft="95">			
+					<s:CheckBox id="cbxRememberMe" 
+								label="Remember me on this machine" 
+								change="onChangeRememberMe()"/>
+				</s:HGroup>		
+				
+			</s:VGroup>
+			
+				
+		<s:VGroup horizontalAlign="right" width="100%" paddingTop="10" >
+			
+			<s:HGroup>
+				<s:Button id="btnCancel" 
+						  label="CANCEL" 
+						  click="onCancel()"  
+						  width="90" 
+						  height="30" 
+						  styleName="blueButton"
+						  />	
+				<s:Button id="btnOK" 
+						  label="OK" 
+						  click="onOK()"  
+						  width="90" 
+						  height="30" 
+						  styleName="blueButton"
+						  excludeFrom="loggingIn"
+						  />	
+			</s:HGroup>
+			
+		</s:VGroup>
+		
+		
+	</s:VGroup>	
+	
+</s:Panel>

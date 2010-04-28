@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.simplediagrams.model.SDObjectModel;
+			
+		import com.simplediagrams.util.Logger
+		import com.simplediagrams.model.ConnectorModel
+		import mx.events.PropertyChangeEvent;
+	
+			
+		private var _objectModel:ConnectorModel
+		private var _path:String
+		
+		public override function set objectModel(model:ConnectorModel):void
+		{
+			if (_objectModel)
+			{
+				_objectModel.removeEventListener( PropertyChangeEvent.PROPERTY_CHANGE, onModelChange)
+			}
+			_objectModel = model
+			
+		}
+		
+		
+		protected function onModelChange(event:PropertyChangeEvent):void
+		{
+			Logger.debug("onModelChange()", this)
+			
+			if (_objectModel && _objectModel.fromObject && _objectModel.toObject == false) return
+			drawConnector()         
+            
+		}
+		
+		protected function drawConnector():void
+		{
+			
+			Logger.debug("drawConnector()", this)
+			var fromObj:SDObjectModel = _objectModel.fromSDObjectModel
+			var toObj:SDObjectModel = _objectModel.toSDObjectModel
+			
+			var xPos:Number			
+			var xOrig:Number 
+			
+			if (fromObj.x < toObj.x) 
+			{
+				xPos = toObj.x
+				xOrig = fromObj.x
+			}
+			else
+			{			
+				xPos = fromObj.x
+				xOrig = toObj.x
+			}
+			
+			if (fromObj.y < toObj.y) 
+			{
+				yPos = toObj.y
+				yOrig = fromObj.y
+			}
+			else
+			{			
+				yPos = fromObj.y
+				yOrig = toObj.y
+			}
+												 
+            //create path            
+            _path = "M 0,0 L " + xPos + "," + yPos
+            connectorGraphic.invalidateProperties()
+            
+            //position connector 
+            x = xOrig;
+            y = yOrig;   
+            
+		}
+		
+		public override function get objectModel():SDObjectModel
+        {
+        	return _objectModel
+        }
+	
+				
+		override public function destroy():void
+		{
+			_model = null
+		}
+		
+			
+		]]>
+	</fx:Script>
+	
+	 <s:Graphic id="connectorGraphic">
+	 
+	 	<!-- from arrow -->
+	 
+	 	<!-- to arrow -->
+	 
+	 	<!--Main connector-->
+        <s:Path data="{_path}">
+            <s:stroke>
+                <mx:SolidColorStroke color="#FFFFFF" weight="3" />
+            </s:stroke>
+        </s:Path>
+        
+    </s:Graphic>
+	
+	
+</s:Group>

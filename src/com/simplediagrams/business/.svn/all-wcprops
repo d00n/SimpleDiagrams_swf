@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/simplediagrams/!svn/ver/307/trunk/src/com/simplediagrams/business
+END
+DBManager.as
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/business/DBManager.as
+END
+LibraryPluginsDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/simplediagrams/!svn/ver/211/trunk/src/com/simplediagrams/business/LibraryPluginsDelegate.as
+END
+MigrationManager.as
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/simplediagrams/!svn/ver/67/trunk/src/com/simplediagrams/business/MigrationManager.as
+END
+FlickrDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/simplediagrams/!svn/ver/246/trunk/src/com/simplediagrams/business/FlickrDelegate.as
+END
+BasecampDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/simplediagrams/!svn/ver/288/trunk/src/com/simplediagrams/business/BasecampDelegate.as
+END
+FileManager.as
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/simplediagrams/!svn/ver/234/trunk/src/com/simplediagrams/business/FileManager.as
+END
+LibraryPluginLoader.as
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/simplediagrams/!svn/ver/211/trunk/src/com/simplediagrams/business/LibraryPluginLoader.as
+END
+SettingsManager.as
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/simplediagrams/!svn/ver/307/trunk/src/com/simplediagrams/business/SettingsManager.as
+END
+LibraryPluginUnpacker.as
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/simplediagrams/!svn/ver/211/trunk/src/com/simplediagrams/business/LibraryPluginUnpacker.as
+END
+SimpleDiagramsDelegate.as
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/simplediagrams/!svn/ver/212/trunk/src/com/simplediagrams/business/SimpleDiagramsDelegate.as
+END

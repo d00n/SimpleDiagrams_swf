@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util1:DragPanel xmlns:mx="http://www.adobe.com/2006/mxml" 
+				xmlns:util="com.simplediagrams.util.*"
+				title="DEBUG" 
+				creationComplete="onCreationComplete()"
+			    panelClosed="onPanelClose(event)"
+				xmlns:util1="com.simplediagrams.util.*">
+		
+		
+		<mx:Script>
+			<![CDATA[
+				import mx.logging.Log
+				import mx.logging.LogEventLevel
+				import mx.logging.targets.LineFormattedTarget
+				
+				import flash.system.Capabilities
+			
+				protected var textAreaTarget:TextAreaTarget
+				
+				public function onCreationComplete():void
+				{
+					
+					textAreaTarget = new TextAreaTarget(txtDebug);
+					textAreaTarget.includeDate = true
+					textAreaTarget.includeTime = true
+					textAreaTarget.includeLevel = true
+					textAreaTarget.level = LogEventLevel.DEBUG
+					Log.addTarget(textAreaTarget)
+					
+					txtDebug.text += "flash player version: " + Capabilities.version 
+				}
+			
+				public function onPanelClose(evt:Event):void
+				{
+					Log.removeTarget(textAreaTarget)
+				}
+			
+				public function scrollDown():void
+				{
+					txtDebug.verticalScrollPosition = txtDebug.maxVerticalScrollPosition
+				}
+				
+				
+				public function submitCommand():void
+				{
+				
+				}
+			]]>
+		</mx:Script>
+		
+		<mx:TextArea id="txtDebug"
+			width="100%" 
+			height="100%"
+			liveScrolling="true"
+			updateComplete="scrollDown()"
+			fontFamily="Courier New" 
+			fontSize="12"
+			color="#000000"
+			 />
+			 
+		<mx:HBox width="100%">
+			<mx:TextInput id="txtCmd"
+				width="100%"
+				height="100%"
+				enter="submitCommand()"
+			/>
+		
+			<mx:Button id="btnCmd"
+				click="submitCommand()"
+				label="Enter"
+				width="70"
+			/>
+		</mx:HBox>
+		
+</util1:DragPanel>

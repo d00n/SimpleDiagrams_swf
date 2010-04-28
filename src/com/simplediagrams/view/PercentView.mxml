@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	creationComplete="onCC()"
+	 width="90" height="30">
+	
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.simplediagrams.model.DiagramModel
+			
+			import flash.utils.Timer
+			import flash.events.TimerEvent
+			
+			//[Bindable]
+			[Autowire(bean="diagramModel")]
+			[Bindable]
+			public var diagramModel:DiagramModel
+				
+			[Bindable]
+			protected var percent:String = "100%"
+			
+			protected var t:Timer 
+			
+			protected function onCC():void
+			{
+				t= new Timer(1000)
+				t.addEventListener(TimerEvent.TIMER, onTimer)
+			}	
+			
+			protected function onTimer(event:TimerEvent):void
+			{
+				t.stop()
+				t.reset()
+				this.currentState = "hide"
+			}
+				
+			[Mediate(event='ZoomEvent.ZOOM_IN')]
+	  		public function onZoomIn():void
+	  		{
+	  			this.currentState = "show"
+	  			showPercent()	
+	  			t.start()	
+	  		}
+	
+			[Mediate(event='ZoomEvent.ZOOM_OUT')]
+			public function onZoomOut():void
+	  		{
+	  			this.currentState = "show"
+	  			showPercent()	
+	  			t.start()
+	  		}
+		
+		
+			protected function showPercent():void
+			{				
+	  			percent = (diagramModel.scaleX * 100).toString() + "%"		
+			}
+			
+		]]>
+	</fx:Script>
+	
+	 <s:states>
+        <s:State name="hide" />
+        <s:State name="show" />
+    </s:states>
+
+ 	<s:transitions>
+        <s:Transition fromState="show" toState="hide">
+            <s:Fade target="{display}" duration="2000" />
+        </s:Transition>
+    </s:transitions>
+    
+    <s:Group id="display" includeIn="show" width="100%" height="100%">
+    
+    	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5" alpha=".4"  >
+		<s:fill>
+			<s:LinearGradient rotation="90" >
+				<s:GradientEntry color="0x000000" />
+				<s:GradientEntry color="0x111111" />
+			</s:LinearGradient>
+		</s:fill>    		
+		</s:Rect>
+		
+		<s:Label id="lblPercent" text="{percent}" color="#FFFFFF"  fontSize="14" width="100%" paddingTop="5" alpha=".9" textAlign="center" />
+		
+    </s:Group>    
+	
+	
+</s:Group>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin 
+        xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:mx="library://ns.adobe.com/flex/mx"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        minWidth="36" minHeight="36"
+        mouseChildren="{currentState=='selected'}"
+        blendMode="normal">
+    
+    <fx:Metadata>
+    	<![CDATA[
+       		[HostComponent("com.simplediagrams.view.SDComponents.SDTextArea")]
+       		
+    	]]>
+    </fx:Metadata> 
+    <fx:Script>
+    	<![CDATA[
+    		
+    		
+       		import com.simplediagrams.model.SDTextAreaModel       		
+       		import com.simplediagrams.util.Logger
+       		
+			
+			protected function onTextAreaChange():void
+			{
+				if (mainTextArea.text=="")
+				{
+					mainTextArea.setStyle("borderVisible", true)
+				}
+				else
+				{					
+					mainTextArea.setStyle("borderVisible", false)
+				}
+			}
+			
+			protected function onDoubleClick():void
+			{
+				mainTextArea.focusEnabled = true
+			}
+       	
+    	]]>
+    </fx:Script>
+    
+    <!-- states -->
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="selected"/>
+    </s:states>
+    
+   
+   <!-- gives some hit area outside text control for objecthandles drag,resize -->
+   <s:Graphic x="0" y="0" includeIn="selected">
+       <s:Rect height="{hostComponent.height}" width="{hostComponent.width}">                              
+             <s:stroke>
+                  <s:SolidColorStroke color="0x00CC00" weight="5"/>
+             </s:stroke>
+       </s:Rect>
+    </s:Graphic>
+	
+  <s:TextArea id="mainTextArea"
+        	  color="{hostComponent.fontColor}"
+    		  contentBackgroundAlpha="0"
+    		  fontSize="{hostComponent.fontSize}"
+			  textAlign="{hostComponent.textAlign}"
+			  fontWeight="{hostComponent.fontWeight}"
+			  text="{hostComponent.text}"
+			  doubleClickEnabled="true"
+			  doubleClick="onDoubleClick()"
+    		  selectable="true"
+    		  width="{hostComponent.width-10}"
+    		  height="{hostComponent.height-10}" 
+    		  contentBackgroundAlpha.selected=".5" 
+			  borderColor="#555555"
+			  change="onTextAreaChange()"
+			  horizontalScrollPolicy="off"
+			  verticalScrollPolicy="off"
+    		  x = "5"
+    		  y = "5"
+              heightInLines="10"
+              widthInChars="15"/>
+   
+  
+</s:SparkSkin>
