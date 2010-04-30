@@ -303,6 +303,9 @@
 			     
 		<util:MenuItem id="rootMenu">
 		
+
+		
+			<!--			
 			<util:MenuItem label="SimpleDiagrams" id="simpleDiagrams">
 				
 				<util:MenuItem label="About SimpleDiagrams" id="about" data="about"/>
@@ -328,10 +331,13 @@
 				<util:MenuItem type="separator"/>
 				<util:MenuItem label="Export to PNG" id="export_diagram_to_file"  data="export_diagram_to_file" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
 				<util:MenuItem label="Export to Basecamp" id="export_diagram_to_basecamp"  data="export_diagram_to_basecamp" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
-				<!--
+			-->				
+			<!--
 				<util:MenuItem label="Export to Flickr" id="export_diagram_to_flickr"  data="export_diagram_to_flickr" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>	
 				-->
+			<!--			
 			</util:MenuItem>
+			-->			
 			
 			<util:MenuItem label="Edit" id="edit">
 				
@@ -364,26 +370,28 @@
 				<!--<util:MenuItem label="Napkin" id="napkin_style"  data="napkin_style" />-->
 				<util:MenuItem label="Basic" id="basic_style"  data="basic_style" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}" />			
 			</util:MenuItem>
-							
+
+			<!--			
 			<util:MenuItem label="Libraries" id="libraries">				
 				<util:MenuItem label="Manage libraries" id="manage_local_libraries"  data="manage_local_libraries" />	
+			-->
 				<!--
 				<util:MenuItem label="Download new libraries" id="download_libraries"  data="download_libraries" />					
 				-->
+			<!--				
 				<util:MenuItem label="Load library plugin from file" id="load_library_plugin_from_file"  data="load_library_plugin_from_file" />		
-					
 			</util:MenuItem>
 			
 			<util:MenuItem label="View" id="view">
 				<util:MenuItem label="Zoom out" id="zoom_out" data="zoom_out" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>				
 				<util:MenuItem label="Zoom in" id="zoom_in" data="zoom_in" enabled="{applicationModel.viewing==ApplicationModel.VIEW_DIAGRAM}"/>
 			</util:MenuItem>   
+			-->					
 			
-			<!--
 			<util:MenuItem label="Debug" id="debug">
 				<util:MenuItem label="View debugger" id="view_debugger" data="view_debugger"/>
 			</util:MenuItem>   
-			-->
+			
 			<util:MenuItem label="Help" id="help">
 				<util:MenuItem label="Get Help" id="view_help" data="view_help"/>	
 				<util:MenuItem label="Reset RSO" id="reset_rso" data="reset_rso"/>	

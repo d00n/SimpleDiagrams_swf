@@ -512,7 +512,7 @@ package com.simplediagrams.model
 									
 			//launch the loaded event before actually building the diagram
 			//b/c on the first load, the DrawingBoard stage won't be set up correctly.			
-			var evt:CreateNewDiagramEvent = new CreateNewDiagramEvent(CreateNewDiagramEvent.NEW_DIAGRAM_CREATED, true)
+			var evt:CreateNewDiagramEvent = new CreateNewDiagramEvent(CreateNewDiagramEvent.NEW_DIAGRAM_CREATED, true, true)
 			Swiz.dispatchEvent(evt)			
 			
 		}		

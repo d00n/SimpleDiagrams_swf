@@ -37,7 +37,11 @@ package com.simplediagrams.model
 						
 //		public var defaultFileDirectory:File
 		
-		protected var _viewing:String = VIEW_STARTUP
+		// In AIR mode, default to VIEW_STARTUP
+		//protected var _viewing:String = VIEW_STARTUP
+			
+		// In swf mode, start with a new board
+		protected var _viewing:String = VIEW_DIAGRAM
 		
 		protected var nagWindowTimer:Timer
 		protected var nagAlertOpen:Boolean = false

@@ -109,24 +109,24 @@ package com.simplediagrams.controllers
 				
 			//CHECK AGREED TO EULA
 				
-			var agreedToEULA:Boolean 
-			try
-			{
-				agreedToEULA = appModel.didUserAgreeToEULA()
-			}
-			catch(err:Error)
-			{
-				Logger.error("Couldn't read 'agreedToEULA' string from model", this)
-				agreedToEULA = false
-			}
-			
-			if (agreedToEULA==false)
-			{
-				appModel.menuEnabled = false 
-				appModel.viewing=ApplicationModel.VIEW_REGISTRATION	
-				registrationManager.viewing = RegistrationManager.VIEW_EULA
-				return
-			}
+//			var agreedToEULA:Boolean 
+//			try
+//			{
+//				agreedToEULA = appModel.didUserAgreeToEULA()
+//			}
+//			catch(err:Error)
+//			{
+//				Logger.error("Couldn't read 'agreedToEULA' string from model", this)
+//				agreedToEULA = false
+//			}
+//			
+//			if (agreedToEULA==false)
+//			{
+//				appModel.menuEnabled = false 
+//				appModel.viewing=ApplicationModel.VIEW_REGISTRATION	
+//				registrationManager.viewing = RegistrationManager.VIEW_EULA
+//				return
+//			}
 														
 			//load in settings
 			settingsManager.loadSettings()
@@ -142,38 +142,38 @@ package com.simplediagrams.controllers
 			}
 			
 			//CHECK LICENSE			
-			Logger.debug("isLicensed: " + registrationManager.isLicensed,this)
-			if (registrationManager.isLicensed)
-			{	
-				//show dialog that we're loading stored libraries
-				_loadLibraryPluginsDialog = dialogsController.showLoadLibraryPluginsDialog()
-				_loadLibraryPluginsDialog.addEventListener(Event.CANCEL, onLoadLibraryPluginsCancel)
-				
-				Logger.debug("LOADING LIBRARY PLUG-INS...", this)
-				//load library plug-ins
-				try
-				{
-					_libraryPluginsDelegate = new LibraryPluginsDelegate()
-					_libraryPluginsDelegate.addEventListener(LibraryPluginsDelegate.LOADING_FINISHED, onLoadingLibraryPluginsFinished)
-					_libraryPluginsDelegate.addEventListener(LibraryPluginsDelegate.LOADING_FAILED, onLoadingLibraryPluginsFailed)
-					_libraryPluginsDelegate.loadLibraries(libraryManager)
-				}
-				catch(err:Error)
-				{
-					Logger.error("Error when loading library plug-ins. Error: " + err, this)	
-						
-					var msg:String = "An error occurred when loading library plug-ins. One of the library plug-ins may be corrupt. Please delete the library plug-ins and reload them to fix this problem. "
-					Alert.show(msg, "Library Load Error")	
-				}	
-				
-			}
-			else
-			{
-				Logger.debug("showing view registration...",this)
-				appModel.menuEnabled = false //will be turned on when user clicks continue
-				appModel.viewing=ApplicationModel.VIEW_REGISTRATION
-				libraryManager.hidePremiumLibraries()
-			}			
+//			Logger.debug("isLicensed: " + registrationManager.isLicensed,this)
+//			if (registrationManager.isLicensed)
+//			{	
+//				//show dialog that we're loading stored libraries
+//				_loadLibraryPluginsDialog = dialogsController.showLoadLibraryPluginsDialog()
+//				_loadLibraryPluginsDialog.addEventListener(Event.CANCEL, onLoadLibraryPluginsCancel)
+//				
+//				Logger.debug("LOADING LIBRARY PLUG-INS...", this)
+//				//load library plug-ins
+//				try
+//				{
+//					_libraryPluginsDelegate = new LibraryPluginsDelegate()
+//					_libraryPluginsDelegate.addEventListener(LibraryPluginsDelegate.LOADING_FINISHED, onLoadingLibraryPluginsFinished)
+//					_libraryPluginsDelegate.addEventListener(LibraryPluginsDelegate.LOADING_FAILED, onLoadingLibraryPluginsFailed)
+//					_libraryPluginsDelegate.loadLibraries(libraryManager)
+//				}
+//				catch(err:Error)
+//				{
+//					Logger.error("Error when loading library plug-ins. Error: " + err, this)	
+//						
+//					var msg:String = "An error occurred when loading library plug-ins. One of the library plug-ins may be corrupt. Please delete the library plug-ins and reload them to fix this problem. "
+//					Alert.show(msg, "Library Load Error")	
+//				}	
+//				
+//			}
+//			else
+//			{
+//				Logger.debug("showing view registration...",this)
+//				appModel.menuEnabled = false //will be turned on when user clicks continue
+//				appModel.viewing=ApplicationModel.VIEW_REGISTRATION
+//				libraryManager.hidePremiumLibraries()
+//			}			
 			
 			Logger.debug("settings stylees to:" + settingsModel.defaultDiagramStyle,this)
 			//set initial styles -- this should be loaded from a settings folder later

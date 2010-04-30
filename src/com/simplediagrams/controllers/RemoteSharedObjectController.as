@@ -379,7 +379,7 @@ package com.simplediagrams.controllers
 			cmd.execute();				
 		}	
 		
-		//[Mediate(event="CreateNewDiagramEvent.NEW_DIAGRAM_CREATED")]
+		[Mediate(event="CreateNewDiagramEvent.NEW_DIAGRAM_CREATED")]
 		public function dispatchUpdate_ClearDiagram(event:CreateNewDiagramEvent) : void
 		{
 			Logger.info("dispatchUpdate_ClearDiagram()",this);
