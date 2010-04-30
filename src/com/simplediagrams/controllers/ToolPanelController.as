@@ -110,16 +110,17 @@ package com.simplediagrams.controllers
 			
 				
 			var sdObjectModel:SDObjectModel = selectedArr[0]
+			var eventChangeDepth:ChangeDepthEvent;
 			switch(event.type)
 			{
 				case PositionEvent.MOVE_BACKWARD:
-					var eventChangeDepth:ChangeDepthEvent = new ChangeDepthEvent(ChangeDepthEvent.MOVE_BACKWARD);
+					eventChangeDepth new ChangeDepthEvent(ChangeDepthEvent.MOVE_BACKWARD);
 					eventChangeDepth.sdID = sdObjectModel.sdID;
 					Swiz.dispatchEvent(eventChangeDepth);
 					break
 				
 				case PositionEvent.MOVE_FORWARD:
-					var eventChangeDepth:ChangeDepthEvent = new ChangeDepthEvent(ChangeDepthEvent.MOVE_FORWARD);
+					eventChangeDepth = new ChangeDepthEvent(ChangeDepthEvent.MOVE_FORWARD);
 					eventChangeDepth.sdID = sdObjectModel.sdID;
 					Swiz.dispatchEvent(eventChangeDepth);
 					break

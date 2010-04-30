@@ -157,7 +157,7 @@ package com.simplediagrams.controllers
 			_remoteSharedObject = SharedObject.getRemote("myDataObj", _netConnection.uri, false);
 			_remoteSharedObject.client = this;
 			_remoteSharedObject.addEventListener(SyncEvent.SYNC, onSyncEventHandler);
-			_remoteSharedObject.connect(_netConnection);          
+			_remoteSharedObject.connect(_netConnection); 
 		}
 		
 		public function securityErrorHandler(event : SecurityErrorEvent) : void {  trace('Security Error: '+event);  }
