@@ -71,8 +71,9 @@ package com.simplediagrams.controllers
 		/** A value of "change" means another client changed the object or the server resynchronized the object. */
 		private static const CHANGE : String = "change";
 		
-		private static const WOWZA_SERVER:String = "rtmp://gold/foo";
-		//private static const WOWZA_SERVER:String = "rtmp://kai/foo";
+		private static const WOWZA_SERVER:String = "rtmp://admin.infrno.net/whiteboard";
+//		private static const WOWZA_SERVER:String = "rtmp://gold/whiteboard";
+//		private static const WOWZA_SERVER:String = "rtmp://kai/foo";
 		
 		private var _netConnection:NetConnection;
 		private var _netStream:NetStream;
