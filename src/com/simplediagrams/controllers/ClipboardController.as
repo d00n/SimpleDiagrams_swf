@@ -5,6 +5,7 @@ package com.simplediagrams.controllers
 	import com.simplediagrams.commands.PasteCommand;
 	import com.simplediagrams.model.*;
 	import com.simplediagrams.util.Logger;
+	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	
 	import flash.desktop.Clipboard;
 	import flash.desktop.ClipboardTransferMode;
@@ -14,6 +15,7 @@ package com.simplediagrams.controllers
 	import mx.core.UITextField;
 	
 	import org.swizframework.controller.AbstractController;
+	import org.swizframework.Swiz;
 	
 	import spark.components.TextArea;
 
@@ -58,7 +60,9 @@ package com.simplediagrams.controllers
 				cmd.execute()
 				undoRedoManager.push(cmd)
 					
-				remoteSharedObjectController.dispatchUpdate_CutEvent(cmd);					
+				//remoteSharedObjectController.dispatchUpdate_CutEvent(cmd);	
+				var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.CUT);	
+				Swiz.dispatchEvent(rsoEvent);
 			}
 			else
 			{
@@ -134,7 +138,10 @@ package com.simplediagrams.controllers
 				cmd.execute()
 				undoRedoManager.push(cmd)	
 					
-				remoteSharedObjectController.dispatchUpdate_PasteEvent(cmd);
+//				remoteSharedObjectController.dispatchUpdate_PasteEvent(cmd);
+				var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.PASTE);	
+				Swiz.dispatchEvent(rsoEvent);
+
 			}
 			else
 			{

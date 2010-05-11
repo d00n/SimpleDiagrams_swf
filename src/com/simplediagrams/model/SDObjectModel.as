@@ -3,6 +3,7 @@ package com.simplediagrams.model
 	
 	import com.roguedevelopment.objecthandles.IMoveable;
 	import com.roguedevelopment.objecthandles.IResizeable;
+	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	import com.simplediagrams.model.mementos.SDObjectMemento;
 	import com.simplediagrams.model.mementos.TransformMemento;
 	import com.simplediagrams.util.Logger;
@@ -343,7 +344,8 @@ package com.simplediagrams.model
 			height = memento.height
 			rotation = memento.rotation
 			zIndex = memento.zIndex
-			color = memento.color
+			color = memento.color;
+
 		}
 		
 		public function getMemento():SDObjectMemento

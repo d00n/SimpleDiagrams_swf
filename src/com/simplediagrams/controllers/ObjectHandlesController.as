@@ -3,6 +3,7 @@ package com.simplediagrams.controllers
 	import com.simplediagrams.commands.TransformCommand;
 	import com.simplediagrams.events.MoveOnceEvent;
 	import com.simplediagrams.events.ObjectChangedEvent;
+	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	import com.simplediagrams.model.DiagramModel;
 	import com.simplediagrams.model.SDObjectModel;
 	import com.simplediagrams.model.UndoRedoManager;
@@ -10,6 +11,7 @@ package com.simplediagrams.controllers
 	import com.simplediagrams.util.Logger;
 	
 	import org.swizframework.controller.AbstractController;
+	import org.swizframework.Swiz;
 
 	public class ObjectHandlesController extends AbstractController
 	{
@@ -34,19 +36,24 @@ package com.simplediagrams.controllers
 		{
 			Logger.debug("onObjectChange() event: " + event.type,this)
 			Logger.debug("onObjectChange() event.relatedObjects.length: " + event.relatedObjects.length,this)
-			var transformedObjectsArr:Array = new Array()
+			var transformedObjectsArr:Array = new Array();
+			var rsoEvent:RemoteSharedObjectEvent;
 			for each (var sdObjectModel:SDObjectModel in event.relatedObjects)
 			{
 				var from:TransformMemento = sdObjectModel.getStartTransformState()
 				var to:TransformMemento = sdObjectModel.getTransformState()
 				var o:Object = {sdID:sdObjectModel.sdID, fromState:from, toState:to}
-				transformedObjectsArr.push(o)
+				transformedObjectsArr.push(o);
+				
 			}
 						
 			var cmd:TransformCommand = new TransformCommand(diagramModel, transformedObjectsArr)
 			undoRedoManager.push(cmd)
 				
-			remoteSharedObjectController.dispatchUpdate_ObjectChanged(cmd)			
+			//remoteSharedObjectController.dispatchUpdate_ObjectChanged(cmd)			
+				
+			var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.OBJECT_CHANGED);	
+			Swiz.dispatchEvent(rsoEvent);
 		}
 		
 		
@@ -105,7 +112,10 @@ package com.simplediagrams.controllers
 			cmd.execute()
 			undoRedoManager.push(cmd)
 				
-			remoteSharedObjectController.dispatchUpdate_ObjectChanged(cmd)
+			//remoteSharedObjectController.dispatchUpdate_ObjectChanged(cmd)
+			var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.OBJECT_CHANGED);	
+			Swiz.dispatchEvent(rsoEvent);
+
 		}
 		
 		

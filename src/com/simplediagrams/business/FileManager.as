@@ -263,6 +263,8 @@ package com.simplediagrams.business
 			s.diagram.@baseBackgroundColor = diagramModel.baseBackgroundColor
 			s.diagram.name = diagramModel.name
 			s.diagram.description = diagramModel.description
+			s.diagram.scaleX = diagramModel.scaleX
+			s.diagram.scaleY = diagramModel.scaleY
 		
 			
 			//save each of the SD objects
@@ -364,6 +366,8 @@ package com.simplediagrams.business
 			diagramModel.baseBackgroundColor = s.diagram.@baseBackgroundColor
 			diagramModel.name = s.diagram.name 
 			diagramModel.description = s.diagram.description 
+			diagramModel.scaleX = s.diagram.scaleX 
+			diagramModel.scaleY = s.diagram.scaleY 
 		
 			var dec:Base64Decoder = new Base64Decoder()
 		

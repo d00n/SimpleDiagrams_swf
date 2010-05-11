@@ -679,7 +679,9 @@
 				
 				SDSymbolModel(diagramModel.selectedArray[0]).text = symbolTextArea.text
 					
-				remoteSharedObjectController.dispatchUpdate_SymbolTextEdit(diagramModel.selectedArray[0]);
+//				remoteSharedObjectController.dispatchUpdate_SymbolTextEdit(diagramModel.selectedArray[0]);
+				var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.SYMBOL_TEXT_EDIT);	
+				Swiz.dispatchEvent(rsoEvent);
 				
 				
 				symbolTextArea.visible = false

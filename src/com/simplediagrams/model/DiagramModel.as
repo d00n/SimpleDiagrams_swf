@@ -2,15 +2,14 @@ package com.simplediagrams.model
 {
 	
 	import com.roguedevelopment.objecthandles.constraints.*;
-	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	import com.simplediagrams.events.ClearDiagramEvent;
 	import com.simplediagrams.events.ConnectorAddedEvent;
 	import com.simplediagrams.events.CreateNewDiagramEvent;
 	import com.simplediagrams.events.DeleteSDComponentEvent;
 	import com.simplediagrams.events.LoadDiagramEvent;
+	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	import com.simplediagrams.events.StyleEvent;
 	import com.simplediagrams.events.ToolEvent;
-	import com.simplediagrams.events.RemoteSharedObjectEvent;
 	import com.simplediagrams.model.dao.DiagramDAO;
 	import com.simplediagrams.model.mementos.SDObjectMemento;
 	import com.simplediagrams.util.Logger;
@@ -80,7 +79,7 @@ package com.simplediagrams.model
 		
 		public function onCollectionChange(event:CollectionEvent):void
 		{
-			_isDirty = true
+			_isDirty = true;
 		}
 		
 		public function initDiagramModel():void
@@ -237,7 +236,10 @@ package com.simplediagrams.model
 			
 			addComponentForModel(newSDObjectModel, true)
 		
-			isDirty = true
+			isDirty = true;
+			
+			var rsoEvent:RemoteSharedObjectEvent = new RemoteSharedObjectEvent(RemoteSharedObjectEvent.ADD_SD_OBJECT_MODEL);	
+			Swiz.dispatchEvent(rsoEvent);
 		
 		}
 		
