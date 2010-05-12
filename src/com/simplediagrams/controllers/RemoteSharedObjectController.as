@@ -77,23 +77,24 @@ package com.simplediagrams.controllers
 		private var _netStream:NetStream;
 		private var _remoteSharedObject:SharedObject;
 		
-		[Autowire(bean='diagramController')]
-		public var diagramController:DiagramController
 		
 		[Autowire(bean='diagramModel')]
 		public var diagramModel:DiagramModel
-		
-		[Autowire(bean='objectHandlesController')]
-		public var objectHandlesController:ObjectHandlesController
-		
-		[Autowire(bean='libraryManager')]
-		public var libraryManager:LibraryManager;
-		
+
 		[Autowire(bean='fileManager')]
 		public var fileManager:FileManager;
 		
-		[Autowire(bean='diagramStyleManager')]
-		public var diagramStyleManager:DiagramStyleManager
+//		[Autowire(bean='diagramController')]
+//		public var diagramController:DiagramController
+//		
+//		[Autowire(bean='objectHandlesController')]
+//		public var objectHandlesController:ObjectHandlesController
+//		
+//		[Autowire(bean='libraryManager')]
+//		public var libraryManager:LibraryManager;
+//		
+//		[Autowire(bean='diagramStyleManager')]
+//		public var diagramStyleManager:DiagramStyleManager
 		
 		public function RemoteSharedObjectController() {			
 			connect();
@@ -166,8 +167,7 @@ package com.simplediagrams.controllers
 		
 		public function securityErrorHandler(event : SecurityErrorEvent) : void {  trace('Security Error: '+event);  }
 		public function ioErrorHandler(event : IOErrorEvent) : void {  trace('IO Error: '+event);  }
-		public function asyncErrorHandler(event : AsyncErrorEvent) : void {  trace('Async Error: '+event);  }  
-		
+		public function asyncErrorHandler(event : AsyncErrorEvent) : void {  trace('Async Error: '+event);  }  		
 		
 		private function onSyncEventHandler(event : SyncEvent):void {
 			Logger.info("onSyncEventHandler event:" + event,this);	
@@ -188,6 +188,50 @@ package com.simplediagrams.controllers
 				}    
 			}
 		}
+		
+//		[Mediate(event="StyleEvent.CHANGE_STYLE")]
+//		[Mediate(event="RemoteSharedObjectEvent.DISPATCH_TEXT_AREA_CHANGE")]
+		[Mediate(event="CreateNewDiagramEvent.NEW_DIAGRAM_CREATED")]
+		[Mediate(event="RemoteSharedObjectEvent.CHANGE_ALL_SHAPES_TO_DEFAULT_COLOR")]
+		[Mediate(event="RemoteSharedObjectEvent.CHANGE_COLOR")]
+		[Mediate(event="RemoteSharedObjectEvent.DISPATCH_TEXT_AREA_CHANGE")]
+		[Mediate(event="RemoteSharedObjectEvent.ADD_SD_OBJECT_MODEL")]
+		[Mediate(event="RemoteSharedObjectEvent.DELETE_SELECTED_SD_OBJECT_MODEL")]
+		[Mediate(event="RemoteSharedObjectEvent.OBJECT_CHANGED")]
+		[Mediate(event="RemoteSharedObjectEvent.CUT")]
+		[Mediate(event="RemoteSharedObjectEvent.PASTE")]
+		[Mediate(event="RemoteSharedObjectEvent.REFRESH_Z_ORDER")]
+		[Mediate(event="RemoteSharedObjectEvent.TEXT_WIDGET_ADDED")]
+		[Mediate(event="RemoteSharedObjectEvent.TEXT_WIDGET_CREATED")]
+		[Mediate(event="RemoteSharedObjectEvent.PENCIL_DRAWING_CREATED")]
+		[Mediate(event="RemoteSharedObjectEvent.CREATE_LINE_COMPONENT")]
+		[Mediate(event="RemoteSharedObjectEvent.REFRESH_ZOOM")]
+		[Mediate(event="RemoteSharedObjectEvent.CHANGE_LINE_POSITION")]
+		[Mediate(event="RemoteSharedObjectEvent.SYMBOL_TEXT_EDIT")]
+		public function dispatchUpdate_xmlDiagram(event:RemoteSharedObjectEvent):void
+		{
+			Logger.info("dispatchUpdate_addSDObjectModel()",this);		
+			
+			var xmlDiagram:XML = fileManager.convertDiagramToXML();
+			
+			Logger.info("_remoteSharedObject.size = " + _remoteSharedObject.size ,this);
+			_remoteSharedObject.setProperty("xmlDiagram", xmlDiagram.toString());
+			Logger.info("_remoteSharedObject.size = " + _remoteSharedObject.size ,this);			
+		}
+		
+		public function processUpdate_xmlDiagram():void
+		{
+			Logger.info("processUpdate_addSDObjectModel()",this);		
+			
+			var xmlDiagram:XML = new XML(_remoteSharedObject.data.xmlDiagram);
+			if (xmlDiagram != null ) {
+				diagramModel.initDiagramModel();
+				fileManager.loadXMLIntoDiagramModel(xmlDiagram);
+				var evt:LoadDiagramEvent = new LoadDiagramEvent(LoadDiagramEvent.DIAGRAM_LOADED, true)							
+				evt.success = true
+				Swiz.dispatchEvent(evt)		
+			}	
+		}
 
 		[Mediate(event="RemoteSharedObjectEvent.RESET")]
 		public function reset():void
@@ -207,7 +251,7 @@ package com.simplediagrams.controllers
 			_netStream = null;
 
 		}
-		
+				
 //		private function processUpdate( event : SyncEvent ) : void {
 //			switch (event.target.data["commandName"]) {
 //				case "AddLibraryItemCommand": {
@@ -825,54 +869,7 @@ package com.simplediagrams.controllers
 //			var cmd:ChangeColorCommand = new ChangeColorCommand(diagramModel, sdObjectModel);
 //			cmd.color = event.target.data["color"];	
 //			cmd.execute();
-//		}
-		
-		[Mediate(event="CreateNewDiagramEvent.NEW_DIAGRAM_CREATED")]
-//		[Mediate(event="StyleEvent.CHANGE_STYLE")]
-//		[Mediate(event="RemoteSharedObjectEvent.DISPATCH_TEXT_AREA_CHANGE")]
-		[Mediate(event="RemoteSharedObjectEvent.CHANGE_ALL_SHAPES_TO_DEFAULT_COLOR")]
-		[Mediate(event="RemoteSharedObjectEvent.CHANGE_COLOR")]
-		[Mediate(event="RemoteSharedObjectEvent.DISPATCH_TEXT_AREA_CHANGE")]
-		[Mediate(event="RemoteSharedObjectEvent.ADD_SD_OBJECT_MODEL")]
-		[Mediate(event="RemoteSharedObjectEvent.DELETE_SELECTED_SD_OBJECT_MODEL")]
-		[Mediate(event="RemoteSharedObjectEvent.OBJECT_CHANGED")]
-		[Mediate(event="RemoteSharedObjectEvent.CUT")]
-		[Mediate(event="RemoteSharedObjectEvent.PASTE")]
-		[Mediate(event="RemoteSharedObjectEvent.REFRESH_Z_ORDER")]
-		[Mediate(event="RemoteSharedObjectEvent.TEXT_WIDGET_ADDED")]
-		[Mediate(event="RemoteSharedObjectEvent.TEXT_WIDGET_CREATED")]
-		[Mediate(event="RemoteSharedObjectEvent.PENCIL_DRAWING_CREATED")]
-		[Mediate(event="RemoteSharedObjectEvent.CREATE_LINE_COMPONENT")]
-		[Mediate(event="RemoteSharedObjectEvent.REFRESH_ZOOM")]
-		[Mediate(event="RemoteSharedObjectEvent.CHANGE_LINE_POSITION")]
-		[Mediate(event="RemoteSharedObjectEvent.SYMBOL_TEXT_EDIT")]
-		public function dispatchUpdate_xmlDiagram(event:RemoteSharedObjectEvent):void
-		{
-			Logger.info("dispatchUpdate_addSDObjectModel()",this);		
-			
-			var xmlDiagram:XML = fileManager.convertDiagramToXML();
-			
-			Logger.info("_remoteSharedObject.size = " + _remoteSharedObject.size ,this);
-			_remoteSharedObject.setProperty("xmlDiagram", xmlDiagram.toString());
-			Logger.info("_remoteSharedObject.size = " + _remoteSharedObject.size ,this);			
-		}
-		
-		public function processUpdate_xmlDiagram():void
-		{
-			Logger.info("processUpdate_addSDObjectModel()",this);		
-			
-			var xmlDiagram:XML = new XML(_remoteSharedObject.data.xmlDiagram);
-			if (xmlDiagram != null ) {
-				diagramModel.initDiagramModel();
-				fileManager.loadXMLIntoDiagramModel(xmlDiagram);
-				var evt:LoadDiagramEvent = new LoadDiagramEvent(LoadDiagramEvent.DIAGRAM_LOADED, true)							
-				evt.success = true
-				Swiz.dispatchEvent(evt)		
-			}
-			
-		}
-
-		
+//		}		
 	}	
 }
 
